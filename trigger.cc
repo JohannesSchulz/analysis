@@ -160,8 +160,8 @@ int trigger(){
 	H_denumerator_final_pt_leg_tight_woMETcut_2 = (TH1F*)Data->Get("h_denumerator_final_pt_leg_tight_woMETcut_2"); 	*/
 	
 	
-//	H_numerator_final_met_leg_loose_wo = (TH1F*)Data->Get("h_numerator_final_met_leg_loose_wo"); 
-//	H_denumerator_final_met_leg_loose_wo = (TH1F*)Data->Get("h_denumerator_final_met_leg_loose_wo");	
+	H_numerator_final_met_leg_loose_wo = (TH1F*)Data->Get("h_numerator_final_met_leg_loose_wo"); 
+	H_denumerator_final_met_leg_loose_wo = (TH1F*)Data->Get("h_denumerator_final_met_leg_loose_wo");	
 		
 	
 	
@@ -244,6 +244,8 @@ int trigger(){
 	H_numerator_final_pt_leg_loose_woMETcut_2->Rebin(4);
 	H_denumerator_final_pt_leg_loose_woMETcut_2->Rebin(4); 
 	
+	H_numerator_final_met_leg_loose_wo->Rebin(4);
+	H_denumerator_final_met_leg_loose_wo->Rebin(4);
 	
 	H_numerator_DeltaRCut_PtCut_2->Rebin(4);
 	H_denumerator_DeltaRCut_PtCut_2->Rebin(4);	
@@ -264,6 +266,9 @@ int trigger(){
 	H_Data_triggereff_metcross_mytrigger->Rebin(2.5);
 	H_Data_triggereff_metcross_crosstrigger->Rebin(2.5);
 	
+	H_numerator_JET_corr_2->GetYaxis()->SetTitle("Efficiency #epsilon");
+	H_denumerator_JET_corr_2->GetYaxis()->SetTitle("Efficiency #epsilon");	
+		
 	H_Data_triggereff_photonptcross_mytrigger_vor = (TH1F*)Data->Get("h_triggereff_photonptcross_mytrigger_vor");
 	H_Data_triggereff_photonptcross_crosstrigger_vor =	(TH1F*)Data->Get("h_triggereff_photonptcross_crosstrigger_vor");
 	H_Data_triggereff_photonptcross_mytrigger_vor2 = (TH1F*)Data->Get("h_triggereff_photonptcross_mytrigger_vor2");
@@ -290,7 +295,7 @@ int trigger(){
 	TEfficiency *T_pt_leg_2_loose = new TEfficiency(*H_numerator_final_pt_leg_loose_2, *H_denumerator_final_pt_leg_loose_2);
 	TEfficiency *T_pt_leg_wo_2_loose = new TEfficiency(*H_numerator_final_pt_leg_loose_woMETcut_2, *H_denumerator_final_pt_leg_loose_woMETcut_2);
 	TEfficiency *T_met_leg_2_loose = new TEfficiency(*H_numerator_final_met_leg_loose_2, *H_denumerator_final_met_leg_loose_2);	
-//	TEfficiency *T_met_leg_2_loose_wo = new TEfficiency(*H_numerator_final_met_leg_loose_wo, *H_denumerator_final_met_leg_loose_wo);	
+	TEfficiency *T_met_leg_2_loose_wo = new TEfficiency(*H_numerator_final_met_leg_loose_wo, *H_denumerator_final_met_leg_loose_wo);	
 		
 //	TEfficiency *T_r9_2 = new TEfficiency(*H_numerator_r9_2, *H_denumerator_r9_2);		
 	TEfficiency *T_MET_calc = new TEfficiency(*H_numerator_MET_calc,*H_denumerator_MET_calc);
@@ -335,6 +340,7 @@ int trigger(){
 */
 	gStyle->SetPadTickX(1);
 	gStyle->SetPadTickY(1);
+	gStyle->SetMarkerStyle(8);
  /*
 /*	h_triggereff_metcross_mytrigger->Draw();
   h_triggereff_metcross_crosstrigger->SetLineColor(kRed);   <- das funktioniert? ohne get und alles..scheinbar ja
@@ -347,13 +353,39 @@ int trigger(){
 //  canvas3->Divide(2,1);
 //  canvas3->cd(1);
 //	H_Data_triggereff_metcross_mytrigger->Draw();
-	Teffi2->Draw();
-	gPad->Update();	
-	Teffi2->SetTitle("Efficiency");	
-	Teffi2->GetPaintedGraph()->GetXaxis()->SetTitle("Missing E_{T} [GeV]");
+	gStyle->SetPadTickX(1);
+	gStyle->SetPadTickY(1);
+	gPad->SetGridx(1);
+	gPad->SetGridy(1);
+  T_met_leg_2_loose_wo->Draw();
+	T_met_leg_2_loose_wo->SetMarkerStyle(8);
+	T_met_leg_2_loose_wo->SetMarkerSize(2);
+	T_met_leg_2_loose_wo->SetLineWidth(2);		
+//	Teffi2->Draw();
+	gPad->Update();
+	T_met_leg_2_loose_wo->GetPaintedGraph()->GetXaxis()->SetTitleSize(0.06);	
+  T_met_leg_2_loose_wo->GetPaintedGraph()->GetYaxis()->SetTitleSize(0.06);	
+  T_met_leg_2_loose_wo->GetPaintedGraph()->GetXaxis()->SetLabelSize(0.055);	
+  T_met_leg_2_loose_wo->GetPaintedGraph()->GetYaxis()->SetLabelSize(0.06);		
+  T_met_leg_2_loose_wo->GetPaintedGraph()->GetYaxis()->SetTitleOffset(0.9);
+	T_met_leg_2_loose_wo->SetTitle("");//"#slash{E}_{T}-req. efficiency");	
+	T_met_leg_2_loose_wo->GetPaintedGraph()->GetYaxis()->SetTitle("#varepsilon_{#slash{E}_{T}-req.}");
+	T_met_leg_2_loose_wo->GetPaintedGraph()->GetYaxis()->SetTitleOffset(0.7);	
+	T_met_leg_2_loose_wo->GetPaintedGraph()->GetXaxis()->SetTitleOffset(0.7);		
+	T_met_leg_2_loose_wo->GetPaintedGraph()->GetXaxis()->SetTitle("#slash{E}_{T} [GeV]");
+	EffiMet = new TLatex(100,0.3,"#varepsilon_{#slash{E}_{T}-req.} = (98.7 #pm 0.2(stat.)) %");
+  EffiMet->SetTextSize(0.06);
+  EffiMet->Draw();
+	TLine *l_cut_met = new TLine(100,0,100,1.05);
+	l_cut_met->SetLineWidth(4);
+	l_cut_met->Draw("same");
+	Arrow3 = new TLatex(100,0.6,"#rightarrow");
+	Arrow3->SetTextSize(0.06);
+	Arrow3->Draw("same");
 //	canvas3->cd(2);
 //	Teffi4->Draw();
-	
+	gStyle->SetPadTickX(1);
+	gStyle->SetPadTickY(1);
 	TCanvas *canvas4 = new TCanvas("canvas4","Plots",600,600);
   canvas4->Divide(2,1);
   canvas4->cd(1);
@@ -600,16 +632,33 @@ int trigger(){
 		TCanvas *cdelta2 = new TCanvas("cdelta2","Plots",600,600);
 	gPad->SetGridx(1);
 	gPad->SetGridy(1);	
-
+	
+	
   T_delta_2_JET->SetLineColor(kRed);
   T_delta_2_JET->SetMarkerColor(kRed);
   T_delta_2_JET->SetMarkerStyle(8);		
 	T_delta_2_JET->Draw();
-
 //	T_delta_1_JET->Draw("same");
 //	T_delta_1_JET->SetMarkerStyle(8);
-	
-
+	gPad->Update();
+	DR = new TLatex(0.8,0.3,"#DeltaR = #sqrt{#Delta #Phi^{2} + #Delta #eta^{2}}");
+	Arrow = new TLatex(0.4,0.6,"#rightarrow");
+	Arrow->Draw("same");		
+  DR->SetTextSize(0.05);
+  DR->Draw("same");
+	TLine *l_cut = new TLine(0.4,0,0.4,1.05);
+	l_cut->SetLineWidth(2);
+	l_cut->Draw("same");
+  T_delta_2_JET->GetPaintedGraph()->GetXaxis()->SetTitleSize(0.06);	
+  T_delta_2_JET->GetPaintedGraph()->GetYaxis()->SetTitleSize(0.07);	
+  T_delta_2_JET->GetPaintedGraph()->GetXaxis()->SetLabelSize(0.06);	
+  T_delta_2_JET->GetPaintedGraph()->GetYaxis()->SetLabelSize(0.06);	
+  T_delta_2_JET->GetPaintedGraph()->GetXaxis()->SetTitle("#DeltaR(#gamma, nearest Jet)");	
+  T_delta_2_JET->GetPaintedGraph()->GetYaxis()->SetTitle("#varepsilon_{#DeltaR}");
+  T_delta_2_JET->GetPaintedGraph()->GetXaxis()->SetTitleOffset(0.7);	
+  T_delta_2_JET->GetPaintedGraph()->GetYaxis()->SetTitleOffset(0.7);
+		
+//  T_delta_2_JET->GetPaintedGraph()->GetYaxis()->SetTitleOffset(0.9);
  // T_delta_wo_1_JET->SetMarkerStyle(31);
 //	T_delta_wo_1_JET->Draw("same"); 
 	
@@ -624,46 +673,69 @@ int trigger(){
   infoBox->Draw();	*/
 	
 	TCanvas *cdelta3 = new TCanvas("cdelta3","Plots",600,600);
-	
+	gPad->SetGridx(1);
+	gPad->SetGridy(1);
 /*	T_pt_leg_40_2->Draw();
 	T_pt_leg_40_2->SetMarkerStyle(8);
 	T_pt_leg_40_2->SetLineColor(kRed);
   T_pt_leg_40_2->SetMarkerColor(kRed);	*/
+	T_DeltaRCut_2->Draw();	
+	gPad->Update();
+	T_DeltaRCut_2->GetPaintedGraph()->GetXaxis()->SetTitleSize(0.055);	
+  T_DeltaRCut_2->GetPaintedGraph()->GetYaxis()->SetTitleSize(0.07);	
+  T_DeltaRCut_2->GetPaintedGraph()->GetXaxis()->SetLabelSize(0.055);	
+  T_DeltaRCut_2->GetPaintedGraph()->GetYaxis()->SetLabelSize(0.06);	
+  T_DeltaRCut_2->GetPaintedGraph()->GetXaxis()->SetTitle("#gamma p_{T} [GeV]");	
+  T_DeltaRCut_2->GetPaintedGraph()->GetYaxis()->SetTitle("#varepsilon_{#gamma-req.}");
+  T_DeltaRCut_2->GetPaintedGraph()->GetXaxis()->SetTitleOffset(0.85);	
+  T_DeltaRCut_2->GetPaintedGraph()->GetYaxis()->SetTitleOffset(0.6);			
+
+	T_DeltaRCut_2->SetMarkerStyle(8);
+	T_DeltaRCut_2->SetMarkerSize(2);
+	T_DeltaRCut_2->SetLineWidth(2);
 	
-//	T_DeltaRCut_2->Draw();
-
-/*  T_pt_leg_40_2->SetLineColor(kRed);
-  T_pt_leg_40_2->SetMarkerColor(kRed);
-  T_pt_leg_40_2->SetMarkerStyle(8);		
-	T_pt_leg_40_2->Draw(); */
-	T_DeltaRCut_PtCut_2->SetMarkerStyle(8);	
-	T_DeltaRCut_PtCut_2->Draw();	
-
-	T_DeltaRCut_DeltaPhiCut_PtCut_2->SetMarkerStyle(8);
-	T_DeltaRCut_DeltaPhiCut_PtCut_2->SetLineColor(kBlue);
-	T_DeltaRCut_DeltaPhiCut_PtCut_2->SetMarkerColor(kBlue);
-	T_DeltaRCut_DeltaPhiCut_PtCut_2->Draw("same");	
+			
+//	T_DeltaRCut_2->Draw();	
+//	T_DeltaRCut_2->SetMarkerStyle(8);
+	cdelta3->Update();
+//	T_pt_leg_40_2->Draw("same");	
+//	T_pt_leg_40_2->SetLineColor(kRed);
+//  T_pt_leg_40_2->SetMarkerColor(kRed);
+//  T_pt_leg_40_2->SetMarkerStyle(1);
+//  T_pt_leg_40_2->SetMarkerSize(2);	
+	gPad->Update();		
+	EffiPt = new TLatex(100,0.3,"#varepsilon_{#gamma-req.} = (89.6 #pm 0.3(stat.)) %");
+  EffiPt->SetTextSize(0.05);
+  EffiPt->Draw();
+	TLine *l_cut_pt = new TLine(40,0,40,1.05);
+	l_cut_pt->SetLineWidth(4);
+	l_cut_pt->Draw("same");
+	Arrow2 = new TLatex(40,0.6,"#rightarrow");
+	Arrow2->SetTextSize(0.06);	
+	Arrow2->Draw("same");
+//	T_DeltaRCut_DeltaPhiCut_PtCut_2->SetMarkerStyle(8);
+//	T_DeltaRCut_DeltaPhiCut_PtCut_2->SetLineColor(kBlue);
+//	T_DeltaRCut_DeltaPhiCut_PtCut_2->SetMarkerColor(kBlue);
+//	T_DeltaRCut_DeltaPhiCut_PtCut_2->Draw("same");	
 	
 		
 //	T_DeltaRCut2_DeltaPhiCut_PtCut_2->SetMarkerStyle(8);
 //	T_DeltaRCut2_DeltaPhiCut_PtCut_2->Draw("same");	
 	
-	gPad->SetGridx(1);
-	gPad->SetGridy(1);
 	
-	TH1F *Error = new TH1F("Error","bla",1,40,400);
+/*	TH1F *Error = new TH1F("Error","bla",1,40,400);
 	Error->SetBinContent(1,0.896);
 	Error->SetBinError(1,0.03);
 	Error->SetFillColor(kGreen);
 	Error->SetFillStyle(3002);
-	Error->Draw("E2 same");
+//	Error->Draw("E2 same");
 	
 	TH1F *Error2 = new TH1F("Error2","bla",1,40,400);
 	Error2->SetBinContent(1,0.896);
 	Error2->SetBinError(1,0.003);
 	Error2->SetFillColor(kViolet+10);
 	Error2->SetFillStyle(3001);
-	Error2->Draw("E2 same");	
+//	Error2->Draw("E2 same");	*/
 	
 //	T_DeltaRCut_2->SetMarkerStyle(8);
 //	T_DeltaRCut_2->Draw("same");	
@@ -671,16 +743,18 @@ int trigger(){
 	
 	
 	TLegend *infoBox = new TLegend(0.77, 0.8, 0.99, 0.99,"");//0.75, 0.83, 0.99, 0.99, "");
-	infoBox->SetHeader("2nd way:");
-  infoBox->AddEntry(T_pt_leg_40_2,"MET > 40 (tight)","lep");		
-  infoBox->AddEntry(T_DeltaRCut_DeltaPhiCut_PtCut_2,"MET > 40 - cleaned (tight)","lep");
-  infoBox->AddEntry(Error2,"Eff. with stat. uncertainty","f");	
-  infoBox->AddEntry(Error,"3 % syst. uncertainty","f");		
+	infoBox->SetHeader("#gamma-req. efficiency:");
+ // infoBox->AddEntry(T_pt_leg_40_2,"MET > 40 (tight)","lep");		
+ // infoBox->AddEntry(T_DeltaRCut_DeltaPhiCut_PtCut_2,"MET > 40 - cleaned (tight)","lep");
+//  infoBox->AddEntry(Error2,"Eff. with stat. uncertainty","f");	
+//  infoBox->AddEntry(Error,"3 % syst. uncertainty","f");
+	infoBox->AddEntry(T_pt_leg_40_2,"before #DeltaR cut","lep");	
+	infoBox->AddEntry(T_DeltaRCut_2,"after #DeltaR cut","lep");
  // infoBox->AddEntry(T_DeltaRCut2_DeltaPhiCut_PtCut_2,"MET > 40 - cleaned (tight)","lep");	
   infoBox->SetShadowColor(0);  // 0 = transparent
   infoBox->SetFillColor(kWhite); 
-	infoBox->SetTextSize(0.025);
-  infoBox->Draw();
+	infoBox->SetTextSize(0.035);
+//  infoBox->Draw();
 			
 //	T_DeltaRCut_DeltaPhiCut_PtCut_100_2->SetMarkerStyle(8);
 //	T_DeltaRCut_DeltaPhiCut_PtCut_100_2->Draw("same");

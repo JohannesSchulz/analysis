@@ -20,19 +20,22 @@ int fake_e(){
 
   TH1::SetDefaultSumw2();	
 	
-	int rebin = 5;	
-	double order = 1.8;  // WZ, ZZ hängen davon ab. Insgesamt kaum Einfluss wegen ttbar
+	int rebin = 3;	
+	double order = 1.5;  // WZ, ZZ hängen davon ab. Insgesamt kaum Einfluss wegen ttbar
 	double efficiency = 0.885339;  // unabhängig von dieser zahl -> Skalierung
 	double FakeRateMC = 0.009591; // 0.0095
 //	double FakeRateMC =0.008471; //0.0084;//0.008471;  // schwarze Linie skaliert damit
 	double error = 0;
 	double error_final = 0;
 	double bin_content = 0;
-	//double error_fake = 0.004234383;
+//  double error_fake = 0.004234383;
 	double error_fake = 0.00053852;
 	
-	string histo = "h_truth_fake_inverse_met_sel"; //"h_truth_fake_inverse_met_sel";//h_truth_electrons_pt_sel";
-
+//	string histo = "h_truth_fake_met_sel";	
+//	string histo = "h_truth_fake_tight_photon_pt_sel";
+//	string histo = "h_truth_fake_inverse_met_sel"; //"h_truth_fake_inverse_met_sel";//h_truth_electrons_pt_sel";
+	string histo = "h_truth_electrons_pt_sel";
+	
 	TFile *GJets40  	= new TFile("GJets_40_100_V06.1_sel.root");	
 	TFile *GJets100 	= new TFile("GJets_100_200_V02.1_sel.root");
 	TFile *GJets200 	= new TFile("GJets_200_400_V02.1_sel.root");
@@ -309,16 +312,20 @@ int fake_e(){
 	numerator->SetLineWidth(2);
 	numerator->GetYaxis()->SetNdivisions(5);
   numerator->GetYaxis()->SetTitle("ratio");
+//  numerator->GetXaxis()->SetTitle("#slash{E}_{T} [GeV]");	
+  numerator->GetXaxis()->SetTitle("truth electron p_{T} [GeV]");
   numerator->GetYaxis()->CenterTitle();	
-  numerator->GetYaxis()->SetTitleSize(0.1);
-  numerator->GetXaxis()->SetTitleSize(0.1);		
-	numerator->GetYaxis()->SetLabelSize(0.1);
-	numerator->GetXaxis()->SetLabelSize(0.1);
-  numerator->GetYaxis()->SetTitleOffset(0.4);	
+  numerator->GetYaxis()->SetTitleSize(0.2);
+  numerator->GetXaxis()->SetTitleSize(0.2);		
+	numerator->GetYaxis()->SetLabelSize(0.2);
+	numerator->GetXaxis()->SetLabelSize(0.17);
+  numerator->GetYaxis()->SetTitleOffset(0.25);
+  numerator->GetXaxis()->SetTitleOffset(0.75);		
 	prediction->Divide(prediction);
 	prediction->SetFillStyle(3002);	
 	prediction->SetFillColor(kRed);
-	
+	prediction->SetLineWidth(3);	
+	prediction->SetMarkerSize(3);	
 /*	for ( int i = 0; i < bins; i++) {
 		error_final = H_GJets40_P_signal->GetBinError(i)/(H_GJets40_P_signal->GetBinContent(i));
 		prediction->SetBinError(i,error_final);			
@@ -354,7 +361,7 @@ int fake_e(){
 	 	
 	c1->cd();
 	
-  TPad *canvasDefault_2 = new TPad("canvasDefault_2", "newpad",0.0,0.32,1,1);
+  TPad *canvasDefault_2 = new TPad("canvasDefault_2", "newpad",0.0,0.325,1,1);
   canvasDefault_2->Draw(); 
   canvasDefault_2->cd();
   canvasDefault_2->SetTopMargin(0.1);
@@ -376,6 +383,11 @@ int fake_e(){
 	H_TTJets_P_signal->SetFillColor(kRed);	
 	H_TTJets_P_signal->SetFillStyle(3002);	
 	H_TTJets_P_signal->Draw("E2");
+	H_TTJets_P_signal->SetTitle("");
+	H_TTJets_P_signal->GetYaxis()->SetTitle("# Events");
+	H_TTJets_P_signal->GetYaxis()->SetTitleSize(0.1);
+	H_TTJets_P_signal->GetYaxis()->SetLabelSize(0.1);			
+	H_TTJets_P_signal->GetYaxis()->SetTitleOffset(0.5);		
 	
 	H_TTJets_signal->SetLineColor(kBlack);
 	H_TTJets_signal->SetLineWidth(2);	
@@ -384,9 +396,9 @@ int fake_e(){
 
 	prediction->SetLabelSize(0.0);
 	prediction->GetXaxis()->SetTitleSize(0.00);
-	prediction->GetYaxis()->SetLabelSize(0.05);
+	prediction->GetYaxis()->SetLabelSize(0.1);
 	prediction->GetYaxis()->SetTitle("# events");
-	prediction->GetYaxis()->SetTitleSize(0.05);	
+	prediction->GetYaxis()->SetTitleSize(0.1);	
 
 	
 	prediction->GetXaxis()->SetTitle("");
@@ -396,15 +408,15 @@ int fake_e(){
   infoBox->AddEntry(H_GJets40_P_signal,"#gamma_{pixel} * fakerate","f");	
   infoBox->AddEntry(H_GJets40_signal,"generated e","l");	 */	
 	
-	TLegend *infoBox = new TLegend(0.7, 0.6, 0.9, 0.9,"");
+	TLegend *infoBox = new TLegend(0.65, 0.6, 0.9, 0.9,"");
   infoBox->SetHeader("Total background");		
-  infoBox->AddEntry(H_TTJets_P_signal,"#gamma_{pixel} * fakerate","f");	
+  infoBox->AddEntry(H_TTJets_P_signal,"#gamma_{pixel} * fakefactor","f");	
 	infoBox->SetBorderSize(0);
-	infoBox->AddEntry(H_TTJets_signal,"generated e","l");	 	
-
+	infoBox->AddEntry(H_TTJets_signal,"generated e #rightarrow #gamma_{signal}","l");	 	
+  infoBox->SetFillStyle(0);
   infoBox->SetShadowColor(0);  // 0 = transparent
   infoBox->SetFillColor(kWhite); 
-	infoBox->SetTextSize(0.042);
+	infoBox->SetTextSize(0.065);
   infoBox->Draw();
 	
 	

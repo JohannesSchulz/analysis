@@ -28,12 +28,13 @@ int t_chi2(){
 	double e_fakerate = 0.0148;
 	int rebin = 1.;
 //	string histo = "h_met_array";
-	string histo = "h_METoverSqHT_scale";
+//	string histo = "h_METoverSqHT_scale";
 //	string histo = "h_METoverSqHT";
 //	string histo = "h_1tightPhotonPtOverMET_scale";
 //	string histo = "h_1tightPhotonPtOverMET_scale_HT";	
 //	string histo = "h_AngleMJ1";
 //  string histo = "h_trans_mass_MET_Gamma";
+	string histo = "h_METoverSqHT_80_17";
 	
   TFile *Data  			= new TFile("PhotonParkedD_V06.1_sel.root");
 	TFile *GJets_file	  	= new TFile("GJetsAdd.root");	

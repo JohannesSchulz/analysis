@@ -10,6 +10,7 @@
 #include "TLegend.h"
 #include "THStack.h"
 #include "TStyle.h"
+#include "TLatex.h"
 #include <map>
 #include <vector>
 #include <list>
@@ -21,14 +22,22 @@ TFile   *sourceFile1, *sourceFile2, *sourceFile3,  *sourceFile4,
 				*sourceFile5, *sourceFile6, *sourceFile7,  *sourceFile8,
 				*sourceFile9, *sourceFile10, *sourceFile11,  *sourceFile12,
 				*sourceFile13, *sourceFile14, *sourceFile15, *sourceFile16, 
-				*sourceFile17, *sourceFile18, *sourceFile19;
-
+				*sourceFile17, *sourceFile18, *sourceFile19, *sourceFile20,
+				*sourceFile21, *sourceFile22, *sourceFile23, *sourceFile24,				
+				*sourceFile25, *sourceFile26, *sourceFile27, *sourceFile28,
+				*sourceFile29, *sourceFile30;				
+				
 TString outputFolder,outputFilename;
+TLatex *CMS_text, *CMS_text2;
+TPad *canvasDefault_1,*canvasDefault_2;
 TCanvas *canvasDefault;
-
+TLegend *infoBox, *infoBoxData, *infoBoxSignal;
 bool showStatsBoxes;
 bool seperated = false;
 bool GJetsPt = false;
+// if true -> htemp!=0 hinzu
+
+bool plot_data = true;
 // *******************************************
 // Variables
 TString imageType = "pdf";
@@ -41,8 +50,35 @@ double efficiency = 0.885339;
 double e_Fakerate = 0.0148;
 //double scale_ISR = 1.99563;
 //double scale_GJets = 2.05726;
-double scale_ISR = 1.70597;
-double scale_GJets = 2.34293;
+double scale_640 = 1.154034091;
+double scale_540 = 1.183054415;
+double scale_ISR = 1.9223;
+double scale_GJets = 2.34156;
+double scale_GJPt = 2.12;
+double scale_ISR_error = 0.314446; //absolut
+double scale_GJets_error = 0.736742; //absolut
+double scale_GJPt_error = 0.8; //absolut
+double e_fake_error = 0.00164; //absolut
+double qcd_error = 0.5; //relativ
+double tt_error = 0.26;  // relativ
+double dibo_error = 0.4;  //relativ
+double lumi_error = 0.022; //relativ
+
+int bins = 0;
+double error_Vg = 0;
+double error_gJ = 0;	
+double error_gJPt = 0;	
+double error_e_fake = 0;
+double error_qcd = 0;
+double error_tt = 0;
+double error_dibo = 0;
+
+//double scale_ISR_error = 0.377; //absolut
+//double scale_GJets_error = 0.8869; //absolut
+//double scale_ISR = 1.91626;
+//double scale_GJets = 2.34216;
+//double scale_ISR = 1.28745;
+//double scale_GJets = 2.37538;
 
 std::map < int , TH1F* > order;
 
@@ -52,12 +88,14 @@ std::map < int , TH1F* > order;
 //TString fileName1 = "PhotonParkedD_V06.1__20_sel.root";
 TString fileName1 = "PhotonParkedD_V06.1_sel.root";
 //TString fileName1 = "PhotonHadD_V02.1_sel.root";
-TString fileName2 = "TTJets_V02.1_sel.root"; // higher order
+//TString fileName2 = "TTJets_V02.1_sel.root"; // higher order
+TString fileName2 = "TTGamma_V02.1_sel.root";
 //TString fileName3 = "ZGamma_V02.1_sel.root";
 TString fileName3 = "ZGammaAdd.root";
 //TString fileName17 = "ZGammaNuNu_V02.1_sel.root";
 // TString fileName4 = "WJets_V02.1_sel.root";
-TString fileName4 = "WGamma_V02.1_sel.root";
+//TString fileName4 = "WGamma_V02.1_sel.root";
+TString fileName4 = "WGamma_split.root";
 TString fileName5 = "QCD_100_250_V06.1_sel.root";
 TString fileName6 = "QCD_250_500_V02.1_sel.root";
 TString fileName7 = "QCD_500_1000_V02.1_sel.root";
@@ -70,23 +108,27 @@ TString fileName13 = "WW_incl_V06.1_sel.root";
 TString fileName14 = "WZ_incl_V06.1_sel.root";
 TString fileName15 = "ZZ_incl_V06.1_sel.root";
 TString fileName16 = "signal_540_530.root";
-TString fileName18 = "signal_540_480.root";
+//TString fileName18 = "signal_540_480.root";
 TString fileName17 = "signal_640_630.root";
 
 TString fileName19 = "GammaPixel.root";
+
 //TString fileName19 = "signal_640_630.root";
-/*TString fileName18 = "G_30_50_V07.1_sel.root";
-TString fileName19 = "G_50_80_V07.1_sel.root";
-TString fileName20 = "G_80_120_V07.1_sel.root";
-TString fileName21 = "G_120_170_V07.1_sel.root";
-TString fileName22 = "G_170_300_V07.1_sel.root";
-TString fileName23 = "G_300_470_V07.1_sel.root";
-TString fileName24 = "G_470_800_V07.1_sel.root";
-TString fileName25 = "G_800_1400_V07.1_sel.root";
-TString fileName26 = "G_1400_1800_V07.1_sel.root";
-TString fileName27 = "G_1800_V07.1_sel.root";
-TString fileName28 = "G_0_15_V07.1_sel.root";
-TString fileName29 = "G_15_30_V07.1_sel.root"; */
+
+/* if (GJetsPt == true){
+	TString fileName28 = "G_0_15_V07.1_sel.root";
+	TString fileName29 = "G_15_30_V07.1_sel.root"; 
+	TString fileName18 = "G_30_50_V07.1_sel.root";
+	TString fileName30 = "G_50_80_V07.1_sel.root";
+	TString fileName20 = "G_80_120_V07.1_sel.root";
+	TString fileName21 = "G_120_170_V07.1_sel.root";
+	TString fileName22 = "G_170_300_V07.1_sel.root";
+	TString fileName23 = "G_300_470_V07.1_sel.root";
+	TString fileName24 = "G_470_800_V07.1_sel.root";
+	TString fileName25 = "G_800_1400_V07.1_sel.root";
+	TString fileName26 = "G_1400_1800_V07.1_sel.root";
+	TString fileName27 = "G_1800_V07.1_sel.root";
+	} */
 
 TString    fileLabel1 = fileName1;
 TString    fileLabel2 = fileName2;
@@ -105,20 +147,23 @@ TString    fileLabel14 = fileName14;
 TString    fileLabel15 = fileName15;
 TString    fileLabel16 = fileName16;
 TString    fileLabel17 = fileName17;
-TString    fileLabel18 = fileName18;
 TString    fileLabel19 = fileName19;
-/*TString    fileLabel18 = fileName18;		
-TString    fileLabel19 = fileName19;
-TString    fileLabel20 = fileName20;		
-TString    fileLabel21 = fileName21;		
-TString    fileLabel22 = fileName22;
-TString    fileLabel23 = fileName23;		
-TString    fileLabel24 = fileName24;		
-TString    fileLabel25 = fileName25;
-TString    fileLabel26 = fileName26;
-TString    fileLabel27 = fileName27;
-TString    fileLabel28 = fileName28;
-TString    fileLabel29 = fileName29; */
+
+/*if ( GJetsPt ) {
+	TString    fileLabel18 = fileName18;		
+	TString    fileLabel30 = fileName30;
+	TString    fileLabel20 = fileName20;		
+	TString    fileLabel21 = fileName21;		
+	TString    fileLabel22 = fileName22;
+	TString    fileLabel23 = fileName23;		
+	TString    fileLabel24 = fileName24;		
+	TString    fileLabel25 = fileName25;
+	TString    fileLabel26 = fileName26;
+	TString    fileLabel27 = fileName27;
+	TString    fileLabel28 = fileName28;
+	TString    fileLabel29 = fileName29; 
+
+	} */
 		
 bool compare(TH1F* x, TH1F* y){
 	
@@ -129,7 +174,8 @@ bool compare(TH1F* x, TH1F* y){
 	
 
 void plotHistograms(TH1F* htemp1, TH1F* htemp2, TH1F* htemp3, TH1F* htemp4, TH1F* htemp5, TH1F* htemp6, TH1F* htemp7, TH1F* htemp8, TH1F* htemp9, TH1F* htemp10, TH1F*
-htemp11, TH1F* htemp12, TH1F* htemp13, TH1F* htemp14, TH1F* htemp15, TH1F* htemp16,TH1F* htemp17, TH1F* htemp18, TH1F* htemp19, TString filename) {// {TH1F* htemp18, TH1F* htemp19, TH1F* htemp20, TH1F*
+htemp11, TH1F* htemp12, TH1F* htemp13, TH1F* htemp14, TH1F* htemp15, TH1F* htemp16,TH1F* htemp17, TH1F* htemp19, TString filename) {
+//TH1F* htemp18, TH1F* htemp20,TH1F* htemp21, TH1F* htemp22, TH1F* htemp23, TH1F* htemp24, TH1F* htemp25, TH1F* htemp26, TH1F* htemp27, TH1F* htemp28, TH1F* htemp29,TH1F* htemp30, TString filename) {// {TH1F* htemp18, TH1F* htemp19, TH1F* htemp20, TH1F*
 //htemp21, TH1F* htemp22, TH1F* htemp23, TH1F* htemp24, TH1F* htemp25, TH1F* htemp26, TH1F* htemp27, TH1F* htemp28, TH1F* htemp29, TString filename) {
 
   //TString title = htemp1->GetName();
@@ -137,8 +183,9 @@ htemp11, TH1F* htemp12, TH1F* htemp13, TH1F* htemp14, TH1F* htemp15, TH1F* htemp
 
   // Make sure histograms exist
   if ( !htemp2 || !htemp3 ||!htemp4 || !htemp5 || !htemp6 ||!htemp7 ||!htemp8 || !htemp9 ||!htemp10 ||!htemp11 || !htemp12 ||!htemp13 ||!htemp14 || !htemp15
-	||!htemp16 ||!htemp17 ||!htemp18 ||!htemp19) { //||!htemp18 || !htemp19 ||!htemp20 ||!htemp21 || !htemp22 ||!htemp23 ||!htemp24 || !htemp25
-//	||!htemp26 ||!htemp27 ||!htemp28 ||!htemp29) {
+	||!htemp16 ||!htemp17 ||!htemp19 ) {
+	//||!htemp18 ||!htemp20 ||!htemp21 || !htemp22 ||!htemp23 ||!htemp24 || !htemp25	||!htemp26 ||!htemp27 ||!htemp28 ||!htemp29 || htemp30) { // ||!htemp20 ||!htemp21 || !htemp22 ||!htemp23 ||!htemp24 || !htemp25
+//	||!htemp26 ||!htemp27 ||!htemp28 ||!htemp29 || htemp30) {
     cout << "Histogram missing from a file: " << htemp1->GetName() << endl;
     return;
   } 
@@ -158,10 +205,14 @@ htemp11, TH1F* htemp12, TH1F* htemp13, TH1F* htemp14, TH1F* htemp15, TH1F* htemp
  htemp15->Scale(weight);
  htemp16->Scale(weight);
  htemp17->Scale(weight);
- htemp18->Scale(weight);
+
  
  htemp19->Scale(e_Fakerate); 
-/* htemp19->Scale(weight);
+ 
+
+/*if (GJetsPt){ 
+ htemp18->Scale(weight);
+ htemp30->Scale(weight);
  htemp20->Scale(weight);
  htemp21->Scale(weight);
  htemp22->Scale(weight);
@@ -171,7 +222,8 @@ htemp11, TH1F* htemp12, TH1F* htemp13, TH1F* htemp14, TH1F* htemp15, TH1F* htemp
  htemp26->Scale(weight);
  htemp27->Scale(weight);  
  htemp28->Scale(weight);
- htemp29->Scale(weight); */
+ htemp29->Scale(weight); 
+ }*/
  
  htemp2->Scale(efficiency); 
  htemp3->Scale(efficiency);
@@ -187,10 +239,12 @@ htemp11, TH1F* htemp12, TH1F* htemp13, TH1F* htemp14, TH1F* htemp15, TH1F* htemp
  htemp13->Scale(efficiency); 
  htemp14->Scale(efficiency);
  htemp15->Scale(efficiency); 
- htemp16->Scale(efficiency); 
- htemp17->Scale(efficiency);  
+ htemp16->Scale(efficiency*scale_540); 
+ htemp17->Scale(efficiency*scale_640);  
+ 
+/* if (GJetsPt){
  htemp18->Scale(efficiency);
-/* htemp19->Scale(efficiency);
+ htemp30->Scale(efficiency);
  htemp20->Scale(efficiency);
  htemp21->Scale(efficiency);
  htemp22->Scale(efficiency);
@@ -200,7 +254,8 @@ htemp11, TH1F* htemp12, TH1F* htemp13, TH1F* htemp14, TH1F* htemp15, TH1F* htemp
  htemp26->Scale(efficiency);
  htemp27->Scale(efficiency); 
  htemp28->Scale(efficiency);
- htemp29->Scale(efficiency); */
+ htemp29->Scale(efficiency); 
+ } */
 
  
  htemp1->Rebin(rebin);
@@ -220,9 +275,11 @@ htemp11, TH1F* htemp12, TH1F* htemp13, TH1F* htemp14, TH1F* htemp15, TH1F* htemp
  htemp15->Rebin(rebin); 
  htemp16->Rebin(rebin);
  htemp17->Rebin(rebin); 
- htemp18->Rebin(rebin);
  htemp19->Rebin(rebin);
-/* htemp20->Rebin(rebin);
+ 
+/*if (GJetsPt){
+ htemp18->Rebin(rebin);
+ htemp20->Rebin(rebin);
  htemp21->Rebin(rebin);
  htemp22->Rebin(rebin);
  htemp23->Rebin(rebin); 
@@ -231,37 +288,39 @@ htemp11, TH1F* htemp12, TH1F* htemp13, TH1F* htemp14, TH1F* htemp15, TH1F* htemp
  htemp26->Rebin(rebin); 
  htemp27->Rebin(rebin); 
  htemp28->Rebin(rebin); 
- htemp29->Rebin(rebin); */
+ htemp29->Rebin(rebin); 
+ } */
 
 
   // Set the histogram colors & lines
 	htemp1	->SetLineColor(kBlack);
   htemp1	->SetMarkerStyle(8);
-	htemp2  ->SetFillColor(kRed);
+	htemp2  ->SetFillColor(kCyan);
 	htemp2  ->SetLineColor(kBlack);
 	htemp2	->SetLineWidth(1);	
 	htemp2	->SetFillStyle(1001);
-	htemp3  ->SetFillColor(kGreen);
+	
+	//vorher orange-> Gjets, green -> Vgamma, red-> ttbar, diboson->kMagenta, blue->QCD, egamma->gray+2
+	
+	htemp3  ->SetFillColor(kOrange);
 	htemp3	->SetFillStyle(1001);
 	htemp3  ->SetLineColor(kBlack);	
 	htemp3	->SetLineWidth(1);	
 //	htemp17 ->SetFillColor(kGreen);
 //	htemp17	->SetFillStyle(1001);	
 //	htemp4  ->SetFillColor(kCyan);
-	htemp4  ->SetFillColor(kGreen);
+	htemp4  ->SetFillColor(kGray);
 	htemp4	->SetFillStyle(1001);
 	htemp4  ->SetLineColor(kBlack);
 	htemp4	->SetLineWidth(1);	
-	htemp19 ->SetFillColor(kGray+2);
+	htemp19 ->SetFillColor(kSpring);
 	htemp19	->SetFillStyle(1001);	
-	htemp16	->SetLineColor(kBlue+4);
-	htemp16	->SetLineWidth(2);	
-	htemp16	->SetLineColor(kBlue+4);
-	htemp16	->SetLineWidth(3);	
-	htemp17	->SetLineColor(kAzure); //(kPink-7);
+	htemp16	->SetLineColor(kBlue+4); //kBlue+4
+	htemp16	->SetLineWidth(3);		
+	htemp17	->SetLineColor(kViolet-1); //(kPink-7);
 	htemp17	->SetLineWidth(3);
-	htemp18	->SetLineColor(kRed+3);
-	htemp18	->SetLineWidth(3);
+//	htemp18	->SetLineColor(kRed+3);
+//	htemp18	->SetLineWidth(3);
 				
 	if ( seperated ) {
   	htemp9	->SetFillColor(kOrange-7);
@@ -288,7 +347,7 @@ htemp11, TH1F* htemp12, TH1F* htemp13, TH1F* htemp14, TH1F* htemp15, TH1F* htemp
 		htemp8	->SetFillStyle(1001);
 		}
 	else {
-  	htemp9	->SetFillColor(kOrange);
+  	htemp9	->SetFillColor(kRed+2);
 		htemp9	->SetFillStyle(1001);		
 		htemp9  ->SetLineColor(kBlack);	
   	htemp9	->SetLineWidth(1);	
@@ -298,7 +357,7 @@ htemp11, TH1F* htemp12, TH1F* htemp13, TH1F* htemp14, TH1F* htemp15, TH1F* htemp
 		htemp11	->SetFillStyle(1001);	
 		htemp12  ->SetFillColor(kOrange);
 		htemp12	->SetFillStyle(1001);	
-	  htemp13	->SetFillColor(kMagenta);
+	  htemp13	->SetFillColor(kBlue+1);
 		htemp13	->SetFillStyle(1001);	
 		htemp13  ->SetLineColor(kBlack);	
   	htemp13	->SetLineWidth(1);				
@@ -306,7 +365,7 @@ htemp11, TH1F* htemp12, TH1F* htemp13, TH1F* htemp14, TH1F* htemp15, TH1F* htemp
 		htemp14	->SetFillStyle(1001);	
 		htemp15  ->SetFillColor(kMagenta);
 		htemp15	->SetFillStyle(1001);		
-		htemp5  ->SetFillColor(kBlue);
+		htemp5  ->SetFillColor(kViolet-1);
 		htemp5	->SetFillStyle(1001);	
 		htemp5  ->SetLineColor(kBlack);	
   	htemp5	->SetLineWidth(1);		
@@ -316,30 +375,33 @@ htemp11, TH1F* htemp12, TH1F* htemp13, TH1F* htemp14, TH1F* htemp15, TH1F* htemp
 		htemp7	->SetFillStyle(1001);
 		htemp8  ->SetFillColor(kBlue);
 		htemp8	->SetFillStyle(1001);
- /* 	htemp18	->SetFillColor(kOrange);
-		htemp18	->SetFillStyle(1001);		
-  	htemp19	->SetFillColor(kOrange);
-		htemp19	->SetFillStyle(1001);		
-	  htemp20	->SetFillColor(kOrange);
-		htemp20	->SetFillStyle(1001);	
-		htemp21  ->SetFillColor(kOrange);
-		htemp21	->SetFillStyle(1001);	
-		htemp22  ->SetFillColor(kOrange);
-		htemp22	->SetFillStyle(1001);		
-  	htemp23	->SetFillColor(kOrange);
-		htemp23	->SetFillStyle(1001);		
-	  htemp24	->SetFillColor(kOrange);
-		htemp24	->SetFillStyle(1001);	
-		htemp25  ->SetFillColor(kOrange);
-		htemp25	->SetFillStyle(1001);	
-		htemp26  ->SetFillColor(kOrange);
-		htemp26	->SetFillStyle(1001);		
-		htemp27  ->SetFillColor(kOrange);
-		htemp27	->SetFillStyle(1001);		
-		htemp28  ->SetFillColor(kOrange);
-		htemp28	->SetFillStyle(1001);		
-		htemp29  ->SetFillColor(kOrange);
-		htemp29	->SetFillStyle(1001);		*/	
+		
+/*    if (GJetsPt) {
+  	 htemp18 ->SetFillColor(kOrange);
+		 htemp18 ->SetFillStyle(1001);   
+  	 htemp30 ->SetFillColor(kOrange);
+		 htemp30 ->SetFillStyle(1001);   
+		 htemp20 ->SetFillColor(kOrange);
+		 htemp20 ->SetFillStyle(1001); 
+		 htemp21  ->SetFillColor(kOrange);
+		 htemp21 ->SetFillStyle(1001); 
+		 htemp22  ->SetFillColor(kOrange);
+		 htemp22 ->SetFillStyle(1001);   
+  	 htemp23 ->SetFillColor(kOrange);
+		 htemp23 ->SetFillStyle(1001);   
+		 htemp24 ->SetFillColor(kOrange);
+		 htemp24 ->SetFillStyle(1001); 
+		 htemp25  ->SetFillColor(kOrange);
+		 htemp25 ->SetFillStyle(1001); 
+		 htemp26  ->SetFillColor(kOrange);
+		 htemp26 ->SetFillStyle(1001);   
+		 htemp27  ->SetFillColor(kOrange);
+		 htemp27 ->SetFillStyle(1001);   
+		 htemp28  ->SetFillColor(kOrange);
+		 htemp28 ->SetFillStyle(1001);   
+		 htemp29  ->SetFillColor(kOrange);
+		 htemp29 ->SetFillStyle(1001); 
+		 } */
 		}
 	
 
@@ -427,7 +489,9 @@ if (BGs.size() != 0){
 		htemp9->Add(htemp5);  // Add QCD to GJets
 		htemp13->Add(htemp14);
 		htemp13->Add(htemp15);
-/*		htemp18->Add(htemp19);
+
+/*if (GJetsPt){
+		htemp18->Add(htemp30);
 		htemp18->Add(htemp20);		
 		htemp18->Add(htemp21);		
 		htemp18->Add(htemp22);		
@@ -437,31 +501,56 @@ if (BGs.size() != 0){
 		htemp18->Add(htemp26);		
 		htemp18->Add(htemp27);	
 		htemp18->Add(htemp28);		
-		htemp18->Add(htemp29);		*/
+		htemp18->Add(htemp29);	
+		} */
 									
-	//	if ( htemp5 != 0)	BGs.push_back(htemp5);
+//		if ( htemp5 != 0)	BGs.push_back(htemp5); // if QCD seperated than uncommand
 		if ( !GJetsPt) {		
 	  	if ( htemp9 != 0)	BGs.push_back(htemp9);
 			}
-		else {
-		//  if ( htemp18 != 0)	BGs.push_back(htemp18);
-			}
+/*		else {
+		  if ( htemp18 != 0)	BGs.push_back(htemp18);
+			} */
 	 	if ( htemp13 != 0)	BGs.push_back(htemp13);		
-	 	if ( htemp3 != 0)	BGs.push_back(htemp3);			
-		histoname[htemp2] = fileLabel2;
-		histoname[htemp3] = fileLabel3;
-		histoname[htemp3] =  "#gamma ISR";		
+	 	if ( htemp3 != 0)	BGs.push_back(htemp3);		
+//	 	if ( htemp4 != 0)	BGs.push_back(htemp4);				
+		histoname[htemp2] = "t#bar{t}#gamma";
+		histoname[htemp3] =  "V#gamma ";		
 //		histoname[htemp17] = fileLabel17;		
 //		histoname[htemp4] = fileLabel4;	
 		histoname[htemp5] = "QCD";	
-		histoname[htemp9] = "GJets";
+		histoname[htemp9] = "#gammaJets";
 		histoname[htemp13] = "DiBoson";	
-		histoname[htemp19] = "e->#gamma";		
-	//	histoname[htemp18] = "GJets";			
+		histoname[htemp19] = "e#rightarrow#gamma";		
+/*		if (GJetsPt) {
+			histoname[htemp18] = "#gammaJets";			
+			} */
 		}
 		
-	std::sort(BGs.begin(), BGs.end(), compare );			
-
+	std::sort(BGs.begin(), BGs.end(), compare );
+				
+	bins = htemp3->GetNbinsX();	
+	error_Vg = 0;
+	error_gJ = 0;	
+	error_gJPt = 0;
+	double error_total[bins];
+	
+	for ( int i = 1; i < (bins+1); i++) {
+		error_Vg = (htemp3->GetBinContent(i)/scale_ISR)*scale_ISR_error;
+		if (!(GJetsPt)){		
+			error_gJ = (htemp9->GetBinContent(i)/scale_GJets)*scale_GJets_error;
+			}
+/*		if (GJetsPt){
+			error_gJPt = (htemp18->GetBinContent(i)/scale_GJPt)*scale_GJPt_error;
+			}		*/
+		error_e_fake = (htemp19->GetBinContent(i)/e_Fakerate)*e_fake_error;
+		error_qcd = (htemp5->GetBinContent(i))*qcd_error; //Pay attention if QCD is added to GJets
+		error_tt = (htemp2->GetBinContent(i))*tt_error;		
+		error_dibo = (htemp13->GetBinContent(i))*dibo_error;			
+		error_total[i-1] = sqrt((error_Vg * error_Vg) + (error_gJ * error_gJ) + (error_e_fake * error_e_fake) + (error_qcd * error_qcd) + (error_tt * error_tt) +
+		(error_dibo * error_dibo) + (error_gJPt * error_gJPt));
+		
+		}
 	
   THStack *tempStack = new THStack();
 /*if (BGs.size() != 0){	
@@ -482,20 +571,6 @@ if (BGs.size() != 0){
   if (!showStatsBoxes) {
     gStyle->SetOptStat(0);
   }
-
-//  THStack *tempStack = new THStack();
-
-/*  tempStack->Add(htemp2);
-  tempStack->Add(htemp3);	
-  tempStack->Add(htemp4);	
-  tempStack->Add(htemp5);
-  tempStack->Add(htemp6);
-  tempStack->Add(htemp7);	
-  tempStack->Add(htemp8);
-	tempStack->Add(htemp9);
-  tempStack->Add(htemp10);
-  tempStack->Add(htemp11);	
-  tempStack->Add(htemp12); */
 	
 	
 	TH1F *denumerator = (TH1F*)htemp2->Clone("denumerator");
@@ -517,201 +592,366 @@ if (BGs.size() != 0){
   	denumerator->Add(htemp15);			
 	  }
 	else {
- 	//	denumerator->Add(htemp5);	
+ 	//	denumerator->Add(htemp5);	//if QCD seperated -> Add to denumerator!!
  		denumerator->Add(htemp13);
 		if ( !GJetsPt) {
 			denumerator->Add(htemp9);
 			}
-		else {
-		//	denumerator->Add(htemp18);
-			}			
+/*		else {
+			denumerator->Add(htemp18);
+			}			*/
 		}
 		
 	canvasDefault->cd();	
 	canvasDefault->Clear();	
-	
-	TPad *canvasDefault_1 = new TPad("canvasDefault_1", "newpad",0.0,0.0,1.0,0.325);	
-
-//  canvasDefault_1->Draw();
-//  canvasDefault_1->cd();
-  canvasDefault_1->SetTopMargin(0.01);
-  canvasDefault_1->SetBottomMargin(0.3);
-  canvasDefault_1->SetRightMargin(0.1);
-  canvasDefault_1->SetFillStyle(0);
-	
-	TH1F *data = (TH1F*)htemp1->Clone("data");
-	TH1F *numerator = (TH1F*)htemp1->Clone("numerator");
-  canvasDefault_1->cd();
-	numerator->Divide(denumerator);
-	numerator->SetTitle("");
-	numerator->SetMaximum(2.1);	
-	numerator->SetMinimum(0.1);
-//	numerator->Draw("AXIS");
-	numerator->SetLineWidth(0);
-	numerator->GetYaxis()->SetNdivisions(5);
-//	TString *title = htemp1->GetXaxis()->GetTitle();
-  numerator->GetYaxis()->SetTitle("ratio");
-  numerator->GetYaxis()->CenterTitle();	
-  numerator->GetYaxis()->SetTitleSize(0.1);
-  numerator->GetXaxis()->SetTitleSize(0.1);		
-	numerator->GetYaxis()->SetLabelSize(0.1);
-	numerator->GetXaxis()->SetLabelSize(0.1);
-  numerator->GetYaxis()->SetTitleOffset(0.4);		
-	numerator->Draw("E1");
-//	numerator->Draw();	
-	gPad->SetGrid();
-	gStyle->SetGridStyle(3);
 	gStyle->SetPadTickX(1);
   gStyle->SetPadTickY(1);
-  canvasDefault->cd();
-  canvasDefault_1->Draw();	
-	 
-//	float defaultRatioYmin = 1.02;
- // float defaultRatioYmax = 0.60;
-//	numerator->SetMinimum(defaultRatioYmin);
-//  numerator->SetMaximum(defaultRatioYmax); 
-//  numerator->GetYaxis()->SetNdivisions(5); 
-	
-	canvasDefault->cd();
-  TPad *canvasDefault_2 = new TPad("canvasDefault_2", "newpad",0.0,0.32,1,1);
-  canvasDefault_2->Draw(); 
-  canvasDefault_2->cd();
-  canvasDefault_2->SetTopMargin(0.1);
-  canvasDefault_2->SetBottomMargin(0.01);
-  canvasDefault_2->SetRightMargin(0.1);
-  canvasDefault_1->SetFillStyle(0);
-	
-	
-  // Draw the histogram and titles
-
-	//data->SetLabelSize(0.05);
-	data->GetXaxis()->SetTitleSize(0.05);
-	data->GetXaxis()->SetLabelSize(0.05);	
-	data->GetYaxis()->SetLabelSize(0.05);
-	data->GetYaxis()->SetTitle("# events");
-	data->GetYaxis()->SetTitleSize(0.05);
-	data->SetMinimum(0.01);
-	double max = htemp18->GetMaximum();
-//	data->SetMaximum(max);
-	data->Draw("AXIS X+");
-	data->Draw("E1");
-//	htemp19->Draw("same E1 h f");
-  tempStack->Draw("same E1 h f X+");
-	data->Draw("same E1");
+	canvasDefault->cd();	
+	TH1F *data = (TH1F*)htemp1->Clone("data");
+	string xtitle = data->GetXaxis()->GetTitle();
 		
-	htemp18->Draw("same hist");	
+	TH1F *h_Vg_safe = (TH1F*)htemp3->Clone("h_Vg_safe");
+	TH1F *h_ratio = (TH1F*)htemp3->Clone("h_ratio");	
+	TH1F *h_stat_uncertainty = (TH1F*)htemp3->Clone("h_stat_uncertainty");		
+	THStack *h_stack_safe = (THStack*)tempStack->Clone("h_stack_safe");	
+	THStack *h_mid = (THStack*)tempStack->Clone("h_mid");	
+	TH1F *h_uncertainty = (TH1F*)h_mid->GetStack()->Last();
+	
+ 	for ( int i = 1; i < (bins+1); i++) {
+		 //h_uncertainty->SetBinContent(i,tempStack->GetStack()->Last()->GetBinContent(i)); //i); //tempStack->GetHistogram()->GetBinContent(i));
+		 h_uncertainty->SetBinError(i,sqrt((((h_uncertainty->GetBinContent(i))*lumi_error) * ((h_uncertainty->GetBinContent(i))*lumi_error)) +
+		 (error_total[i-1] * error_total[i-1])));	
+		 h_stat_uncertainty->SetBinContent(i,1);	
+		 h_stat_uncertainty->SetBinError(i,(denumerator->GetBinError(i)/denumerator->GetBinContent(i)));		 	 
+		 h_ratio->SetBinError(i,(error_total[i-1]/h_uncertainty->GetBinContent(i)));
+		 h_ratio->SetBinContent(i,1);		 	
+		 }		
+	h_uncertainty->SetLineColor(kRed);
+	h_uncertainty->SetFillColor(kRed);	
+	h_uncertainty->SetFillStyle(3002);
+	h_stat_uncertainty->SetLineColor(kBlue);
+	h_stat_uncertainty->SetFillColor(kBlue);	
+	h_stat_uncertainty->SetFillStyle(3344);	
+	h_ratio->SetLineColor(kRed);
+	h_ratio->SetFillColor(kRed);	
+	h_ratio->SetFillStyle(3002);	
+			
+//	canvasDefault_1 = new TPad("canvasDefault_1", "newpad",0.0,0.0,1.0,0.1);//0.325);	
+	if (plot_data){
+	
+	TH1F *numerator = (TH1F*)htemp1->Clone("numerator");	
+	numerator->Divide(denumerator);
+	numerator->SetTitle("");
+	numerator->SetMaximum(2.2);	
+	numerator->SetMinimum(0.1);
+	numerator->SetLineWidth(0);
+	numerator->GetYaxis()->SetNdivisions(5);	
+  numerator->GetYaxis()->SetTitle("Data / BG");
+  numerator->GetYaxis()->CenterTitle();	
+  numerator->GetYaxis()->SetTitleSize(0.15);
+  numerator->GetXaxis()->SetTitleSize(0.15);		
+	numerator->GetYaxis()->SetLabelSize(0.15);
+	numerator->GetXaxis()->SetLabelSize(0.15);
+  numerator->GetYaxis()->SetTitleOffset(0.32);
+  numerator->GetXaxis()->SetTitleOffset(0.9);
+			
+  canvasDefault_1 = new TPad("canvasDefault_1", "newpad",0.0,0.0,1.0,0.325);//0.325);		
+
+  canvasDefault_1->SetTopMargin(0.01);
+  canvasDefault_1->SetBottomMargin(0.35);
+  canvasDefault_1->SetRightMargin(0.1);
+  canvasDefault_1->SetFillStyle(0);
+  canvasDefault_1->cd(); 
+	numerator->Draw("E1");
+	h_ratio->Draw("same E2");
+	h_stat_uncertainty->Draw("same E2");
+	numerator->Draw("same E1");	
+	//numerator->Draw();	
+	gPad->SetGrid();
+	gStyle->SetGridStyle(3);
+		
+  canvasDefault->cd();
+	canvasDefault_1->Draw();
+	canvasDefault->cd();	
+	}
+	
+	 
+  data->GetXaxis()->SetTitleSize(0.15);
+	data->GetXaxis()->SetLabelSize(0.06);	
+	data->GetYaxis()->SetLabelSize(0.07);
+	data->GetYaxis()->SetTitle("# Events");
+	data->GetYaxis()->SetTitleSize(0.06);
+	data->GetXaxis()->SetTitleOffset(1);	
+	data->GetYaxis()->SetTitleOffset(0.8);
+	data->SetMinimum(0.01);
+	data->SetTitle("");
+ 	
+	if (plot_data) {	
+
+	 canvasDefault_2 = new TPad("canvasDefault_2", "newpad",0.0,0.315,1,1); //0.32
+	 canvasDefault_2->Draw(); 
+ 	 canvasDefault_2->cd();
+ 	 canvasDefault_2->SetTopMargin(0.1);
+ 	 canvasDefault_2->SetBottomMargin(0.01);
+ 	 canvasDefault_2->SetRightMargin(0.1);
+ 	 canvasDefault_2->SetFillStyle(0);		 
+	 data->GetXaxis()->SetTitleSize(0.0); 
+	 data->Draw("E1");
+	 tempStack->Draw("same hist f");	 		
+	 h_uncertainty->Draw("same E2");
+	 data->Draw("same E1");	  			 	
+	 }
+
+	if (!plot_data){
+	
+	  canvasDefault_2 = new TPad("canvasDefault_2", "newpad",0.0,0.0,1,1); //0.32
+	  canvasDefault_2->Draw(); 
+ 	  canvasDefault_2->cd();
+ 	  canvasDefault_2->SetTopMargin(0.1);
+ 	  canvasDefault_2->SetBottomMargin(0.1);
+ 	  canvasDefault_2->SetRightMargin(0.1);
+ 	  canvasDefault_2->SetFillStyle(0);	
+	//	data->GetXaxis()->SetTitleSize(0.5); 
+
+		//data->Draw("AXIS");		
+  	tempStack->Draw("hist f");	
+		canvasDefault->Update();		
+		canvasDefault->Modified();				
+	  tempStack->GetHistogram()->GetXaxis()->SetTitle(xtitle.c_str());		
+		tempStack->GetHistogram()->GetXaxis()->SetTitleSize(0.04);
+		tempStack->GetHistogram()->GetXaxis()->SetLabelSize(0.04);	
+		tempStack->GetHistogram()->GetYaxis()->SetLabelSize(0.04);
+		tempStack->GetHistogram()->GetYaxis()->SetTitle("# Events");
+		tempStack->GetHistogram()->GetYaxis()->SetTitleSize(0.04);
+		tempStack->GetHistogram()->GetXaxis()->SetTitleOffset(1);	
+		tempStack->GetHistogram()->GetYaxis()->SetTitleOffset(1);
+
+		tempStack->GetHistogram()->SetMinimum(0.01);
+		tempStack->SetMinimum(0.01);
+		tempStack->GetHistogram()->SetTitle("");
+		tempStack->Draw("same hist f");		
+		canvasDefault->Modified();					
+		canvasDefault->Draw();
+		h_uncertainty->Draw("same E2");
+	//	gPad->RedrawAxis();		
+		}
+		
+/*	tempStack->GetXaxis()->SetTitleSize(0.1);
+	tempStack->GetXaxis()->SetLabelSize(0.05);  
+	tempStack->GetYaxis()->SetLabelSize(0.05);
+	tempStack->GetYaxis()->SetTitle("# events");
+	tempStack->GetYaxis()->SetTitleSize(0.05);
+  tempStack->GetXaxis()->SetTitleOffset(0.01);	
+  tempStack->GetYaxis()->SetTitleOffset(1);	*/
+//	gPad->Update();
+//	data->Draw("same E1");
+		
+//	htemp18->Draw("same hist");	
 	htemp17->Draw("same hist");
 	htemp16->Draw("same hist");	
 	//gPad->RedrawAxis();	
-	data->GetXaxis()->SetTitle("");
+//	data->GetXaxis()->SetTitle("");
 //  tempStack->SetTitle(title);
  // tempStack->GetXaxis()->SetTitle(data->GetXaxis()->GetTitle());
 //  tempStack->GetYaxis()->SetTitle("# events");
  // canvasDefault_2->Draw();	
 	
   // Draw the legend
-  TLegend *infoBox = new TLegend(0.7, 0.5, 0.9, 0.899,"");//0.75, 0.83, 0.99, 0.99, "");
-  infoBox->AddEntry(htemp1,fileLabel1,"lep");	
+	if (plot_data){	
+  infoBoxData = new TLegend(0.64, 0.82, 0.89, 0.89,"");//0.75, 0.83, 0.99, 0.99, "");	
+	infoBoxData->AddEntry(htemp1,fileLabel1,"lep");
+  infoBoxData->SetFillStyle(0);	
+  infoBoxData->SetShadowColor(0);  // 0 = transparent
+  infoBoxData->SetFillColor(kWhite); 
+	infoBoxData->SetBorderSize(0);
+	infoBoxData->SetTextSize(0.05);
+  infoBoxData->Draw();		
+  infoBox = new TLegend(0.64, 0.6, 0.89, 0.83,"");//0.75, 0.83, 0.99, 0.99, "");  infoBox = new TLegend(0.66, 0.49, 0.9, 0.89,"");
+//  infoBox->AddEntry(htemp1,fileLabel1,"lep");	
+	for ( int i = 0; i < BGs.size(); i++) {
+		int size = BGs.size() - 1;
+	  int reverse = size - i;
+	  infoBox->AddEntry(BGs[reverse],histoname[BGs[reverse]].c_str() , "f"); 
+		}
+	infoBox->AddEntry(h_uncertainty,"#sigma_{total}^{syst}","f");
+//  infoBox->AddEntry(htemp18,fileLabel18,"l");		
+	infoBox->SetNColumns(2);
+//  infoBox->AddEntry(htemp16,"M_{Wino} = 540 GeV","l");	
+//  infoBox->AddEntry(htemp17,"M_{Wino} = 640 GeV","l");
+  infoBox->SetFillStyle(0);	
+  infoBox->SetShadowColor(0);  // 0 = transparent
+  infoBox->SetFillColor(kWhite); 
+	infoBox->SetBorderSize(0);
+	infoBox->SetTextSize(0.05);
+  infoBox->Draw();
+  infoBoxSignal = new TLegend(0.64, 0.49, 0.89, 0.59,"");//0.75, 0.83, 0.99, 0.99, "");	
+	infoBoxSignal->AddEntry(htemp16,"M_{Wino} = 540 GeV","l");
+	infoBoxSignal->AddEntry(htemp17,"M_{Wino} = 640 GeV","l");
+  infoBoxSignal->SetFillStyle(0);	
+  infoBoxSignal->SetShadowColor(0);  // 0 = transparent
+  infoBoxSignal->SetFillColor(kWhite); 
+	infoBoxSignal->SetBorderSize(0);
+	infoBoxSignal->SetTextSize(0.05);
+  infoBoxSignal->Draw();	
+	
+	
+	CMS_text = new TLatex(0.1,0.91,"#int L dt = 7.4 fb^{-1},  #sqrt{S} = 8 TeV,   CMS PRIVATE WORK");
+	CMS_text->SetNDC();
+  CMS_text->SetTextSize(0.05);
+  CMS_text->Draw();	
+
+/*	CMS_text = new TLatex(0.37,0.82,"#int L dt = 7.4 fb^{-1},  #sqrt{S} = 8 TeV");
+	CMS_text->SetNDC();
+  CMS_text->SetTextSize(0.05);
+  CMS_text->Draw();	*/
+	CMS_text2 = new TLatex(0.42,0.77,"CMS PRIVATE WORK");
+	CMS_text2->SetNDC();
+  CMS_text2->SetTextSize(0.05);
+//  CMS_text2->Draw(); 
+	
+	canvasDefault_2->SetLogy(0);
+	canvasDefault->SaveAs(filename+"_lin."+imageType);
+  canvasDefault_2->SetLogy(1);	
+	
+	
+	}
+	else {
+	infoBoxData = new TLegend(0.64, 0.81, 0.89, 0.89,"");//0.75, 0.83, 0.99, 0.99, "");	
+	infoBoxData->AddEntry(htemp1,fileLabel1,"lep");
+  infoBoxData->SetFillStyle(0);	
+  infoBoxData->SetShadowColor(0);  // 0 = transparent
+  infoBoxData->SetFillColor(kWhite); 
+	infoBoxData->SetBorderSize(0);
+	infoBoxData->SetTextSize(0.035);
+ // infoBoxData->Draw();		
+  infoBox = new TLegend(0.64, 0.7, 0.89, 0.89,"");//0.75, 0.83, 0.99, 0.99, "");  infoBox = new TLegend(0.66, 0.49, 0.9, 0.89,"");
+//  infoBox->AddEntry(htemp1,fileLabel1,"lep");	
 	for ( int i = 0; i < BGs.size(); i++) {
 		int size = BGs.size() - 1;
 	  int reverse = size - i;
 	  infoBox->AddEntry(BGs[reverse],histoname[BGs[reverse]].c_str() , "f"); 
 		}	
-  infoBox->AddEntry(htemp18,fileLabel18,"l");	
-  infoBox->AddEntry(htemp16,fileLabel16,"l");	
-  infoBox->AddEntry(htemp17,fileLabel17,"l");
+	infoBox->AddEntry(h_uncertainty,"#sigma_{total}^{syst}","f");
+//  infoBox->AddEntry(htemp18,fileLabel18,"l");		
+	infoBox->SetNColumns(2);
+//  infoBox->AddEntry(htemp16,"M_{Wino} = 540 GeV","l");	
+//  infoBox->AddEntry(htemp17,"M_{Wino} = 640 GeV","l");
   infoBox->SetFillStyle(0);	
   infoBox->SetShadowColor(0);  // 0 = transparent
   infoBox->SetFillColor(kWhite); 
 	infoBox->SetBorderSize(0);
-	infoBox->SetTextSize(0.042);
+	infoBox->SetTextSize(0.035);
   infoBox->Draw();
-
-  // Place the stats boxes to be non-overlapping
-/*  if (showStatsBoxes) {
-    canvasDefault->SetRightMargin(0.2);
-    canvasDefault->Update();
-    TPaveStats *st1 = (TPaveStats*)htemp1->GetListOfFunctions()->FindObject("stats"); 
-    TPaveStats *st2 = (TPaveStats*)htemp2->GetListOfFunctions()->FindObject("stats");
-    TPaveStats *st3 = (TPaveStats*)htemp3->GetListOfFunctions()->FindObject("stats"); 
-    TPaveStats *st4 = (TPaveStats*)htemp4->GetListOfFunctions()->FindObject("stats");		
-		
-    st1->SetX1NDC(.79); st1->SetX2NDC(.99);
-    st1->SetY1NDC(.6);  st1->SetY2NDC(.8);
-    st2->SetX1NDC(.79); st2->SetX2NDC(.99);
-    st2->SetY1NDC(.38); st2->SetY2NDC(.58);
-    st3->SetX1NDC(.79); st1->SetX3NDC(.99);
-    st3->SetY1NDC(.6);  st1->SetY3NDC(.8);
-    st4->SetX1NDC(.79); st2->SetX4NDC(.99);
-    st4->SetY1NDC(.38); st2->SetY4NDC(.58);		
-		
-		
-    canvasDefault->Modified(); 
-  } */
-
-  // Set log y axis
-  // Save the canvas 
-	//canvasDefault->SetLogy(0);
+  infoBoxSignal = new TLegend(0.64, 0.62, 0.89, 0.69,"");//0.75, 0.83, 0.99, 0.99, "");	
+	infoBoxSignal->AddEntry(htemp16,"M_{Wino} = 540 GeV","l");
+	infoBoxSignal->AddEntry(htemp17,"M_{Wino} = 640 GeV","l");
+  infoBoxSignal->SetFillStyle(0);	
+  infoBoxSignal->SetShadowColor(0);  // 0 = transparent
+  infoBoxSignal->SetFillColor(kWhite); 
+	infoBoxSignal->SetBorderSize(0);
+	infoBoxSignal->SetTextSize(0.035);
+  infoBoxSignal->Draw();	
+/*  infoBox = new TLegend(0.64, 0.55, 0.9, 0.89,"");//0.75, 0.83, 0.99, 0.99, "");
+	for ( int i = 0; i < BGs.size(); i++) {
+		int size = BGs.size() - 1;
+	  int reverse = size - i;
+	  infoBox->AddEntry(BGs[reverse],histoname[BGs[reverse]].c_str() , "f"); 
+		}	
+//  infoBox->AddEntry(htemp18,fileLabel18,"l");	
+//  infoBox->AddEntry(htemp16,fileLabel16,"l");	
+//  infoBox->AddEntry(htemp17,fileLabel17,"l");
+  infoBox->AddEntry(htemp16,"M_{Wino} = 540 GeV","l");	
+  infoBox->AddEntry(htemp17,"M_{Wino} = 640 GeV","l");
+  infoBox->SetFillStyle(0);	
+  infoBox->SetShadowColor(0);  // 0 = transparent
+  infoBox->SetFillColor(kWhite); 
+	infoBox->SetBorderSize(0);
+	infoBox->SetTextSize(0.035);
+  infoBox->Draw(); */	
+	
+	CMS_text = new TLatex(0.1,0.91,"#int L dt = 7.4 fb^{-1},  #sqrt{S} = 8 TeV,   CMS PRIVATE WORK");
+	CMS_text->SetNDC();
+  CMS_text->SetTextSize(0.03);
+  CMS_text->Draw();		
+/*	CMS_text = new TLatex(0.34,0.82,"#int L dt = 7.4 fb^{-1},  #sqrt{S} = 8 TeV");
+	CMS_text->SetNDC();
+  CMS_text->SetTextSize(0.035);
+  CMS_text->Draw();	
+	CMS_text2 = new TLatex(0.4,0.77,"CMS PRIVATE WORK");
+	CMS_text2->SetNDC();
+  CMS_text2->SetTextSize(0.035);
+  CMS_text2->Draw(); */
+	
+//	canvasDefault->Draw();	
 	canvasDefault_2->SetLogy(0);
 	canvasDefault->SaveAs(filename+"_lin."+imageType);
- // canvasDefault->SetLogy(1);
-  canvasDefault_2->SetLogy(1);
-	
+  canvasDefault_2->SetLogy(1);		
+	}
+
 	double stack_max = tempStack->GetMaximum();
 	double data_max = data->GetMaximum();
-	double signal_max = htemp18->GetMaximum();
+	double signal_max = htemp16->GetMaximum();
 	
-	if ( data_max > stack_max ) {
-		data->SetMinimum(0.01);
-		data->Draw("AXIS X+");	
-		data->Draw("E1 X+");
- 	//  htemp19->Draw("same h f");			
- 	  tempStack->Draw("h f X+");
-		data->Draw("same E1");
-		htemp18->Draw("same hist");			
+	if ( plot_data){
+		data->SetMaximum(5*data_max);
+		if ( data_max < stack_max ) {
+			data->SetMaximum(5*stack_max);
+			}			
+//		data->SetMinimum(1.1);						
+		data->SetMinimum(0.05);	
+		data->Draw("E1");			
+ 	  tempStack->Draw("same hist f");
+//		htemp18->Draw("same hist");					
+		h_uncertainty->Draw("same E2");
 		htemp17->Draw("same hist");
-		htemp16->Draw("same hist");	
-	//	gPad->RedrawAxis();
-		
-		}
-	else if( data_max < stack_max){
+		htemp16->Draw("same hist");			
+		data->Draw("same E1");		
+		gPad->RedrawAxis();
+	}
+	
+	if ( !plot_data){ 
+	  tempStack->GetHistogram()->SetMaximum(5*stack_max);		
+		if ( signal_max > stack_max ) {
+	    tempStack->GetHistogram()->SetMaximum(5*signal_max);	
+	    tempStack->SetMaximum(5*signal_max);				
+			}	
+	 	tempStack->Draw("hist f");	
+		canvasDefault->Update();		
+		canvasDefault->Modified();						
+	  tempStack->GetHistogram()->GetXaxis()->SetTitle(xtitle.c_str());		
+		tempStack->GetHistogram()->GetXaxis()->SetTitleSize(0.04);
+		tempStack->GetHistogram()->GetXaxis()->SetLabelSize(0.04);	
+		tempStack->GetHistogram()->GetYaxis()->SetLabelSize(0.04);
+		tempStack->GetHistogram()->GetYaxis()->SetTitle("# Events");
+		tempStack->GetHistogram()->GetYaxis()->SetTitleSize(0.04);
+		tempStack->GetHistogram()->GetXaxis()->SetTitleOffset(1);	
+		tempStack->GetHistogram()->GetYaxis()->SetTitleOffset(1);
 
-	  tempStack->GetXaxis()->SetTitleSize(0.05);
-	  tempStack->GetXaxis()->SetLabelSize(0.05);  
-	  tempStack->GetYaxis()->SetLabelSize(0.05);
-	  tempStack->GetYaxis()->SetTitle("# events");
-	  tempStack->GetYaxis()->SetTitleSize(0.05); 
-		tempStack->SetMinimum(0.01);
- 	//  htemp19->Draw("h f");	
-	  tempStack->Draw("h f X+");
-		data->Draw("same AXIS X+");			
-		data->Draw("same E1");			
-		htemp18->Draw("same hist");			
+		tempStack->GetHistogram()->SetMinimum(0.05);
+		tempStack->GetHistogram()->SetTitle("");
+		tempStack->Draw("same hist f");	
+	//	data->SetMaximum(stack_max+(stack_max/2));
+	//	data->SetMinimum(0.01);			
+		//data->Draw("AXIS");	
+	//	tempStack->SetMinimum(0.01);
+//		htemp18->Draw("same hist");
+		h_uncertainty->Draw("same E2");		
 		htemp17->Draw("same hist");
 		htemp16->Draw("same hist");	
-					
-	//	gPad->RedrawAxis();
-		}
-	else if( signal_max > stack_max){
+//		h_uncertainty->Draw("same E2");
+	//	canvasDefault->Update();	
+		gPad->RedrawAxis();
+	} 
 
-	  htemp18->GetXaxis()->SetTitleSize(0.05);
-	  htemp18->GetXaxis()->SetLabelSize(0.05);  
-	  htemp18->GetYaxis()->SetLabelSize(0.05);
-	  htemp18->GetYaxis()->SetTitle("# events");
-	  htemp18->GetYaxis()->SetTitleSize(0.05); 
-		htemp18->SetMinimum(0.01);
- 	//  htemp19->Draw("h f");	
-	 htemp18 ->Draw("hist X+");
-		data->Draw("same AXIS X+");			
-	//	data->Draw("same E1");
-	  tempStack->Draw("same h f X+");				
-		htemp18->Draw("same hist");			
-		htemp17->Draw("same hist");
-		htemp16->Draw("same hist");	
-					
-	//	gPad->RedrawAxis();
-		}		
-	infoBox->Draw();
+  CMS_text->Draw();
+//  if( !plot_data ){
+//	  CMS_text2->Draw();
+//		}
+	if (plot_data){
+		infoBoxData->Draw();
+		}
+	infoBox->Draw();	
+	infoBoxSignal->Draw();	
 	canvasDefault->SaveAs(filename+"_log."+imageType);
 }
 
@@ -739,7 +979,7 @@ void recurseOverKeys( TDirectory *target1 ) {
       // **************************
       // Plot & Save this Histogram
       TH1F *htemp1, *htemp2, *htemp3, *htemp4, *htemp5, *htemp6, *htemp7, *htemp8, *htemp9, *htemp10, *htemp11, *htemp12, *htemp13, *htemp14, *htemp15,
-			*htemp16, *htemp17, *htemp18, *htemp19;// *htemp18, *htemp19, *htemp20, *htemp21, *htemp22, *htemp23, *htemp24, *htemp25,
+			*htemp16, *htemp17, *htemp19;//*htemp18, *htemp20, *htemp21, *htemp22, *htemp23, *htemp24, *htemp25,	*htemp26, *htemp27, *htemp28, *htemp29 *htemp30 ;// *htemp18, *htemp19, *htemp20, *htemp21, *htemp22, *htemp23, *htemp24, *htemp25,
 		//	*htemp26, *htemp27, *htemp28, *htemp29;
 
       htemp1 = (TH1F*)obj;
@@ -761,10 +1001,11 @@ void recurseOverKeys( TDirectory *target1 ) {
         sourceFile14->GetObject(path+"/"+histName, htemp14);
         sourceFile15->GetObject(path+"/"+histName, htemp15);
         sourceFile16->GetObject(path+"/"+histName, htemp16);																				
-        sourceFile17->GetObject(path+"/"+histName, htemp17);
-        sourceFile18->GetObject(path+"/"+histName, htemp18);				
+        sourceFile17->GetObject(path+"/"+histName, htemp17);			
         sourceFile19->GetObject(path+"/"+histName, htemp19);
-    /*    sourceFile19->GetObject(path+"/"+histName, htemp19);				
+/*    if (GJetsPt){
+        sourceFile18->GetObject(path+"/"+histName, htemp18);			
+		    sourceFile30->GetObject(path+"/"+histName, htemp30);				
         sourceFile20->GetObject(path+"/"+histName, htemp20);				
         sourceFile21->GetObject(path+"/"+histName, htemp21);
         sourceFile22->GetObject(path+"/"+histName, htemp22);	
@@ -774,7 +1015,8 @@ void recurseOverKeys( TDirectory *target1 ) {
         sourceFile26->GetObject(path+"/"+histName, htemp26);																				
         sourceFile27->GetObject(path+"/"+histName, htemp27);				
         sourceFile28->GetObject(path+"/"+histName, htemp28);																				
-        sourceFile29->GetObject(path+"/"+histName, htemp29);		*/				
+        sourceFile29->GetObject(path+"/"+histName, htemp29);		
+				}			*/	
 							
       } else {
 			sourceFile2->GetObject(histName, htemp2);
@@ -792,10 +1034,12 @@ void recurseOverKeys( TDirectory *target1 ) {
       sourceFile14->GetObject(histName, htemp14);
       sourceFile15->GetObject(histName, htemp15);
       sourceFile16->GetObject(histName, htemp16);		
-      sourceFile17->GetObject(histName, htemp17);	
-      sourceFile18->GetObject(histName, htemp18);			
+      sourceFile17->GetObject(histName, htemp17);			
       sourceFile19->GetObject(histName, htemp19);				
- /*     sourceFile20->GetObject(histName, htemp20);				
+/*     if (GJetsPt){
+      sourceFile18->GetObject(histName, htemp18);	 
+      sourceFile20->GetObject(histName, htemp20);	
+      sourceFile30->GetObject(histName, htemp30);							
       sourceFile21->GetObject(histName, htemp21);
       sourceFile17->GetObject(histName, htemp17);     		
       sourceFile23->GetObject(histName, htemp23);				
@@ -804,12 +1048,14 @@ void recurseOverKeys( TDirectory *target1 ) {
       sourceFile26->GetObject(histName, htemp26);		
       sourceFile27->GetObject(histName, htemp27);			
       sourceFile28->GetObject(histName, htemp28);		
-      sourceFile29->GetObject(histName, htemp29);			*/								
-      }
+      sourceFile29->GetObject(histName, htemp29);			
+			}						*/		
+    }
 
       outputFilename=histName;
       plotHistograms(htemp1, htemp2, htemp3, htemp4, htemp5, htemp6, htemp7, htemp8, htemp9, htemp10, htemp11, htemp12, htemp13, htemp14, htemp15,
-			htemp16, htemp17, htemp18, htemp19,outputFolder+path+"/"+outputFilename); // htemp18, htemp19, htemp20, htemp21, htemp22, htemp23, htemp24, htemp25,
+			htemp16, htemp17, htemp19,outputFolder+path+"/"+outputFilename);
+			// htemp18, htemp20, htemp21, htemp22, htemp23, htemp24, htemp25, htemp26, htemp27, htemp28, htemp29, htemp30,outputFolder+path+"/"+outputFilename); // htemp18, htemp19, htemp20, htemp21, htemp22, htemp23, htemp24, htemp25,
 		//	htemp26, htemp27, htemp28, htemp29, outputFolder+path+"/"+outputFilename);
 
     } else if ( obj->IsA()->InheritsFrom( "TDirectory" ) ) {
@@ -848,7 +1094,6 @@ fileLabel13.ReplaceAll("_V06.1_sel.root","");
 fileLabel14.ReplaceAll("_V06.1_sel.root","");
 fileLabel15.ReplaceAll("_V06.1_sel.root","");
 fileLabel16.ReplaceAll(".root","");
-fileLabel18.ReplaceAll(".root","");
 fileLabel19.ReplaceAll(".root","");
 //fileLabel18.ReplaceAll("_30_50_V07.1_sel.root","");
 //  label1 = fileLabel1;
@@ -873,9 +1118,11 @@ fileLabel19.ReplaceAll(".root","");
   sourceFile15 = TFile::Open( fileName15 );			
   sourceFile16 = TFile::Open( fileName16 );
   sourceFile17 = TFile::Open( fileName17 );	
-  sourceFile18 = TFile::Open( fileName18 );	
   sourceFile19 = TFile::Open( fileName19 );
-/*  sourceFile20 = TFile::Open( fileName20 );
+/*if(GJetsPt){
+  sourceFile18 = TFile::Open( fileName18 );	
+  sourceFile30 = TFile::Open( fileName30 );
+  sourceFile20 = TFile::Open( fileName20 );
   sourceFile21 = TFile::Open( fileName21 );
   sourceFile22 = TFile::Open( fileName22 );		
   sourceFile23 = TFile::Open( fileName23 );
@@ -884,14 +1131,15 @@ fileLabel19.ReplaceAll(".root","");
   sourceFile26 = TFile::Open( fileName26 );
   sourceFile27 = TFile::Open( fileName27 );
   sourceFile28 = TFile::Open( fileName28 );
-  sourceFile29 = TFile::Open( fileName29 );		 */
+  sourceFile29 = TFile::Open( fileName29 );		 
+	} */
   outputFolder = "HistogramsTogether"; // Blank to use current directory,
                                           // or, for a specific dir type
                                           // something like "images/"
   gSystem->MakeDirectory(outputFolder);
 
   canvasDefault = new TCanvas("canvasDefault","testCanvas",outputWidth,outputHeight);
-	canvasDefault->Range(0,0,1,1);
+//	canvasDefault->Range(0,0,1,1);
 
   // This function will plot all histograms from 
   // file1 against matching histogram from file2
@@ -917,7 +1165,10 @@ fileLabel19.ReplaceAll(".root","");
 	sourceFile17->Close();	
 	sourceFile18->Close();	
   sourceFile19->Close();
-/*  sourceFile20->Close();
+/*if(GJetsPt){
+	sourceFile18->Close();	
+  sourceFile30->Close();
+  sourceFile20->Close();
   sourceFile21->Close();
 	sourceFile22->Close();	
   sourceFile23->Close();
@@ -926,7 +1177,8 @@ fileLabel19.ReplaceAll(".root","");
 	sourceFile26->Close();		
 	sourceFile27->Close();	
 	sourceFile28->Close();		
-	sourceFile29->Close();	*/
+	sourceFile29->Close();	
+	} */
   TString currentDir = gSystem->pwd();
   cout << "Done. See images in:" << endl << currentDir << "/" << outputFolder << endl;
 	

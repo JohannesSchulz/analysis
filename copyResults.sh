@@ -1,1 +1,1 @@
-gsiscp cms.naf.desy.de:/scratch/hh/dust/naf/cms/user/schulz/results/*.root .
+gsiscp nafhh-cms01.desy.de:/nfs/dust/cms/user/jschulz/results/*.root .
