@@ -26,19 +26,12 @@ int q_chi2(){
 
 
 	bool Vg = false;
-	double trigger_effi = 0.885339;
+//	double trigger_effi = 0.885339;
+  double trigger_effi = 0.865;
+//  double trigger_effi = 0.856;
 	double e_fakerate = 0.0148;
 	int rebin = 1.;
-//	string histo = "h_met_array";
-//	string histo = "h_met";
-//	string histo = "h_met_orth";
-//	string histo = "h_pt_orth";	
-//		string histo = "h_inverse_MET";	
-//	string histo = "h_METoverSqHT_scale";
-
-/* control */
-
-//	string histo = "h_MET_significance_control2";
+	
 
 /*MET Significance */
 
@@ -51,22 +44,15 @@ int q_chi2(){
 		
 /*  METoverSqHT */
 
-//    string histo = "h_METoverSqHT_80";
-//    string histo = "h_METoverSqHT_90";
-//   string histo = "h_METoverSqHT_scale_pt_cut";
-//    string histo = "h_METoverSqHT_110";
-//    string histo = "h_METoverSqHT_120";
-
 //    string histo = "h_METoverSqHT_100_30";		
  //   string histo = "h_METoverSqHT_100_36";				
 //    string histo = "h_METoverSqHT_100_24";		 
 //   string histo = "h_METoverSqHT_100_17";
-     string histo = "h_METoverSqHT_100_12"; //beste!
-//     string histo = "h_MET_significance_120_23";
-//     string histo = "h_METoverSqHT_80_17";		 		
-		
-//    string histo = "h_1tightPhotonPtOverMET_scale_pt_cut";		
-//	string histo = "h_HT_array_HT_cut";
+ //    string histo = "h_METoverSqHT_100_12"; //beste!
+ string histo = "h_METoverSqHT_double_control_20";
+//		 string histo = "h_METoverSqHT_met_sign_control";
+  //   string histo = "h_METoverSqHT_trans_mass_control";
+//		 string histo = "h_final_MET_significance_unblind";
 
 /*  HT_array */
 
@@ -76,58 +62,29 @@ int q_chi2(){
 //	string histo = "h_HT_array_110";	
 //	string histo = "h_HT_array_100_41";	
 
-/* Angles*/
 
-//	string histo = "h_DeltaPhi_JMother";
-//	string histo = "h_DeltaPhi_JJ";	
-//	string histo = "h_AngleMJ1";		//also nice	
-//	string histo = "h_Angle_MET_1jet_100";
-	
-// string histo = "h_InvMass_2jets_100";
-//	string histo = "h_MET_over_PT_120";
-//	string histo = "h_tight_photon_pt_over_HT_high";	
-//		string histo = "h_HToverMET";
-//	string histo = "h_METoverPhotonPt";
-//	string histo = "h_METoverSqHT_scale_HT_cut";	
-//	string histo = "h_1tightPhotonPtOverMET_scale_HT_cut";			
-//	string histo = "h_HT";	
-//	string histo = "h_METoverSqHT";
-//	string histo = "h_1tightPhotonPtOverMET_scale";
-//	string histo = "h_1tightPhotonPtOverMET_scale_HT";	
-//	string histo = "h_AngleMJ1";
-//	string histo = "h_DR_test";
-//	string histo = "h_Delta_Phi_JMother";
-//  string histo = "h_trans_mass_MET_Gamma";
-//  string histo = "h_trans_mass_MET_Gamma_100";
-//		string histo = "h_n_jets_cleaned";
-//	string histo = "h_n_muons_loose";
-//	string histo = "h_cleaned_jets_pt";
-//	string histo = "h_cleaned_jets_chargedfrac";
-//	string histo = "h_matched_jet_photonMultiplicity";
-//	string histo = "h_sum_signal";
-//	string histo = "h_sum_pt_photons";
-//	string histo = "h_photon_iso";
-//	string histo = "h_tight_photon_pt_over_HT_high";
-//  string histo = "h_HToverMET";
-//  string histo = "h_InvMassJetsEtaRel";
 	
   TFile *Data  			= new TFile("PhotonParkedD_V06.1_sel.root");
 	TFile *GJets_file	  	= new TFile("GJetsAdd.root");	
-	TFile *G_file	  	= new TFile("GAdd.root");	
-	TFile *QCD	  	= new TFile("QCDAdd.root");		
-  TFile *EWKBG 		= new TFile("EWKBG.root");
-	TFile *GammaPixel	= new TFile("GammaPixel.root");	
-//	TFile *ttbar	= new TFile("TTJets_V02.1_sel.root");	
+	TFile *QCD	  	= new TFile("QCDAdd.root");	
+	TFile *WG	  	= new TFile("WGammaAdd.root");
+//  TFile *WG	  	= new TFile("WGamma_splitAdd.root");
+	TFile *ZG	  	= new TFile("ZGammatest/Znew.root");
+//	TFile *ZG	  	= new TFile("ZGammaAdd.root");
+//  TFile *EWKBG 		= new TFile("EWKBG.root");
+	TFile *GammaPixel	= new TFile("GammaPixel.root");		
   TFile *ttbar	= new TFile("TTGamma_V02.1_sel.root");
 	TFile *Diboson	= new TFile("Diboson.root");	
 	TFile *signal	= new TFile("signal_640_630.root");	
 	TFile *signal2	= new TFile("signal_540_530.root");	
 		
-	TH1F *	H_Data  	 = (TH1F*)Data->Get(histo.c_str());	
-	TH1F *	H_GJets2    = (TH1F*)GJets_file->Get(histo.c_str());
-	TH1F *	H_G2    = (TH1F*)G_file->Get(histo.c_str());	
+	TH1F *	H_Data  = (TH1F*)Data->Get(histo.c_str());	
+	TH1F *	H_GJets2 = (TH1F*)GJets_file->Get(histo.c_str());
+	
+	TH1F *	H_WG  	 = (TH1F*)WG->Get(histo.c_str());	
+	TH1F *	H_ZG     = (TH1F*)ZG->Get(histo.c_str());
 	TH1F *	H_QCD    = (TH1F*)QCD->Get(histo.c_str());		
-  TH1F *	H_EWKBG	 = (TH1F*)EWKBG->Get(histo.c_str());
+//  TH1F *	H_EWKBG	 = (TH1F*)EWKBG->Get(histo.c_str());
 	TH1F *	H_GammaPixel = (TH1F*)GammaPixel->Get(histo.c_str());	
 	TH1F *	H_ttbar = (TH1F*)ttbar->Get(histo.c_str());
 	TH1F *	H_Diboson = (TH1F*)Diboson->Get(histo.c_str());	
@@ -135,7 +92,13 @@ int q_chi2(){
 	TH1F *	H_signal2 = (TH1F*)signal2->Get(histo.c_str());	
 	
 	TH1F *	H_GJets2_scale    = (TH1F*)GJets_file->Get("h_met");
-	TH1F *	H_G2_scale    = (TH1F*)G_file->Get("h_met");
+	gStyle->SetPaintTextFormat(".2f");	
+//	H_WG->Scale(1.424);
+//	H_ZG->Scale(1.579);
+	
+	H_WG->Add(H_ZG);	
+	
+	TH1F *H_EWKBG = (TH1F*)H_WG->Clone("H_EWKBG");	
 			
 	H_GammaPixel->Scale(e_fakerate);
   H_signal->Scale(trigger_effi);
@@ -154,59 +117,60 @@ int q_chi2(){
 		
 	H_EWKBG->Scale(trigger_effi);
 	H_GJets2->Scale(trigger_effi);
-	H_G2->Scale(trigger_effi);	
+
 	H_ttbar->Scale(trigger_effi);
 	H_Diboson->Scale(trigger_effi);
 	H_QCD->Scale(trigger_effi);		
 		
 	H_GJets2_scale->Scale(trigger_effi);
-	H_G2_scale->Scale(trigger_effi);		
-		
-	int bin_low = 1;
 	
-	double data = H_Data->Integral(bin_low,-1);
+		
+	int bin_low = 0;
+	
 	double dataFake = H_GammaPixel->Integral(bin_low,-1);	
 	double dataEWK = H_EWKBG->Integral(bin_low,-1);	
 	double dataGJets = H_GJets2->Integral(bin_low,-1);
-	double dataG = H_G2->Integral(bin_low,-1);	
+
 	double datattbar = H_ttbar->Integral(bin_low,-1);	
 	double dataDiboson = H_Diboson->Integral(bin_low,-1);	
 	double dataQCD = H_QCD->Integral(bin_low,-1);	
 	
 	double dataGJets_scale = H_GJets2_scale->Integral(bin_low,-1);
-	double dataG_scale = H_G2_scale->Integral(bin_low,-1);		
 	
-	double G_ratio = dataGJets/dataG;
 	
-	cout << "------------------------->>>>>>  " << G_ratio << endl;
-	H_G2->Scale(G_ratio);			
-	dataG = dataG*G_ratio;
-	double scale = (data - dataFake - datattbar - dataDiboson - dataQCD)/(dataEWK+dataGJets);	
-//	double scale = (data - dataFake - datattbar - dataDiboson - dataQCD)/(dataEWK+dataG);			
+	H_Data->Add(H_ttbar,-1);
+	H_Data->Add(H_Diboson,-1);	
+	H_Data->Add(H_QCD,-1);	
+	H_Data->Add(H_GammaPixel,-1);	
+	
+	double data = H_Data->Integral(bin_low,-1);
+//	double scale = (data - dataFake - datattbar - dataDiboson - dataQCD)/(dataEWK+dataGJets);
+	
+	double scale = (data)/(dataEWK+dataGJets);	
 		
-	Double_t chi2[60], x[60];	
+	Double_t chi2[150], x[150];	
 		
-	for ( int i = 1; i < 60; i++) { 	
+	for ( int i = 1; i < 150; i++) { 	
 		
 	TH1F *H_EWK = (TH1F*)H_EWKBG->Clone("H_EWK");	
 	TH1F *H_GJets = (TH1F*)H_GJets2->Clone("H_GJets");	
-	TH1F *H_G = (TH1F*)H_G2->Clone("H_G");	
+	
 			
 	if ( Vg ) {
-		double scale_EWK = 0.05 + i*0.05;		
+		double scale_EWK = 0.04 + i*0.02;		
 		H_EWK->Scale(scale_EWK);
 		double scale_GJets = (scale*(dataEWK + dataGJets) - scale_EWK*dataEWK)/dataGJets;
-		double scale_G = (scale*(dataEWK + dataG) - scale_EWK*dataEWK)/dataG;		
+
 		H_GJets->Scale(scale_GJets);
-		H_G->Scale(scale_G);								
+							
 		}
 	else {
-		double scale_GJets = 0.05 + i*0.05;
-		double scale_G = 0.05 + i*0.05;		
+		double scale_GJets = 0.04 + i*0.02;
+		double scale_G = 0.04 + i*0.02;		
 		H_GJets->Scale(scale_GJets);
-		H_G->Scale(scale_G);		
+		
 		double scale_EWK = (scale*(dataEWK + dataGJets) - scale_GJets*dataGJets)/dataEWK;
-//		double scale_EWK = (scale*(dataEWK + dataG) - scale_G*dataG)/dataEWK;		
+	
 		H_EWK->Scale(scale_EWK);
 		}	
 		
@@ -223,36 +187,42 @@ int q_chi2(){
 	H_GJets->Scale(scale_GJets);	
 //	H_EWK->Scale(scale_EWK); */
 
-	H_EWK->Add(H_GJets);
 //	H_EWK->Add(H_G);	
 	
 	gStyle->SetTitleW(0.9);
 	gStyle->SetTitleH(0.08);	
 	
-	H_EWK->Add(H_GammaPixel);
-	H_EWK->Add(H_ttbar);		//Zwar gleicher Prozess aber bereits NNLO, deswegen nicht mitskalieren
-	H_EWK->Add(H_Diboson);
-	H_EWK->Add(H_QCD);	
+	TH1F *EWK_BG = (TH1F*)H_EWK->Clone("EWK_BG");
+	
+	H_EWK->Add(H_GJets);	
+//	H_EWK->Add(H_GammaPixel);
+//	H_EWK->Add(H_ttbar);		//Zwar gleicher Prozess aber bereits NNLO, deswegen nicht mitskalieren
+//	H_EWK->Add(H_Diboson);
+//	H_EWK->Add(H_QCD);	
 	canvas->cd(i);
 	
 	chi2[i-1] = H_Data->Chi2Test(H_EWK,"UW OF P CHI2/NDF");
 
 	canvas->Update();
-if (i == 1 || i == 59 || i == 37 || i == 38){
-  if (i == 37 || i == 38){
-	canvas->cd(i - 35); 
+if (i == 21 || i == 141 || i == 64 || i == 65){
+  if (i == 64 || i == 65){
+	canvas->cd(i - 62); 
 	}
-  if (i == 1){
-	canvas->cd(i);
+  if (i == 21){
+	canvas->cd(1);
 	}		
-  if (i == 59){
-	canvas->cd(i - 55);
-	}	
+  if (i == 141){
+	canvas->cd(4);
+	}		
+	gPad->SetLogy(1);
+	gStyle->SetPaintTextFormat(".2f");		
 	H_Data->Draw("E1");
+	H_Data->SetTitle("");		
+//	H_Data->GetYaxis()->SetRangeUser(8,500);
+	H_Data->GetYaxis()->SetTitle("corrected events per bin");	
 	H_Data->SetMarkerStyle(8);
 	H_Data->SetMarkerColor(kBlack);
 	H_Data->SetLineColor(kBlack);
-	H_Data->SetTitle("Scale determination");
 	H_Data->SetTitleSize(0.5);	
 	H_Data->GetXaxis()->SetTitle("#slash{E}_{T} / #sqrt{H_{T}} [#sqrt{GeV}]");	
 	H_Data->GetYaxis()->SetTitleSize(0.062);
@@ -261,6 +231,12 @@ if (i == 1 || i == 59 || i == 37 || i == 38){
 	H_Data->GetXaxis()->SetLabelSize(0.062);
 	H_Data->GetXaxis()->SetTitleOffset(0.8);
 	gPad->SetBottomMargin(0.12);	
+	gPad->SetLeftMargin(0.12);
+	gPad->SetRightMargin(0.03);	
+	CMS_text = new TLatex(0.1,0.91,"#int L dt = 7.4 fb^{-1},  #sqrt{S} = 8 TeV,   CMS PRIVATE WORK");
+	CMS_text->SetNDC();
+  CMS_text->SetTextSize(0.05);
+  CMS_text->Draw();		
 	std::string s;
 	std::stringstream out;
 	out << scale_EWK;
@@ -282,49 +258,57 @@ if (i == 1 || i == 59 || i == 37 || i == 38){
 	string factor2 = "#chi^{2}/ndf = ";
 	factor2.append(s2);	
 	
-	
-	kEWK = new TLatex(15,250,factor.c_str());
+	gStyle->SetPaintTextFormat(".2f");		
+	kEWK = new TLatex(12.5,200,factor.c_str());
   kEWK->SetTextSize(0.07);
   kEWK->Draw();	
-	kGJets = new TLatex(15,180,factor1.c_str());
+	kGJets = new TLatex(12.5,160,factor1.c_str());
   kGJets->SetTextSize(0.07);
   kGJets->Draw("same");	
-	Chi2T = new TLatex(15,100,factor2.c_str());
+	Chi2T = new TLatex(12.5,120,factor2.c_str());
   Chi2T->SetTextSize(0.07);
   Chi2T->Draw("same");	
-	
-	
-	
+	gStyle->SetPaintTextFormat(".2f");	
+	//gPad->Update();
+	gPad->SetLogy(1);
+	gPad->Update();
 	double N_BG = H_EWK->Integral();
 	double N_signal = H_signal->Integral();
 	double N_signal2 = H_signal2->Integral();	
 	
-	H_EWK->Draw("hist E1 same");
-	H_EWK->SetLineColor(kRed);
-	H_EWK->SetLineWidth(2);
+	EWK_BG->SetLineColor(kBlack);
+	EWK_BG->Draw("hist same");	
+	EWK_BG->SetFillStyle(1001);	
+  EWK_BG->SetFillColor(kOrange);
+		
 	H_GJets->SetLineColor(kBlack);
 	H_GJets->Draw("same hist");
 	H_GJets->SetFillStyle(1001);	
-  H_GJets->SetFillColor(kOrange);	
+  H_GJets->SetFillColor(kRed+2);	
 	
-	H_GammaPixel->Draw("same hist");
+//	H_GammaPixel->Draw("same hist");
 	H_GammaPixel->SetFillStyle(1001);	
-	H_GammaPixel->SetFillColor(kGray+2);	
+	H_GammaPixel->SetFillColor(kSpring);
+	
+	H_EWK->Draw("hist E1 same");
+	H_EWK->SetLineColor(kBlue);
+	H_EWK->SetLineWidth(3);	
+	
 	H_Data->Draw("same E1");	
 	gPad->SetLogy(0);
 	gPad->RedrawAxis();
 	gStyle->SetOptStat(00000);
 	
-	TLegend *infoBox = new TLegend(0.67, 0.45, 0.9, 0.899,"");//0.75, 0.83, 0.99, 0.99, "");
+	TLegend *infoBox = new TLegend(0.69, 0.4, 0.97, 0.899,"");//0.75, 0.83, 0.99, 0.99, "");
 
-	infoBox->AddEntry(H_Data,"Data" , "lep");
-	infoBox->AddEntry(H_EWK,"total BG" , "l");		
-//	infoBox->AddEntry(H_G,"#gammaJets" , "f");
+	infoBox->AddEntry(H_Data,"corr. Data" , "lep");
+	infoBox->AddEntry(H_EWK,"V#gamma + #gammaJets" , "l");		
+	infoBox->AddEntry(EWK_BG,"V#gamma" , "f");
 	infoBox->AddEntry(H_GJets,"#gammaJets" , "f");	
-	infoBox->AddEntry(H_GammaPixel,"e#rightarrow#gamma" , "f");				 
+//	infoBox->AddEntry(H_GammaPixel,"e#rightarrow#gamma" , "f");				 
   infoBox->SetShadowColor(0);  // 0 = transparent
   infoBox->SetFillColor(kWhite); 
-	infoBox->SetTextSize(0.065);
+	infoBox->SetTextSize(0.069);
   infoBox->Draw("same");
 	
 	}
@@ -335,11 +319,11 @@ if (i == 1 || i == 59 || i == 37 || i == 38){
 	
 	
 	canvas2->cd(1);
-	for (int j=0; j<59; j++){
-	  x[j]= 0.1 + j*0.05;
+	for (int j=0; j<149; j++){
+	  x[j]= 0.06 + j*0.02;
 	  }
 	cout << "  -------------------------------------------" << endl;		
-	TGraph *chi2_graph = new TGraph(59,x,chi2);
+	TGraph *chi2_graph = new TGraph(149,x,chi2);
 	chi2_graph->GetXaxis()->SetRangeUser(0.0,3.1);
 	chi2_graph->GetXaxis()->SetTitle("V#gamma scale");
 	double max = chi2_graph->GetMaximum();
@@ -368,12 +352,13 @@ if (i == 1 || i == 59 || i == 37 || i == 38){
 	cout << "  -------------------------------------------" << endl;	
 	if ( Vg ) {
 		chi2_graph->GetXaxis()->SetTitle("V#gamma scale");
-		TF1 *parable = new TF1("parable","[0]+[1]*pow(x-[2],2)",1.7,2.1);
-		parable->SetParameter(2,1.7);
+		TF1 *parable = new TF1("parable","[0]+[1]*pow(x-[2],2)",1.65,1.9);
+//		TF1 *parable = new TF1("parable","[0]+[1]*pow(x-[2],2)",1.,1.5);
+		parable->SetParameter(2,1.3);
 		}
 	else {
 	  chi2_graph->GetXaxis()->SetTitle("#gammaJets scale");
-		TF1 *parable = new TF1("parable","[0]+[1]*pow(x-[2],2)",2.1,2.5);
+		TF1 *parable = new TF1("parable","[0]+[1]*pow(x-[2],2)",2.45,2.65);
 		parable->SetParameter(2,2.4);
 		}
 //	TF1 *parable = new TF1("parable","[0]+[1]*pow(x-[2],2)",1.8,2.4);

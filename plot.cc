@@ -1,6 +1,8 @@
 #include <string.h>
 #include "TFile.h"
 #include "TH1.h"
+#include "TVirtualFitter.h"
+#include "TF1.h"
 #include "TH1F.h"
 #include "TKey.h"
 #include "Riostream.h"
@@ -11,6 +13,11 @@
 #include "THStack.h"
 #include "TStyle.h"
 #include "TLatex.h"
+#include "TMatrixD.h"
+#include "TFitResult.h"
+#include "TFitResultPtr.h"
+#include "TMatrixDSym.h"
+#include "TMinuit.h"
 #include <map>
 #include <vector>
 #include <list>
@@ -26,12 +33,13 @@ TFile   *sourceFile1, *sourceFile2, *sourceFile3,  *sourceFile4,
 				*sourceFile21, *sourceFile22, *sourceFile23, *sourceFile24,				
 				*sourceFile25, *sourceFile26, *sourceFile27, *sourceFile28,
 				*sourceFile29, *sourceFile30;				
-				
+TH1F *plain;
+TF1 *f;			
 TString outputFolder,outputFilename;
 TLatex *CMS_text, *CMS_text2;
-TPad *canvasDefault_1,*canvasDefault_2;
+TPad *canvasDefault_1,*canvasDefault_2,*canvasDefault_3;
 TCanvas *canvasDefault;
-TLegend *infoBox, *infoBoxData, *infoBoxSignal;
+TLegend *infoBox, *infoBoxData, *infoBoxSignal, *infoBoxError;
 bool showStatsBoxes;
 bool seperated = false;
 bool GJetsPt = false;
@@ -45,24 +53,74 @@ int outputWidth   = 960;
 int outputHeight  = 720;
 bool showStats = false;
 double weight = 1.;
-double rebin = 1.;
-double efficiency = 0.885339;
+double rebin = 10;
+double N_bins = 1;
+double efficiency = 0.865;
+//double efficiency = 0.885339;
 double e_Fakerate = 0.0148;
 //double scale_ISR = 1.99563;
 //double scale_GJets = 2.05726;
 double scale_640 = 1.154034091;
 double scale_540 = 1.183054415;
-double scale_ISR = 1.9223;
-double scale_GJets = 2.34156;
-double scale_GJPt = 2.12;
-double scale_ISR_error = 0.314446; //absolut
-double scale_GJets_error = 0.736742; //absolut
-double scale_GJPt_error = 0.8; //absolut
+//double scale_ISR = 1.92996;
+
+
+/* double scale_ISR = 1.33;
+double scale_GJets = 2.385;
+double scale_ISR_error = 0.18; //absolut
+double scale_GJets_error = 0.63; //absolut
+*/
+
+
+double scale_ISR = 1.34;
+double scale_GJets = 2.19;
+double scale_ISR_error = 0.2; //absolut
+double scale_GJets_error = 0.47; //absolut
+
+/*
+double scale_ISR = 1.2;
+double scale_GJets = 2.61;
+double scale_ISR_error = 0.23; //absolut
+double scale_GJets_error = 0.93; //absolut
+*/
+/*
+double scale_ISR = 1.78;
+double scale_GJets = 2.56;
+double scale_ISR_error = 0.35; //absolut
+double scale_GJets_error = 0.92; //absolut
+*/
+/*double scale_ISR = 1.36;
+double scale_GJets = 2.23;
+double scale_ISR_error = 0.20; //absolut
+double scale_GJets_error = 0.47; //absolut */
+
+/*double scale_ISR = 1.31;
+double scale_GJets = 2.353;
+double scale_ISR_error = 0.1755; //absolut
+double scale_GJets_error = 0.636; //absolut 
+*/
+//double scale_ISR = 1.91;
+//double scale_GJets = 2.3;
+
+//double scale_GJets = 2.34993;
+
+//double scale_ISR = 1.97;
+//double scale_GJets = 2.14;
+//double scale_ISR_error = 0.29; //absolut
+//double scale_GJets_error = 0.49; //absolut
+
+
+//double scale_ISR_error = 0.28; //absolut
+//double scale_GJets_error = 0.67; //absolut
+//double scale_ISR_error = 0.318974; //absolut
+//double scale_GJets_error = 0.753576; //absolut
+
 double e_fake_error = 0.00164; //absolut
-double qcd_error = 0.5; //relativ
+double qcd_error = 1; //relativ
 double tt_error = 0.26;  // relativ
-double dibo_error = 0.4;  //relativ
-double lumi_error = 0.022; //relativ
+double dibo_error = 0.5;  //relativ
+double lumi_error = 0.026; //relativ
+double trigger_error = 0.0133; //relativ
 
 int bins = 0;
 double error_Vg = 0;
@@ -73,12 +131,7 @@ double error_qcd = 0;
 double error_tt = 0;
 double error_dibo = 0;
 
-//double scale_ISR_error = 0.377; //absolut
-//double scale_GJets_error = 0.8869; //absolut
-//double scale_ISR = 1.91626;
-//double scale_GJets = 2.34216;
-//double scale_ISR = 1.28745;
-//double scale_GJets = 2.37538;
+double minimum = 0.005;
 
 std::map < int , TH1F* > order;
 
@@ -91,13 +144,22 @@ TString fileName1 = "PhotonParkedD_V06.1_sel.root";
 //TString fileName2 = "TTJets_V02.1_sel.root"; // higher order
 TString fileName2 = "TTGamma_V02.1_sel.root";
 //TString fileName3 = "ZGamma_V02.1_sel.root";
-TString fileName3 = "ZGammaAdd.root";
+TString fileName3 = "ZGammatest/Znew.root";
+//TString fileName3 = "ZGammaAdd.root";
+//TString fileName3 = "ZG_merge.root";
 //TString fileName17 = "ZGammaNuNu_V02.1_sel.root";
 // TString fileName4 = "WJets_V02.1_sel.root";
 //TString fileName4 = "WGamma_V02.1_sel.root";
-TString fileName4 = "WGamma_split.root";
-TString fileName5 = "QCD_100_250_V06.1_sel.root";
-TString fileName6 = "QCD_250_500_V02.1_sel.root";
+TString fileName4 = "WGammaAdd.root";
+
+//TString fileName5 = "scaled_normal/ZGammaAdd.root";
+//TString fileName6 = "scaled_normal/WGammaAdd.root";
+
+//TString fileName5 = "ZGammaUp.root";
+//TString fileName6 = "WGammaUp.root";
+TString fileName5 = "ZGammaAdd.root";
+TString fileName6 = "WGammaAdd.root";
+
 TString fileName7 = "QCD_500_1000_V02.1_sel.root";
 TString fileName8 = "QCD_1000_inf_V02.1_sel.root";
 TString fileName9 = "GJets_40_100_V06.1_sel.root";
@@ -173,7 +235,7 @@ bool compare(TH1F* x, TH1F* y){
 	}
 	
 
-void plotHistograms(TH1F* htemp1, TH1F* htemp2, TH1F* htemp3, TH1F* htemp4, TH1F* htemp5, TH1F* htemp6, TH1F* htemp7, TH1F* htemp8, TH1F* htemp9, TH1F* htemp10, TH1F*
+void plotHistograms(TH1F* htemp1, TH1F* htemp2, TH1F* htemp3, TH1F* htemp4,TH1F* htemp5, TH1F* htemp6, TH1F* htemp7, TH1F* htemp8, TH1F* htemp9, TH1F* htemp10, TH1F*
 htemp11, TH1F* htemp12, TH1F* htemp13, TH1F* htemp14, TH1F* htemp15, TH1F* htemp16,TH1F* htemp17, TH1F* htemp19, TString filename) {
 //TH1F* htemp18, TH1F* htemp20,TH1F* htemp21, TH1F* htemp22, TH1F* htemp23, TH1F* htemp24, TH1F* htemp25, TH1F* htemp26, TH1F* htemp27, TH1F* htemp28, TH1F* htemp29,TH1F* htemp30, TString filename) {// {TH1F* htemp18, TH1F* htemp19, TH1F* htemp20, TH1F*
 //htemp21, TH1F* htemp22, TH1F* htemp23, TH1F* htemp24, TH1F* htemp25, TH1F* htemp26, TH1F* htemp27, TH1F* htemp28, TH1F* htemp29, TString filename) {
@@ -182,7 +244,7 @@ htemp11, TH1F* htemp12, TH1F* htemp13, TH1F* htemp14, TH1F* htemp15, TH1F* htemp
   TString title = htemp1->GetTitle();
 
   // Make sure histograms exist
-  if ( !htemp2 || !htemp3 ||!htemp4 || !htemp5 || !htemp6 ||!htemp7 ||!htemp8 || !htemp9 ||!htemp10 ||!htemp11 || !htemp12 ||!htemp13 ||!htemp14 || !htemp15
+  if ( !htemp2 || !htemp3 ||!htemp4 ||!htemp5 ||!htemp6 || !htemp7 ||!htemp8 || !htemp9 ||!htemp10 ||!htemp11 || !htemp12 ||!htemp13 ||!htemp14 || !htemp15
 	||!htemp16 ||!htemp17 ||!htemp19 ) {
 	//||!htemp18 ||!htemp20 ||!htemp21 || !htemp22 ||!htemp23 ||!htemp24 || !htemp25	||!htemp26 ||!htemp27 ||!htemp28 ||!htemp29 || htemp30) { // ||!htemp20 ||!htemp21 || !htemp22 ||!htemp23 ||!htemp24 || !htemp25
 //	||!htemp26 ||!htemp27 ||!htemp28 ||!htemp29 || htemp30) {
@@ -191,10 +253,16 @@ htemp11, TH1F* htemp12, TH1F* htemp13, TH1F* htemp14, TH1F* htemp15, TH1F* htemp
   } 
 // htemp2 = ttbar is NNLO and htemp13 = WW is NLO
 
+ htemp3->Scale(1.424); //k factor
+ htemp4->Scale(1.579); //k factor
+ 
+ htemp5->Scale(1.424); //k factor
+ htemp6->Scale(1.579); //k factor
+
  htemp3->Scale(scale_ISR);
  htemp4->Scale(scale_ISR);
- htemp5->Scale(weight);
- htemp6->Scale(weight);
+ htemp5->Scale(scale_ISR);
+ htemp6->Scale(scale_ISR);
  htemp7->Scale(weight);
  htemp8->Scale(weight);
  htemp9->Scale(scale_GJets);
@@ -255,28 +323,91 @@ htemp11, TH1F* htemp12, TH1F* htemp13, TH1F* htemp14, TH1F* htemp15, TH1F* htemp
  htemp27->Scale(efficiency); 
  htemp28->Scale(efficiency);
  htemp29->Scale(efficiency); 
- } */
+ const double METsign10[] = {0,15,26,34,60,100,140,180,230,350}; } */
+ //  float METsign14[] = {0,15,22,26,30,34,40,46,60,80,100,140,180,230,350};
+// const double METsign10[] = {0,15,22,34,60,80,100,140,180,230,350}; 
+ rebin = 2;
+ const double METsign10[] = {0,15,26,34,60,100,140,230,350};
+// const double METsign10[] = {0,15,26,34,60,100,140,180,230,350}; 
+// const double PT[] = {30,68.8,117.3,165.8,214.3,291.9,388.9,1000}; 
+ const double PT[] = {30,59.1,97.9,136.7,224.0,301.6,388.9,1000};
+//if ( true ) {
 
+ if(title == "h_trans_mass_pt_40" || title == "h_METoverSqHT_double_control_20" || title == "h_tight_photon_pt_before" || title == "h_MET_significance_scale" ||title == "h_MET_significance" || title == "h_pt_dep_1" ||title == "h_pt_dep_2" ||title == "h_pt_dep_3" ||title == "h_pt_dep_4"|| title == "h_pt_orth" ||title == "h_final_MET_significance_unblind" ||title == "h_photon_pt_trans_mass_control" || title == "h_photon_pt_trans_mass_signal" || title == "h_METoverSqHT_100_12" || title == "h_cutflow"
+ ||title == "h_METoverSqHT_trans_mass_control" || title == "h_METoverSqHT_met_sign_control"
+ || title == "h_met_significance_40"|| title == "h_photon_pt_met_sign_control" ||title == "h_photon_pt_met_sign_signal"||title == "h_tight_1photons_pt" || title == "h_final_MET_significance_blind" || title == "h_MET_significance_per_gev_14" || title ==
+ "h_MET_significance_per_gev_14_blind" || title == "h_final_n_loose_photons_blind") {
+
+
+// if( title == "h_pt_dep_4" ) {
  
- htemp1->Rebin(rebin);
- htemp2->Rebin(rebin);
- htemp3->Rebin(rebin);
- htemp4->Rebin(rebin);
- htemp5->Rebin(rebin);
- htemp6->Rebin(rebin);
- htemp7->Rebin(rebin);
- htemp8->Rebin(rebin);
- htemp9->Rebin(rebin);
- htemp10->Rebin(rebin);
- htemp11->Rebin(rebin);
- htemp12->Rebin(rebin);
- htemp13->Rebin(rebin); 
- htemp14->Rebin(rebin);
- htemp15->Rebin(rebin); 
- htemp16->Rebin(rebin);
- htemp17->Rebin(rebin); 
- htemp19->Rebin(rebin);
+  if (title == "h_MET_significance_scale" || title == "h_pt_dep_1" ||title == "h_pt_dep_2" ||title == "h_pt_dep_3"
+ || title == "h_pt_orth" ||title == "h_tight_1photons_pt"||title == "h_tight_photon_pt_before"|| title == "h_photon_pt_trans_mass_control" || title == "h_photon_pt_trans_mass_signal"
+ || title == "h_photon_pt_met_sign_control" ||title == "h_photon_pt_met_sign_signal") {
+ htemp1 = (TH1F*)htemp1->Rebin(rebin);
+ htemp2 = (TH1F*)htemp2->Rebin(rebin);
+ htemp3 = (TH1F*)htemp3->Rebin(rebin);
+ htemp4 = (TH1F*)htemp4->Rebin(rebin);
+ htemp5 = (TH1F*)htemp5->Rebin(rebin);
+ htemp6 = (TH1F*)htemp6->Rebin(rebin);
+ htemp7 = (TH1F*)htemp7->Rebin(rebin);
+ htemp8 = (TH1F*)htemp8->Rebin(rebin);
+ htemp9 = (TH1F*)htemp9->Rebin(rebin);
+ htemp10 = (TH1F*)htemp10->Rebin(rebin);
+ htemp11 = (TH1F*)htemp11->Rebin(rebin);
+ htemp12 = (TH1F*)htemp12->Rebin(rebin);
+ htemp13 = (TH1F*)htemp13->Rebin(rebin); 
+ htemp14 = (TH1F*)htemp14->Rebin(rebin);
+ htemp15 = (TH1F*)htemp15->Rebin(rebin); 
+ htemp16 = (TH1F*)htemp16->Rebin(rebin);
+ htemp17 = (TH1F*)htemp17->Rebin(rebin); 
+ htemp19 = (TH1F*)htemp19->Rebin(rebin);
+ } 
+  
+	rebin = 8;
+ if (title == "h_final_MET_significance_unblind" || title == "h_final_MET_significance_blind" || title == "h_MET_significance_per_gev_14" || title == "h_MET_significance_per_gev_14_blind") {
+ htemp1 = (TH1F*)htemp1->Rebin(rebin,"htemp1",METsign10);
+ htemp2 = (TH1F*)htemp2->Rebin(rebin,"htemp2",METsign10);
+ htemp3 = (TH1F*)htemp3->Rebin(rebin,"htemp3",METsign10);
+ htemp4 = (TH1F*)htemp4->Rebin(rebin,"htemp4",METsign10);
+ htemp5 = (TH1F*)htemp5->Rebin(rebin,"htemp5",METsign10);
+ htemp6 = (TH1F*)htemp6->Rebin(rebin,"htemp6",METsign10);
+ htemp7 = (TH1F*)htemp7->Rebin(rebin,"htemp7",METsign10);
+ htemp8 = (TH1F*)htemp8->Rebin(rebin,"htemp8",METsign10);
+ htemp9 = (TH1F*)htemp9->Rebin(rebin,"htemp9",METsign10);
+ htemp10 = (TH1F*)htemp10->Rebin(rebin,"htemp10",METsign10);
+ htemp11 = (TH1F*)htemp11->Rebin(rebin,"htemp11",METsign10);
+ htemp12 = (TH1F*)htemp12->Rebin(rebin,"htemp12",METsign10);
+ htemp13 = (TH1F*)htemp13->Rebin(rebin,"htemp13",METsign10); 
+ htemp14 = (TH1F*)htemp14->Rebin(rebin,"htemp14",METsign10);
+ htemp15 = (TH1F*)htemp15->Rebin(rebin,"htemp15",METsign10); 
+ htemp16 = (TH1F*)htemp16->Rebin(rebin,"htemp16",METsign10);
+ htemp17 = (TH1F*)htemp17->Rebin(rebin,"htemp17",METsign10); 
+ htemp19 = (TH1F*)htemp19->Rebin(rebin,"htemp19",METsign10);
+ } 
  
+// htemp1->SetBinErrorOption(kPoisson);
+ rebin = 7;
+ if (title == "h_pt_dep_4") {
+ htemp1 = (TH1F*)htemp1->Rebin(rebin,"htemp1",PT);
+ htemp2 = (TH1F*)htemp2->Rebin(rebin,"htemp2",PT);
+ htemp3 = (TH1F*)htemp3->Rebin(rebin,"htemp3",PT);
+ htemp4 = (TH1F*)htemp4->Rebin(rebin,"htemp4",PT);
+ htemp5 = (TH1F*)htemp5->Rebin(rebin,"htemp5",PT);
+ htemp6 = (TH1F*)htemp6->Rebin(rebin,"htemp6",PT);
+ htemp7 = (TH1F*)htemp7->Rebin(rebin,"htemp7",PT);
+ htemp8 = (TH1F*)htemp8->Rebin(rebin,"htemp8",PT);
+ htemp9 = (TH1F*)htemp9->Rebin(rebin,"htemp9",PT);
+ htemp10 = (TH1F*)htemp10->Rebin(rebin,"htemp10",PT);
+ htemp11 = (TH1F*)htemp11->Rebin(rebin,"htemp11",PT);
+ htemp12 = (TH1F*)htemp12->Rebin(rebin,"htemp12",PT);
+ htemp13 = (TH1F*)htemp13->Rebin(rebin,"htemp13",PT); 
+ htemp14 = (TH1F*)htemp14->Rebin(rebin,"htemp14",PT);
+ htemp15 = (TH1F*)htemp15->Rebin(rebin,"htemp15",PT); 
+ htemp16 = (TH1F*)htemp16->Rebin(rebin,"htemp16",PT);
+ htemp17 = (TH1F*)htemp17->Rebin(rebin,"htemp17",PT); 
+ htemp19 = (TH1F*)htemp19->Rebin(rebin,"htemp19",PT);
+ }  
 /*if (GJetsPt){
  htemp18->Rebin(rebin);
  htemp20->Rebin(rebin);
@@ -289,9 +420,9 @@ htemp11, TH1F* htemp12, TH1F* htemp13, TH1F* htemp14, TH1F* htemp15, TH1F* htemp
  htemp27->Rebin(rebin); 
  htemp28->Rebin(rebin); 
  htemp29->Rebin(rebin); 
- } */
+ } 
 
-
+*/
   // Set the histogram colors & lines
 	htemp1	->SetLineColor(kBlack);
   htemp1	->SetMarkerStyle(8);
@@ -337,10 +468,6 @@ htemp11, TH1F* htemp12, TH1F* htemp13, TH1F* htemp14, TH1F* htemp15, TH1F* htemp
 		htemp14	->SetFillStyle(1001);	
 		htemp15  ->SetFillColor(kMagenta-3);
 		htemp15	->SetFillStyle(1001);	
-		htemp5  ->SetFillColor(kBlue-2);
-		htemp5	->SetFillStyle(1001);	
-		htemp6  ->SetFillColor(kBlue);
-		htemp6	->SetFillStyle(1001);
 		htemp7  ->SetFillColor(kBlue+2);
 		htemp7	->SetFillStyle(1001);
 		htemp8  ->SetFillColor(kBlue+4);
@@ -365,13 +492,9 @@ htemp11, TH1F* htemp12, TH1F* htemp13, TH1F* htemp14, TH1F* htemp15, TH1F* htemp
 		htemp14	->SetFillStyle(1001);	
 		htemp15  ->SetFillColor(kMagenta);
 		htemp15	->SetFillStyle(1001);		
-		htemp5  ->SetFillColor(kViolet-1);
-		htemp5	->SetFillStyle(1001);	
-		htemp5  ->SetLineColor(kBlack);	
-  	htemp5	->SetLineWidth(1);		
-		htemp6  ->SetFillColor(kBlue);
-		htemp6	->SetFillStyle(1001);
-		htemp7  ->SetFillColor(kBlue);
+		htemp7  ->SetLineColor(kBlack);	
+  	htemp7	->SetLineWidth(1);		
+		htemp7  ->SetFillColor(kGray+2);
 		htemp7	->SetFillStyle(1001);
 		htemp8  ->SetFillColor(kBlue);
 		htemp8	->SetFillStyle(1001);
@@ -437,19 +560,55 @@ if (BGs.size() != 0){
 /*	for ( i = 0; i < 12; i++ ) {
 		order[i] = BGs[i]->Integral();
 		} */
+		//overflow
 		
+	
+	N_bins = htemp3->GetNbinsX();
+	//data
+	htemp1->SetBinContent(N_bins, htemp1->GetBinContent(N_bins) + htemp1->GetBinContent(N_bins+1));
+	htemp1->SetBinError(N_bins, sqrt(htemp1->GetBinError(N_bins)*htemp1->GetBinError(N_bins) + htemp1->GetBinContent(N_bins+1)*htemp1->GetBinContent(N_bins+1)));
+	//signal 540
+	htemp16->SetBinContent(N_bins, htemp16->GetBinContent(N_bins) + htemp16->GetBinContent(N_bins+1));
+	htemp16->SetBinError(N_bins, sqrt(htemp16->GetBinError(N_bins)*htemp16->GetBinError(N_bins) + htemp16->GetBinContent(N_bins+1)*htemp16->GetBinContent(N_bins+1)));
+	//signal 640
+	htemp17->SetBinContent(N_bins, htemp17->GetBinContent(N_bins) + htemp17->GetBinContent(N_bins+1));
+	htemp17->SetBinError(N_bins, sqrt(htemp17->GetBinError(N_bins)*htemp17->GetBinError(N_bins) + htemp17->GetBinContent(N_bins+1)*htemp17->GetBinContent(N_bins+1)));	
+	//Vgamma
+	htemp3->SetBinContent(N_bins, htemp3->GetBinContent(N_bins) + htemp3->GetBinContent(N_bins+1));
+	htemp3->SetBinError(N_bins, sqrt(htemp3->GetBinError(N_bins)*htemp3->GetBinError(N_bins) + htemp3->GetBinContent(N_bins+1)*htemp3->GetBinContent(N_bins+1)));
+	//Vgamma scaled with uncertainty up
+	htemp5->SetBinContent(N_bins, htemp5->GetBinContent(N_bins) + htemp5->GetBinContent(N_bins+1));
+	htemp5->SetBinError(N_bins, sqrt(htemp5->GetBinError(N_bins)*htemp5->GetBinError(N_bins) + htemp5->GetBinContent(N_bins+1)*htemp5->GetBinContent(N_bins+1)));
+	
+	
+	//ttgamma
+	htemp2->SetBinContent(N_bins, htemp2->GetBinContent(N_bins) + htemp2->GetBinContent(N_bins+1));
+	htemp2->SetBinError(N_bins, sqrt(htemp2->GetBinError(N_bins)*htemp2->GetBinError(N_bins) + htemp2->GetBinContent(N_bins+1)*htemp2->GetBinContent(N_bins+1)));
+	//gammaJets
+	htemp9->SetBinContent(N_bins, htemp9->GetBinContent(N_bins) + htemp9->GetBinContent(N_bins+1));
+	htemp9->SetBinError(N_bins, sqrt(htemp9->GetBinError(N_bins)*htemp9->GetBinError(N_bins) + htemp9->GetBinContent(N_bins+1)*htemp9->GetBinContent(N_bins+1)));
+	//QCD
+	htemp7->SetBinContent(N_bins, htemp7->GetBinContent(N_bins) + htemp7->GetBinContent(N_bins+1));
+	htemp7->SetBinError(N_bins, sqrt(htemp7->GetBinError(N_bins)*htemp7->GetBinError(N_bins) + htemp7->GetBinContent(N_bins+1)*htemp7->GetBinContent(N_bins+1)));
+	//Diboson
+	htemp13->SetBinContent(N_bins, htemp13->GetBinContent(N_bins) + htemp13->GetBinContent(N_bins+1));
+	htemp13->SetBinError(N_bins, sqrt(htemp13->GetBinError(N_bins)*htemp13->GetBinError(N_bins) + htemp13->GetBinContent(N_bins+1)*htemp13->GetBinContent(N_bins+1)));
+	//GammaPixel
+	htemp19->SetBinContent(N_bins, htemp19->GetBinContent(N_bins) + htemp19->GetBinContent(N_bins+1));
+	htemp19->SetBinError(N_bins, sqrt(htemp19->GetBinError(N_bins)*htemp19->GetBinError(N_bins) + htemp19->GetBinContent(N_bins+1)*htemp19->GetBinContent(N_bins+1)));
+			
+				
 	std::map<TH1F*, std::string> histoname;
 	std::vector< TH1F* > BGs;	
 		
-	if ( htemp2 != 0)	BGs.push_back(htemp2);
+	if ( htemp2 != 0)	BGs.push_back(htemp2); //ttbarGamma
 //	if ( htemp3 != 0)	BGs.push_back(htemp3);
 //	if ( htemp17 != 0)	BGs.push_back(htemp17);	
 //	if ( htemp4 != 0)	BGs.push_back(htemp4);
-	if ( htemp19 != 0)	BGs.push_back(htemp19);	
+
+	if ( htemp19 != 0)	BGs.push_back(htemp19);	//GammaPixel
 	
 	if ( seperated ) {
-		if ( htemp5 != 0)	BGs.push_back(htemp5);	
-		if ( htemp6 != 0)	BGs.push_back(htemp6);
 		if ( htemp7 != 0)	BGs.push_back(htemp7);	
 		if ( htemp8 != 0)	BGs.push_back(htemp8);
 		if ( !GJetsPt) {
@@ -465,8 +624,6 @@ if (BGs.size() != 0){
 		histoname[htemp3] = fileLabel3;
 //		histoname[htemp17] = fileLabel17;		
 		histoname[htemp4] = fileLabel4;	
-		histoname[htemp5] = fileLabel5;	
-		histoname[htemp6] = fileLabel6;	
 		histoname[htemp7] = fileLabel7;
 		histoname[htemp8] = fileLabel8;	
 		histoname[htemp9] = fileLabel9;	
@@ -478,15 +635,20 @@ if (BGs.size() != 0){
 		histoname[htemp15] = fileLabel15;		
 		
 	}
+			
+	
+	
+	
 	else {
 		htemp3->Add(htemp4);
-		htemp5->Add(htemp6);
-		htemp5->Add(htemp7);
-		htemp5->Add(htemp8);
+		htemp5->Add(htemp6);		
+//		htemp5->Add(htemp6);
+//		htemp5->Add(htemp7);
+		htemp7->Add(htemp8);
 		htemp9->Add(htemp10);
 		htemp9->Add(htemp11);
 		htemp9->Add(htemp12);
-		htemp9->Add(htemp5);  // Add QCD to GJets
+		htemp9->Add(htemp7);  // Add QCD to GJets
 		htemp13->Add(htemp14);
 		htemp13->Add(htemp15);
 
@@ -503,22 +665,24 @@ if (BGs.size() != 0){
 		htemp18->Add(htemp28);		
 		htemp18->Add(htemp29);	
 		} */
+		
+
 									
-//		if ( htemp5 != 0)	BGs.push_back(htemp5); // if QCD seperated than uncommand
+	//	if ( htemp7 != 0)	BGs.push_back(htemp7); // if QCD seperated than uncommand
 		if ( !GJetsPt) {		
-	  	if ( htemp9 != 0)	BGs.push_back(htemp9);
+	  	if ( htemp9 != 0)	BGs.push_back(htemp9); //GammaJets
 			}
 /*		else {
 		  if ( htemp18 != 0)	BGs.push_back(htemp18);
 			} */
-	 	if ( htemp13 != 0)	BGs.push_back(htemp13);		
-	 	if ( htemp3 != 0)	BGs.push_back(htemp3);		
+	 	if ( htemp13 != 0)	BGs.push_back(htemp13);		//Dibo
+	 	if ( htemp3 != 0)	BGs.push_back(htemp3);		 //VGamma
 //	 	if ( htemp4 != 0)	BGs.push_back(htemp4);				
 		histoname[htemp2] = "t#bar{t}#gamma";
 		histoname[htemp3] =  "V#gamma ";		
 //		histoname[htemp17] = fileLabel17;		
 //		histoname[htemp4] = fileLabel4;	
-		histoname[htemp5] = "QCD";	
+		histoname[htemp7] = "QCD";	
 		histoname[htemp9] = "#gammaJets";
 		histoname[htemp13] = "DiBoson";	
 		histoname[htemp19] = "e#rightarrow#gamma";		
@@ -535,21 +699,24 @@ if (BGs.size() != 0){
 	error_gJPt = 0;
 	double error_total[bins];
 	
-	for ( int i = 1; i < (bins+1); i++) {
-		error_Vg = (htemp3->GetBinContent(i)/scale_ISR)*scale_ISR_error;
-		if (!(GJetsPt)){		
-			error_gJ = (htemp9->GetBinContent(i)/scale_GJets)*scale_GJets_error;
-			}
-/*		if (GJetsPt){
-			error_gJPt = (htemp18->GetBinContent(i)/scale_GJPt)*scale_GJPt_error;
-			}		*/
-		error_e_fake = (htemp19->GetBinContent(i)/e_Fakerate)*e_fake_error;
-		error_qcd = (htemp5->GetBinContent(i))*qcd_error; //Pay attention if QCD is added to GJets
-		error_tt = (htemp2->GetBinContent(i))*tt_error;		
-		error_dibo = (htemp13->GetBinContent(i))*dibo_error;			
-		error_total[i-1] = sqrt((error_Vg * error_Vg) + (error_gJ * error_gJ) + (error_e_fake * error_e_fake) + (error_qcd * error_qcd) + (error_tt * error_tt) +
-		(error_dibo * error_dibo) + (error_gJPt * error_gJPt));
+//		cout << "error scale:  " << htemp5->GetBinContent(3) << endl;	
+//		cout << "error nortmal:  " << htemp3->GetBinContent(3) << endl;
+//	htemp5->Add(htemp3,-1);
+//		cout << "error scale:  " << htemp5->GetBinContent(3) << endl;	
+//		cout << "error nortmal:  " << htemp3->GetBinContent(3) << endl;		
 		
+	for ( int i = 1; i < (bins+1); i++) {
+		error_Vg = htemp3->GetBinContent(i)*(sqrt((scale_ISR_error/scale_ISR)*(scale_ISR_error/scale_ISR) + (trigger_error*trigger_error) ));	
+	//	cout << "error VG:  " << error_Vg << endl;
+//		error_Vg = sqrt( error_Vg*error_Vg + (htemp5->GetBinContent(i)*htemp5->GetBinContent(i)) );
+		error_gJ = htemp9->GetBinContent(i)*(sqrt((scale_GJets_error/scale_GJets)*(scale_GJets_error/scale_GJets) + (trigger_error*trigger_error)));
+		error_e_fake = (htemp19->GetBinContent(i)/e_Fakerate)*e_fake_error;
+		error_qcd = htemp7->GetBinContent(i)*(sqrt((qcd_error*qcd_error) + (trigger_error*trigger_error))); //Pay attention if QCD is added to GJets
+		error_tt  = htemp2->GetBinContent(i)*(sqrt((tt_error*tt_error) + (trigger_error*trigger_error)));		
+		error_dibo = (htemp13->GetBinContent(i))*(sqrt((dibo_error*dibo_error) + (trigger_error*trigger_error)));			
+	//	error_total[i-1] = sqrt((error_Vg * error_Vg) + (error_gJ * error_gJ) + (error_e_fake * error_e_fake) + (error_qcd * error_qcd) + (error_tt * error_tt) +
+	//	(error_dibo * error_dibo));
+		error_total[i-1] = error_Vg + error_gJ + error_e_fake + error_qcd + error_tt + error_dibo;		
 		}
 	
   THStack *tempStack = new THStack();
@@ -574,13 +741,11 @@ if (BGs.size() != 0){
 	
 	
 	TH1F *denumerator = (TH1F*)htemp2->Clone("denumerator");
-  denumerator->Add(htemp3);	
+  denumerator->Add(htemp3);  //VGamma	
 //  denumerator->Add(htemp17);	
 //  denumerator->Add(htemp4);  // WGamma in ZGamma combined
 	denumerator->Add(htemp19);  //GammaPixel
 	if ( seperated ) {	
- 		denumerator->Add(htemp5);
- 		denumerator->Add(htemp6);
   	denumerator->Add(htemp7);	
   	denumerator->Add(htemp8);
 		denumerator->Add(htemp9);
@@ -592,10 +757,10 @@ if (BGs.size() != 0){
   	denumerator->Add(htemp15);			
 	  }
 	else {
- 	//	denumerator->Add(htemp5);	//if QCD seperated -> Add to denumerator!!
- 		denumerator->Add(htemp13);
+ //		denumerator->Add(htemp7);	//if QCD seperated -> Add to denumerator!!
+ 		denumerator->Add(htemp13); //Dibo
 		if ( !GJetsPt) {
-			denumerator->Add(htemp9);
+			denumerator->Add(htemp9); //GJets
 			}
 /*		else {
 			denumerator->Add(htemp18);
@@ -617,13 +782,16 @@ if (BGs.size() != 0){
 	THStack *h_mid = (THStack*)tempStack->Clone("h_mid");	
 	TH1F *h_uncertainty = (TH1F*)h_mid->GetStack()->Last();
 	
+	
  	for ( int i = 1; i < (bins+1); i++) {
 		 //h_uncertainty->SetBinContent(i,tempStack->GetStack()->Last()->GetBinContent(i)); //i); //tempStack->GetHistogram()->GetBinContent(i));
 		 h_uncertainty->SetBinError(i,sqrt((((h_uncertainty->GetBinContent(i))*lumi_error) * ((h_uncertainty->GetBinContent(i))*lumi_error)) +
 		 (error_total[i-1] * error_total[i-1])));	
+	//	 h_uncertainty->SetBinError(i,h_uncertainty->GetBinContent(i)*lumi_error + error_total[i-1]);		
 		 h_stat_uncertainty->SetBinContent(i,1);	
 		 h_stat_uncertainty->SetBinError(i,(denumerator->GetBinError(i)/denumerator->GetBinContent(i)));		 	 
-		 h_ratio->SetBinError(i,(error_total[i-1]/h_uncertainty->GetBinContent(i)));
+	//	 h_ratio->SetBinError(i,(error_total[i-1]/h_uncertainty->GetBinContent(i)));
+	   h_ratio->SetBinError(i,(h_uncertainty->GetBinError(i)/h_uncertainty->GetBinContent(i)));
 		 h_ratio->SetBinContent(i,1);		 	
 		 }		
 	h_uncertainty->SetLineColor(kRed);
@@ -639,12 +807,25 @@ if (BGs.size() != 0){
 //	canvasDefault_1 = new TPad("canvasDefault_1", "newpad",0.0,0.0,1.0,0.1);//0.325);	
 	if (plot_data){
 	
-	TH1F *numerator = (TH1F*)htemp1->Clone("numerator");	
+/*********************************Aufpassen****************************/	
+//	TH1F *numerator = (TH1F*)htemp1->Clone("numerator");	
+//	numerator->Divide(denumerator);
+
+
+	TH1F *numerator = (TH1F*)htemp1->Clone("numerator");
 	numerator->Divide(denumerator);
+//	numerator->Add(htemp19,-1);
+//	numerator->Add(htemp9,-1);	
+//	numerator->Add(htemp13,-1);	
+//	numerator->Add(htemp2,-1);
+//  numerator->Divide(htemp3);
 	numerator->SetTitle("");
 	numerator->SetMaximum(2.2);	
 	numerator->SetMinimum(0.1);
-	numerator->SetLineWidth(0);
+//	numerator->SetMaximum(4.);	
+//	numerator->SetMinimum(0.3);
+	numerator->SetLineWidth(0);	
+//	numerator->GetYaxis()->SetMoreLogLabels();
 	numerator->GetYaxis()->SetNdivisions(5);	
   numerator->GetYaxis()->SetTitle("Data / BG");
   numerator->GetYaxis()->CenterTitle();	
@@ -654,9 +835,11 @@ if (BGs.size() != 0){
 	numerator->GetXaxis()->SetLabelSize(0.15);
   numerator->GetYaxis()->SetTitleOffset(0.32);
   numerator->GetXaxis()->SetTitleOffset(0.9);
+	
+	//TF1 *poly = new TF1("poly","[0]+[1]*pow(x-[2],2)",2.2,2.5);
 			
   canvasDefault_1 = new TPad("canvasDefault_1", "newpad",0.0,0.0,1.0,0.325);//0.325);		
-
+//  canvasDefault_1->SetLogy(1);	
   canvasDefault_1->SetTopMargin(0.01);
   canvasDefault_1->SetBottomMargin(0.35);
   canvasDefault_1->SetRightMargin(0.1);
@@ -665,11 +848,71 @@ if (BGs.size() != 0){
 	numerator->Draw("E1");
 	h_ratio->Draw("same E2");
 	h_stat_uncertainty->Draw("same E2");
-	numerator->Draw("same E1");	
-	//numerator->Draw();	
 	gPad->SetGrid();
-	gStyle->SetGridStyle(3);
-		
+	gStyle->SetGridStyle(3);	
+
+	TF1 *f1 = new TF1("f","pol1",30,1000);	
+	TF1 *f3 = new TF1("f","pol3",30,1000);
+  f1->SetLineWidth(2);	
+/*  numerator->Fit(f1,"S");
+//	TF1 *myfunc = numerator->GetFunction("myfunc");
+     TFitResultPtr r = numerator->Fit(f1,"S");
+     TMatrixDSym cov = r->GetCovarianceMatrix();  //  to access the covariance matrix
+     Double_t par0   = r->Parameter(0); // retrieve the value for the parameter 0
+     Double_t err0   = r->ParError(0); // retrieve the error for the parameter 0
+     r->Print("V");     // print full information of fit including covariance matrix
+    // r->Write();*/
+		 
+  f3->SetLineWidth(2);	
+/*  numerator->Fit(f3);	
+	TH1F *fit3 = (TH1F*)numerator->Clone("fit3");	
+	(TVirtualFitter::GetFitter())->GetConfidenceIntervals(fit3,0.68);	
+   //Now the "hint" histogram has the fitted function values as the 
+   //bin contents and the confidence intervals as bin errors
+  // fit->SetStats(kFALSE);
+   fit3->SetFillColor(kBlack);
+   fit3->SetMarkerStyle(1);	 
+   fit3->Draw("e5 a same");
+	 fit3->SetFillStyle(3002);	*/
+	 
+/*	TH1F *fit = (TH1F*)numerator->Clone("fit");	
+	(TVirtualFitter::GetFitter())->GetConfidenceIntervals(fit,0.68);	
+   //Now the "hint" histogram has the fitted function values as the 
+   //bin contents and the confidence intervals as bin errors
+  // fit->SetStats(kFALSE);
+   fit->SetFillColor(kRed);
+   fit->SetMarkerStyle(1);	 
+   fit->Draw("e5 a same");
+	 fit->SetFillStyle(3002);	
+	 numerator->Draw("same E0");
+ //  TF1 *fitresult = numerator->GetFunction("f1");
+//	 fitresult->GetChisquare();
+//	 gMinuit->mnmatu(1);
+//	 TMatrixD matrix0(2,2);
+//	 gMinuit->mnemat(matrix0.GetMatrixArray(),2);
+//	 matrix0.Print();
+/*  canvasDefault_3 = new TPad("canvasDefault_1", "newpad",0.0,0.325,1.0,0.4);//0.325);		
+	TH1F *plain = (TH1F*)htemp1->Clone("plain");
+	plain->SetNdivisions(0);
+//  canvasDefault_3->SetTopMargin(0.01);
+//  canvasDefault_3->SetBottomMargin(0.35);
+//  canvasDefault_3->SetRightMargin(0.1);
+  canvasDefault_3->SetFillStyle(0);
+  canvasDefault_3->cd(); 
+	plain->Draw("");*/
+	
+	//numerator->Draw();	
+	
+	infoBoxError = new TLegend(0.64, 0.78, 0.89, 0.89,"");//0.75, 0.83, 0.99, 0.99, "");	
+	infoBoxError->AddEntry(h_ratio,"#sigma^{syst}","f");
+	infoBoxError->AddEntry(h_stat_uncertainty,"#sigma^{stat}","f");	
+  infoBoxError->SetFillStyle(0);	
+  infoBoxError->SetShadowColor(0);  // 0 = transparent
+  infoBoxError->SetFillColor(kWhite); 
+	infoBoxError->SetBorderSize(0);
+	infoBoxError->SetTextSize(0.16);
+	infoBoxError->SetNColumns(2);	
+  infoBoxError->Draw();	
   canvasDefault->cd();
 	canvasDefault_1->Draw();
 	canvasDefault->cd();	
@@ -683,7 +926,7 @@ if (BGs.size() != 0){
 	data->GetYaxis()->SetTitleSize(0.06);
 	data->GetXaxis()->SetTitleOffset(1);	
 	data->GetYaxis()->SetTitleOffset(0.8);
-	data->SetMinimum(0.01);
+	data->SetMinimum(minimum);
 	data->SetTitle("");
  	
 	if (plot_data) {	
@@ -695,11 +938,15 @@ if (BGs.size() != 0){
  	 canvasDefault_2->SetBottomMargin(0.01);
  	 canvasDefault_2->SetRightMargin(0.1);
  	 canvasDefault_2->SetFillStyle(0);		 
-	 data->GetXaxis()->SetTitleSize(0.0); 
+	 data->GetXaxis()->SetTitleSize(0.0);
+	// data->GetYaxis()->SetNdivisions(20);
+	 data->SetMaximum(1.5*data->GetMaximum());
+	// data->SetMaximum(2);	 
 	 data->Draw("E1");
 	 tempStack->Draw("same hist f");	 		
 	 h_uncertainty->Draw("same E2");
-	 data->Draw("same E1");	  			 	
+	 data->Draw("same E1");
+//	 gPad->SetGrid();		 	
 	 }
 
 	if (!plot_data){
@@ -726,8 +973,8 @@ if (BGs.size() != 0){
 		tempStack->GetHistogram()->GetXaxis()->SetTitleOffset(1);	
 		tempStack->GetHistogram()->GetYaxis()->SetTitleOffset(1);
 
-		tempStack->GetHistogram()->SetMinimum(0.01);
-		tempStack->SetMinimum(0.01);
+		tempStack->GetHistogram()->SetMinimum(minimum);
+		tempStack->SetMinimum(minimum);
 		tempStack->GetHistogram()->SetTitle("");
 		tempStack->Draw("same hist f");		
 		canvasDefault->Modified();					
@@ -756,6 +1003,7 @@ if (BGs.size() != 0){
 //  tempStack->GetYaxis()->SetTitle("# events");
  // canvasDefault_2->Draw();	
 	
+
   // Draw the legend
 	if (plot_data){	
   infoBoxData = new TLegend(0.64, 0.82, 0.89, 0.89,"");//0.75, 0.83, 0.99, 0.99, "");	
@@ -773,7 +1021,7 @@ if (BGs.size() != 0){
 	  int reverse = size - i;
 	  infoBox->AddEntry(BGs[reverse],histoname[BGs[reverse]].c_str() , "f"); 
 		}
-	infoBox->AddEntry(h_uncertainty,"#sigma_{total}^{syst}","f");
+	infoBox->AddEntry(h_uncertainty,"#sigma^{syst}","f");
 //  infoBox->AddEntry(htemp18,fileLabel18,"l");		
 	infoBox->SetNColumns(2);
 //  infoBox->AddEntry(htemp16,"M_{Wino} = 540 GeV","l");	
@@ -831,7 +1079,7 @@ if (BGs.size() != 0){
 	  int reverse = size - i;
 	  infoBox->AddEntry(BGs[reverse],histoname[BGs[reverse]].c_str() , "f"); 
 		}	
-	infoBox->AddEntry(h_uncertainty,"#sigma_{total}^{syst}","f");
+	infoBox->AddEntry(h_uncertainty,"#sigma_{syst}","f");
 //  infoBox->AddEntry(htemp18,fileLabel18,"l");		
 	infoBox->SetNColumns(2);
 //  infoBox->AddEntry(htemp16,"M_{Wino} = 540 GeV","l");	
@@ -897,8 +1145,8 @@ if (BGs.size() != 0){
 		if ( data_max < stack_max ) {
 			data->SetMaximum(5*stack_max);
 			}			
-//		data->SetMinimum(1.1);						
-		data->SetMinimum(0.05);	
+		data->SetMinimum(minimum);						
+//		data->SetMinimum(0.05);	
 		data->Draw("E1");			
  	  tempStack->Draw("same hist f");
 //		htemp18->Draw("same hist");					
@@ -926,8 +1174,8 @@ if (BGs.size() != 0){
 		tempStack->GetHistogram()->GetYaxis()->SetTitleSize(0.04);
 		tempStack->GetHistogram()->GetXaxis()->SetTitleOffset(1);	
 		tempStack->GetHistogram()->GetYaxis()->SetTitleOffset(1);
-
-		tempStack->GetHistogram()->SetMinimum(0.05);
+	//	tempStack->GetHistogram()->SetMinimum(0.001);
+		tempStack->GetHistogram()->SetMinimum(minimum);
 		tempStack->GetHistogram()->SetTitle("");
 		tempStack->Draw("same hist f");	
 	//	data->SetMaximum(stack_max+(stack_max/2));
@@ -935,10 +1183,12 @@ if (BGs.size() != 0){
 		//data->Draw("AXIS");	
 	//	tempStack->SetMinimum(0.01);
 //		htemp18->Draw("same hist");
-		h_uncertainty->Draw("same E2");		
+//		h_uncertainty->Draw("same E2");		
+//		htemp17->Add(h_uncertainty);
+//		htemp16->Add(h_uncertainty);
 		htemp17->Draw("same hist");
 		htemp16->Draw("same hist");	
-//		h_uncertainty->Draw("same E2");
+		h_uncertainty->Draw("same E2");
 	//	canvasDefault->Update();	
 		gPad->RedrawAxis();
 	} 
@@ -953,6 +1203,7 @@ if (BGs.size() != 0){
 	infoBox->Draw();	
 	infoBoxSignal->Draw();	
 	canvasDefault->SaveAs(filename+"_log."+imageType);
+	}
 }
 
 
@@ -978,7 +1229,7 @@ void recurseOverKeys( TDirectory *target1 ) {
 
       // **************************
       // Plot & Save this Histogram
-      TH1F *htemp1, *htemp2, *htemp3, *htemp4, *htemp5, *htemp6, *htemp7, *htemp8, *htemp9, *htemp10, *htemp11, *htemp12, *htemp13, *htemp14, *htemp15,
+      TH1F *htemp1, *htemp2, *htemp3, *htemp4,*htemp5, *htemp6, *htemp7, *htemp8, *htemp9, *htemp10, *htemp11, *htemp12, *htemp13, *htemp14, *htemp15,
 			*htemp16, *htemp17, *htemp19;//*htemp18, *htemp20, *htemp21, *htemp22, *htemp23, *htemp24, *htemp25,	*htemp26, *htemp27, *htemp28, *htemp29 *htemp30 ;// *htemp18, *htemp19, *htemp20, *htemp21, *htemp22, *htemp23, *htemp24, *htemp25,
 		//	*htemp26, *htemp27, *htemp28, *htemp29;
 
@@ -989,7 +1240,7 @@ void recurseOverKeys( TDirectory *target1 ) {
         sourceFile2->GetObject(path+"/"+histName, htemp2);
         sourceFile3->GetObject(path+"/"+histName, htemp3);				
         sourceFile4->GetObject(path+"/"+histName, htemp4);
-        sourceFile5->GetObject(path+"/"+histName, htemp5);
+        sourceFile5->GetObject(path+"/"+histName, htemp5);				
         sourceFile6->GetObject(path+"/"+histName, htemp6);				
         sourceFile7->GetObject(path+"/"+histName, htemp7);				
         sourceFile8->GetObject(path+"/"+histName, htemp8);
@@ -1022,8 +1273,8 @@ void recurseOverKeys( TDirectory *target1 ) {
 			sourceFile2->GetObject(histName, htemp2);
 			sourceFile3->GetObject(histName, htemp3);
 			sourceFile4->GetObject(histName, htemp4);
-      sourceFile5->GetObject(histName, htemp5);
-      sourceFile6->GetObject(histName, htemp6);				
+			sourceFile5->GetObject(histName, htemp5);
+			sourceFile6->GetObject(histName, htemp6);			
       sourceFile7->GetObject(histName, htemp7);				
       sourceFile8->GetObject(histName, htemp8);
       sourceFile9->GetObject(histName, htemp9);				
@@ -1053,7 +1304,7 @@ void recurseOverKeys( TDirectory *target1 ) {
     }
 
       outputFilename=histName;
-      plotHistograms(htemp1, htemp2, htemp3, htemp4, htemp5, htemp6, htemp7, htemp8, htemp9, htemp10, htemp11, htemp12, htemp13, htemp14, htemp15,
+      plotHistograms(htemp1, htemp2, htemp3, htemp4,htemp5, htemp6, htemp7, htemp8, htemp9, htemp10, htemp11, htemp12, htemp13, htemp14, htemp15,
 			htemp16, htemp17, htemp19,outputFolder+path+"/"+outputFilename);
 			// htemp18, htemp20, htemp21, htemp22, htemp23, htemp24, htemp25, htemp26, htemp27, htemp28, htemp29, htemp30,outputFolder+path+"/"+outputFilename); // htemp18, htemp19, htemp20, htemp21, htemp22, htemp23, htemp24, htemp25,
 		//	htemp26, htemp27, htemp28, htemp29, outputFolder+path+"/"+outputFilename);
@@ -1080,10 +1331,10 @@ TH1::SetDefaultSumw2();
 fileLabel1.ReplaceAll("_V06.1_sel.root","");
 fileLabel2.ReplaceAll("_V02.1_sel.root","");
 fileLabel3.ReplaceAll("Add.root","");
+fileLabel5.ReplaceAll("Add.root","");
+fileLabel6.ReplaceAll("Add.root","");
 fileLabel17.ReplaceAll(".root","");		
 fileLabel4.ReplaceAll("_V02.1_sel.root","");		
-fileLabel5.ReplaceAll("_V06.1_sel.root","");		
-fileLabel6.ReplaceAll("_V02.1_sel.root","");		
 fileLabel7.ReplaceAll("_V02.1_sel.root","");		
 fileLabel8.ReplaceAll("_V02.1_sel.root","");		
 fileLabel9.ReplaceAll("_V06.1_sel.root","");		
@@ -1106,7 +1357,7 @@ fileLabel19.ReplaceAll(".root","");
   sourceFile3 = TFile::Open( fileName3 );
   sourceFile4 = TFile::Open( fileName4 );
   sourceFile5 = TFile::Open( fileName5 );
-  sourceFile6 = TFile::Open( fileName6 );
+  sourceFile6 = TFile::Open( fileName6 );	
   sourceFile7 = TFile::Open( fileName7 );
   sourceFile8 = TFile::Open( fileName8 );	
   sourceFile9 = TFile::Open( fileName9 );
@@ -1151,7 +1402,7 @@ fileLabel19.ReplaceAll(".root","");
   sourceFile3->Close();
 	sourceFile4->Close();
   sourceFile5->Close();
-  sourceFile6->Close();
+	sourceFile6->Close();	
   sourceFile7->Close();
 	sourceFile8->Close();	
   sourceFile9->Close();
@@ -1163,7 +1414,7 @@ fileLabel19.ReplaceAll(".root","");
 	sourceFile15->Close();
 	sourceFile16->Close();		
 	sourceFile17->Close();	
-	sourceFile18->Close();	
+//	sourceFile18->Close();	
   sourceFile19->Close();
 /*if(GJetsPt){
 	sourceFile18->Close();	

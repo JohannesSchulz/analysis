@@ -24,10 +24,17 @@ using namespace std;
 
 int selection(){
 
-	double trigger_effi = 0.885339;
+	double trigger_effi = 0.865;
+//	double trigger_effi = 0.885339;
 	double e_fakerate = 0.0148;
-	double scale_EWK = 1.9223;
-	double scale_GJets = 2.34156;
+	
+	double scale_EWK = 1.95;
+	double scale_Z = 1.424;
+	double scale_W = 1.579;
+	double scale_VGamma = 1.33;	
+	double scale_GJets = 2.385;	
+//	double scale_EWK = 1.9223;
+//	double scale_GJets = 2.34156;
 	double scale_740 = 1.135;		
 	double scale_640 = 1.154034091;	
 	double scale_540 = 1.183054415;		
@@ -42,6 +49,8 @@ int selection(){
 //	TFile *G_file	  	= new TFile("GAdd.root");	
 	TFile *QCD	  				= new TFile("QCDAdd.root");		
   TFile *EWKBG 					= new TFile("EWKBG.root");
+  TFile *Z 							= new TFile("ZGammaAdd.root");	
+  TFile *W 							= new TFile("WGammaAdd.root");	
 	TFile *GammaPixel			= new TFile("GammaPixel.root");	
 //	TFile *ttbar	= new TFile("TTJets_V02.1_sel.root");	
   TFile *ttbar					= new TFile("TTGamma_V02.1_sel.root");
@@ -307,32 +316,32 @@ int selection(){
 /////////////////	
 		
 	
-	TH1F *	H_Data_9  	 	= (TH1F*)Data->Get("h_stage9_met_significance");	
-	TH1F *	H_GJets_9    = (TH1F*)GJets->Get("h_stage9_met_significance");
+	TH1F *	H_Data_12  	 	= (TH1F*)Data->Get("h_stage12_met_significance");	
+	TH1F *	H_GJets_12    = (TH1F*)GJets->Get("h_stage12_met_significance");
 //	TH1F *	H_G2    	= (TH1F*)G_file->Get(histo.c_str());	
-	TH1F *	H_QCD_9    		= (TH1F*)QCD->Get("h_stage9_met_significance");		
-  TH1F *	H_EWKBG_9	 		= (TH1F*)EWKBG->Get("h_stage9_met_significance");
-	TH1F *	H_GammaPixel_9= (TH1F*)GammaPixel->Get("h_stage9_met_significance");	
-	TH1F *	H_ttbar_9 		= (TH1F*)ttbar->Get("h_stage9_met_significance");
-	TH1F *	H_Diboson_9 	= (TH1F*)Diboson->Get("h_stage9_met_significance");	
-	TH1F *	H_signal_540_9= (TH1F*)signal_540->Get("h_stage9_met_significance");
-	TH1F *	H_signal_640_9= (TH1F*)signal_640->Get("h_stage9_met_significance");		
+	TH1F *	H_QCD_12    		= (TH1F*)QCD->Get("h_stage12_met_significance");		
+  TH1F *	H_EWKBG_12	 		= (TH1F*)EWKBG->Get("h_stage12_met_significance");
+	TH1F *	H_GammaPixel_12= (TH1F*)GammaPixel->Get("h_stage12_met_significance");	
+	TH1F *	H_ttbar_12 		= (TH1F*)ttbar->Get("h_stage12_met_significance");
+	TH1F *	H_Diboson_12 	= (TH1F*)Diboson->Get("h_stage12_met_significance");	
+	TH1F *	H_signal_540_12= (TH1F*)signal_540->Get("h_stage12_met_significance");
+	TH1F *	H_signal_640_12= (TH1F*)signal_640->Get("h_stage12_met_significance");		
 	
-	H_GammaPixel_9->Scale(e_fakerate);
-	H_EWKBG_9->Scale(scale_EWK);
-	H_GJets_9->Scale(scale_GJets);
+	H_GammaPixel_12->Scale(e_fakerate);
+	H_EWKBG_12->Scale(scale_EWK);
+	H_GJets_12->Scale(scale_GJets);
 
-  H_EWKBG_9->Add(H_GJets_9);
-  H_EWKBG_9->Add(H_QCD_9);	
-  H_EWKBG_9->Add(H_ttbar_9);	
-  H_EWKBG_9->Add(H_Diboson_9);
+  H_EWKBG_12->Add(H_GJets_12);
+  H_EWKBG_12->Add(H_QCD_12);	
+  H_EWKBG_12->Add(H_ttbar_12);	
+  H_EWKBG_12->Add(H_Diboson_12);
 	
-  H_EWKBG_9->Scale(trigger_effi);
+  H_EWKBG_12->Scale(trigger_effi);
 	
-  H_EWKBG_9->Add(H_GammaPixel_9);
+  H_EWKBG_12->Add(H_GammaPixel_12);
 	
-  H_signal_540_9->Scale(trigger_effi);
-	H_signal_640_9->Scale(scale_640*trigger_effi);	
+  H_signal_540_12->Scale(trigger_effi);
+	H_signal_640_12->Scale(scale_640*trigger_effi);	
 	
 /////////////////	
 	/*Next stage */
@@ -340,16 +349,16 @@ int selection(){
 		
 	
 			
-	TH1F *	H_Data_10  	 	= (TH1F*)Data->Get("h_stage10_met_significance");	
-	TH1F *	H_GJets_10    = (TH1F*)GJets->Get("h_stage10_met_significance");
+	TH1F *	H_Data_10  	 	= (TH1F*)Data->Get("h_stage10_met_significance_32");	
+	TH1F *	H_GJets_10    = (TH1F*)GJets->Get("h_stage10_met_significance_32");
 //	TH1F *	H_G2    	= (TH1F*)G_file->Get(histo.c_str());	
-	TH1F *	H_QCD_10    		= (TH1F*)QCD->Get("h_stage10_met_significance");		
-  TH1F *	H_EWKBG_10	 		= (TH1F*)EWKBG->Get("h_stage10_met_significance");
-	TH1F *	H_GammaPixel_10= (TH1F*)GammaPixel->Get("h_stage10_met_significance");	
-	TH1F *	H_ttbar_10 		= (TH1F*)ttbar->Get("h_stage10_met_significance");
-	TH1F *	H_Diboson_10 	= (TH1F*)Diboson->Get("h_stage10_met_significance");	
-	TH1F *	H_signal_540_10= (TH1F*)signal_540->Get("h_stage10_met_significance");
-	TH1F *	H_signal_640_10= (TH1F*)signal_640->Get("h_stage10_met_significance");		
+	TH1F *	H_QCD_10    		= (TH1F*)QCD->Get("h_stage10_met_significance_32");		
+  TH1F *	H_EWKBG_10	 		= (TH1F*)EWKBG->Get("h_stage10_met_significance_32");
+	TH1F *	H_GammaPixel_10= (TH1F*)GammaPixel->Get("h_stage10_met_significance_32");	
+	TH1F *	H_ttbar_10 		= (TH1F*)ttbar->Get("h_stage10_met_significance_32");
+	TH1F *	H_Diboson_10 	= (TH1F*)Diboson->Get("h_stage10_met_significance_32");	
+	TH1F *	H_signal_540_10= (TH1F*)signal_540->Get("h_stage10_met_significance_32");
+	TH1F *	H_signal_640_10= (TH1F*)signal_640->Get("h_stage10_met_significance_32");		
 	
 	H_GammaPixel_10->Scale(e_fakerate);
 	H_EWKBG_10->Scale(scale_EWK);
@@ -405,7 +414,7 @@ int selection(){
 	TCanvas *canvas = new TCanvas("canvas","Plots",1000,700);
   canvas->Divide(1,1);
 	TCanvas *canvas2 = new TCanvas("canvas2","Plots",1000,700);
-  canvas2->Divide(2,2);	
+  canvas2->Divide(2,1);	
 	
 	canvas->cd(1);
 	H_EWKBG_1->GetYaxis()->SetTitleSize(0.06);
@@ -449,9 +458,9 @@ int selection(){
   H_EWKBG_8->SetLineColor(kYellow);
 	H_EWKBG_8->SetLineWidth(4);		
 	
-	H_EWKBG_9->Draw("hist  same");
-	H_EWKBG_9->SetLineColor(kMagenta+2);
-	H_EWKBG_9->SetLineWidth(4);	
+	H_EWKBG_12->Draw("hist  same");
+	H_EWKBG_12->SetLineColor(kMagenta+2);
+	H_EWKBG_12->SetLineWidth(4);	
 		
 	H_EWKBG_10->Draw("hist  same");
 	H_EWKBG_10->SetLineColor(kRed);
@@ -485,7 +494,7 @@ int selection(){
 	infoBox->AddEntry(H_EWKBG_6,"n_jets < 3" , "l");	
 	infoBox->AddEntry(H_EWKBG_7,"sum_signal > 500 GeV" , "l");		
 	infoBox->AddEntry(H_EWKBG_8,"pt ratio + met ratio" , "l");	
-	infoBox->AddEntry(H_EWKBG_9,"trans_mass > 350 GeV" , "l");
+	infoBox->AddEntry(H_EWKBG_12,"n loose #gamma > 1" , "l");
 	infoBox->AddEntry(H_EWKBG_10,"pt_over_sqrt_met > 10" , "l");	
 	infoBox->AddEntry(H_EWKBG_11,"pt_over_sqrt_ht> 10" , "l");		
 	infoBox->AddEntry(H_signal_540_1,"signal_540" , "l");	
@@ -500,7 +509,7 @@ int selection(){
 /*Check the influence of good cuts on the signal*/
 //////////////////////////////////////////////////
 	
-	canvas2->cd(1);
+/*	canvas2->cd(1);
   H_EWKBG_1->Draw("hist");
 	H_EWKBG_4->Draw("hist same");
 	H_signal_640_1->Draw("hist same");	
@@ -516,26 +525,35 @@ int selection(){
 			
  	gStyle->SetOptStat(00000);
 	gPad->SetLogy(1);	
-//	gPad->SetBottomMargin(0.12);	
+//	gPad->SetBottomMargin(0.12);	*/
 /////////////////////////////////////
 /*Check the influence on the signal*/
 /////////////////////////////////////
 	
-	canvas2->cd(2);
+	canvas2->cd(1);
   H_EWKBG_1->Draw("hist");
-	H_EWKBG_9->Draw("hist same");
+	H_EWKBG_12->Draw("hist same");
 	H_signal_640_1->Draw("hist same");	
-	H_signal_640_9->Draw("hist  same");
-	H_signal_640_9->SetLineColor(kBlack);
-	H_signal_640_9->SetLineStyle(2);	
-	H_signal_640_9->SetLineWidth(3);	
+	H_signal_640_12->Draw("hist  same");
+	H_signal_640_12->SetLineColor(kBlack);
+	H_signal_640_12->SetLineStyle(2);	
+	H_signal_640_12->SetLineWidth(3);	
 			
-	double NMC = H_EWKBG_9->Integral(H_EWKBG_9->FindBin(230),-1);
-	double N_signal_640_630 = H_signal_640_9->Integral(H_EWKBG_9->FindBin(230),-1);
-	cout << "find bin:   " << 	H_EWKBG_9->FindBin(230)	<< endl;
+	double NMC = H_EWKBG_12->Integral(H_EWKBG_12->FindBin(230),-1);
+	double N_signal_640_630 = H_signal_640_12->Integral(H_EWKBG_12->FindBin(230),-1);
+	cout << "find bin:   " << 	H_EWKBG_12->FindBin(230)	<< endl;
 	double significance_640_630 =  N_signal_640_630 / sqrt(N_signal_640_630 + NMC);	
 	cout << "significance_640_630 (trans mass):  " << significance_640_630 << endl;				
-			
+	TLegend *infoBox3 = new TLegend(0.4, 0.68, 0.9, 0.899,"");//0.75, 0.83, 0.99, 0.99, "");
+
+	infoBox3->AddEntry(H_EWKBG_1,"before selection" , "f");	
+	infoBox3->AddEntry(H_EWKBG_12,"n loose #gamma > 1" , "l");	
+	infoBox3->AddEntry(H_signal_640_1,"signal_640 before" , "l");	
+	infoBox3->AddEntry(H_signal_640_12,"signal_640 after" , "l");					 
+  infoBox3->SetShadowColor(0);  // 0 = transparent
+  infoBox3->SetFillColor(kWhite); 
+	infoBox3->SetTextSize(0.035);
+  infoBox3->Draw("same");			
  	gStyle->SetOptStat(00000);
 	gPad->SetLogy(1);	
 //	gPad->SetBottomMargin(0.12);	
@@ -543,7 +561,7 @@ int selection(){
 /*Check the influence on the signal*/
 /////////////////////////////////////
 	
-	canvas2->cd(3);
+	canvas2->cd(2);
   H_EWKBG_1->Draw("hist");
 	H_EWKBG_10->Draw("hist same");
 	H_signal_640_1->Draw("hist same");	
@@ -552,12 +570,22 @@ int selection(){
 	H_signal_640_10->SetLineStyle(2);	
 	H_signal_640_10->SetLineWidth(3);	
 			
-	double NMC = H_EWKBG_10->Integral(H_EWKBG_10->FindBin(230),-1);
-	double N_signal_640_630 = H_signal_640_10->Integral(H_EWKBG_10->FindBin(230),-1);		
+	double NMC = H_EWKBG_10->Integral(22,-1);
+	double N_signal_640_630 = H_signal_640_10->Integral(22,-1);		
 	double significance_640_630 =  N_signal_640_630 / sqrt(N_signal_640_630 + NMC);	
-	cout << "significance_640_630 (pt_over_sqrt_met):  " << significance_640_630 << endl;				
+	cout << "significance_640_630 (pt_over_sqrt_met):  " << significance_640_630 << endl;	
+	cout << "Bin 22 low edge:  " << 		H_signal_640_10->GetBinLowEdge(22) << endl;
 			
-			
+	TLegend *infoBox4 = new TLegend(0.4, 0.68, 0.9, 0.899,"");//0.75, 0.83, 0.99, 0.99, "");
+
+	infoBox4->AddEntry(H_EWKBG_1,"before selection" , "f");
+	infoBox4->AddEntry(H_EWKBG_10,"sum_signal_over_sqrt_met > 32" , "l");	
+	infoBox4->AddEntry(H_signal_640_1,"signal_640 before" , "l");
+	infoBox4->AddEntry(H_signal_640_10,"signal_640 after" , "l");				 
+  infoBox4->SetShadowColor(0);  // 0 = transparent
+  infoBox4->SetFillColor(kWhite); 
+	infoBox4->SetTextSize(0.035);
+  infoBox4->Draw("same");			
  	gStyle->SetOptStat(00000);
 	gPad->SetLogy(1);	
 //	gPad->SetBottomMargin(0.12);	
@@ -565,7 +593,7 @@ int selection(){
 /////////////////////////////////////
 /*Check the influence on the signal*/
 /////////////////////////////////////
-	
+/*	
 	canvas2->cd(4);
   H_EWKBG_1->Draw("hist");
 	H_EWKBG_11->Draw("hist same");
@@ -604,7 +632,7 @@ int selection(){
 	gPad->SetLogy(1);	
 //	gPad->SetBottomMargin(0.12);	
 
-
+*/
 	canvas2->Update();
 		
 ////////////////////	
@@ -980,7 +1008,7 @@ int selection(){
 	infoBox_met->AddEntry(H_EWKBG_6,"n_jets < 3" , "l");	
 	infoBox_met->AddEntry(H_EWKBG_7,"sum_signal > 500 GeV" , "l");		
 	infoBox_met->AddEntry(H_EWKBG_8,"met_significance > 150" , "l");	
-	infoBox_met->AddEntry(H_EWKBG_9,"trans_mass > 350 GeV" , "l");		
+	infoBox_met->AddEntry(H_EWKBG_12,"n loose #gamma > 1" , "l");		
 	infoBox_met->AddEntry(H_signal_540_1,"signal_540" , "l");	
 	infoBox_met->AddEntry(H_signal_640_1,"signal_640" , "l");		 
   infoBox_met->SetShadowColor(0);  // 0 = transparent

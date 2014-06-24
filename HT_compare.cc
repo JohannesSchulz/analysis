@@ -17,7 +17,7 @@
 using namespace std;
 
 int HT_compare(){
-
+	 
 	TFile *Had  	= new TFile("PhotonHadD_V02.1_sel.root");	
 	TFile *Data 	= new TFile("HT_Compare.root");
 
@@ -52,6 +52,11 @@ int HT_compare(){
 	Arrow3->SetTextSize(0.1);		
 	Arrow3->Draw("same");	
 	
+ opis = new TPaveText(0,0,450,182000);
+ opis->SetFillColor(kGray+2);
+  opis->SetFillStyle(3244);
+ opis->Draw();  
+	
 	TLegend *infoBox = new TLegend(0.77, 0.8, 0.99, 0.99,"");//0.75, 0.83, 0.99, 0.99, "");
 	infoBox->SetHeader("H_{T} comparison");
 
@@ -62,5 +67,6 @@ int HT_compare(){
   infoBox->SetFillColor(kWhite); 
 	infoBox->SetTextSize(0.055);
   infoBox->Draw();
+	
 
 }
