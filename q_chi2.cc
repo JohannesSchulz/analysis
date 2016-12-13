@@ -49,10 +49,10 @@ int q_chi2(){
 //    string histo = "h_METoverSqHT_100_24";		 
 //   string histo = "h_METoverSqHT_100_17";
  //    string histo = "h_METoverSqHT_100_12"; //beste!
- string histo = "h_METoverSqHT_double_control_20";
+// string histo = "h_METoverSqHT_double_control_20";
 //		 string histo = "h_METoverSqHT_met_sign_control";
   //   string histo = "h_METoverSqHT_trans_mass_control";
-//		 string histo = "h_final_MET_significance_unblind";
+//		 string histo = "h_met";
 
 /*  HT_array */
 
@@ -62,40 +62,43 @@ int q_chi2(){
 //	string histo = "h_HT_array_110";	
 //	string histo = "h_HT_array_100_41";	
 
-
+//string histo = "h_METoverSqHT_double_control_10_80";
+ // string histo = "h_METoverSqHT_double_control_100_300";
+ string histo = "h_METoverSqHT_double_control_3_regions_100_10_80";  //<--- Analysis
+//	string histo = "h_METoverSqHT_double_control_100_300";
+//	string histo = "h_METoverSqHT_100_12";
 	
-  TFile *Data  			= new TFile("PhotonParkedD_V06.1_sel.root");
-	TFile *GJets_file	  	= new TFile("GJetsAdd.root");	
-	TFile *QCD	  	= new TFile("QCDAdd.root");	
-	TFile *WG	  	= new TFile("WGammaAdd.root");
-//  TFile *WG	  	= new TFile("WGamma_splitAdd.root");
-	TFile *ZG	  	= new TFile("ZGammatest/Znew.root");
-//	TFile *ZG	  	= new TFile("ZGammaAdd.root");
-//  TFile *EWKBG 		= new TFile("EWKBG.root");
-	TFile *GammaPixel	= new TFile("GammaPixel.root");		
-  TFile *ttbar	= new TFile("TTGamma_V02.1_sel.root");
-	TFile *Diboson	= new TFile("Diboson.root");	
-	TFile *signal	= new TFile("signal_640_630.root");	
-	TFile *signal2	= new TFile("signal_540_530.root");	
+//	string histo = "h_METoverSqHT_double_control_100_300";
+	
+  TFile *Data  				= new TFile("PhotonParkedD_V06.1_sel.root");
+	TFile *GJets_file	  = new TFile("GJetsAdd.root");	
+	TFile *QCD	  			= new TFile("QCDAdd.root");	
+	TFile *WG	  				= new TFile("WGammaAdd.root");
+	TFile *ZG	  				= new TFile("ZGammaAdd.root");
+	TFile *GammaPixel		= new TFile("GammaPixel.root");		
+  TFile *ttbar				= new TFile("TTGamma_V02.1_sel.root");
+	TFile *Diboson			= new TFile("Diboson.root");	
+	TFile *signal				= new TFile("signal_640_630.root");	
+	TFile *signal2			= new TFile("signal_540_530.root");	
 		
-	TH1F *	H_Data  = (TH1F*)Data->Get(histo.c_str());	
-	TH1F *	H_GJets2 = (TH1F*)GJets_file->Get(histo.c_str());
+	TH1F *	H_Data  		= (TH1F*)Data->Get(histo.c_str());	
+	TH1F *	H_GJets2 		= (TH1F*)GJets_file->Get(histo.c_str());	
+	TH1F *	H_WG  	 		= (TH1F*)WG->Get(histo.c_str());	
+	TH1F *	H_ZG     		= (TH1F*)ZG->Get(histo.c_str());
+	TH1F *	H_QCD    		= (TH1F*)QCD->Get(histo.c_str());		
+	TH1F *	H_GammaPixel= (TH1F*)GammaPixel->Get(histo.c_str());	
+	TH1F *	H_ttbar 		= (TH1F*)ttbar->Get(histo.c_str());
+	TH1F *	H_Diboson 	= (TH1F*)Diboson->Get(histo.c_str());	
+	TH1F *	H_signal 		= (TH1F*)signal->Get(histo.c_str());	
+	TH1F *	H_signal2 	= (TH1F*)signal2->Get(histo.c_str());		
+	TH1F *	H_GJets2_scale= (TH1F*)GJets_file->Get("h_met");
 	
-	TH1F *	H_WG  	 = (TH1F*)WG->Get(histo.c_str());	
-	TH1F *	H_ZG     = (TH1F*)ZG->Get(histo.c_str());
-	TH1F *	H_QCD    = (TH1F*)QCD->Get(histo.c_str());		
-//  TH1F *	H_EWKBG	 = (TH1F*)EWKBG->Get(histo.c_str());
-	TH1F *	H_GammaPixel = (TH1F*)GammaPixel->Get(histo.c_str());	
-	TH1F *	H_ttbar = (TH1F*)ttbar->Get(histo.c_str());
-	TH1F *	H_Diboson = (TH1F*)Diboson->Get(histo.c_str());	
-	TH1F *	H_signal = (TH1F*)signal->Get(histo.c_str());	
-	TH1F *	H_signal2 = (TH1F*)signal2->Get(histo.c_str());	
-	
-	TH1F *	H_GJets2_scale    = (TH1F*)GJets_file->Get("h_met");
 	gStyle->SetPaintTextFormat(".2f");	
 //	H_WG->Scale(1.424);
 //	H_ZG->Scale(1.579);
-	
+
+	H_WG->Scale(1.579);
+	H_ZG->Scale(1.424);	
 	H_WG->Add(H_ZG);	
 	
 	TH1F *H_EWKBG = (TH1F*)H_WG->Clone("H_EWKBG");	
@@ -107,21 +110,20 @@ int q_chi2(){
 			
 	TCanvas *canvas = new TCanvas("canvas","Plots",1000,700);
 	TCanvas *canvas2 = new TCanvas("canvas2","Plots",1000,700);			
-	TCanvas *canvas3 = new TCanvas("canvas3","Plots",1000,700);	
-	//canvas->Divide(6,10);	
+//	TCanvas *canvas3 = new TCanvas("canvas3","Plots",1000,700);	
+//	canvas3->Divide(1,1);
+
 	canvas->Divide(2,2);
 	canvas2->Divide(1,1);
-	canvas3->Divide(1,1);
-	
-	
+  CMS_text = new TLatex(0.1,0.94,"#scale[1.2]{CMS}#scale[0.5]{ }#scale[0.8]{#bf{#it{Private Work}}}#bf{, 7.4 fb^{-1} (8 TeV)}");	
+	CMS_text->SetNDC();
+  CMS_text->SetTextSize(0.069);
 		
 	H_EWKBG->Scale(trigger_effi);
 	H_GJets2->Scale(trigger_effi);
-
 	H_ttbar->Scale(trigger_effi);
 	H_Diboson->Scale(trigger_effi);
-	H_QCD->Scale(trigger_effi);		
-		
+	H_QCD->Scale(trigger_effi);				
 	H_GJets2_scale->Scale(trigger_effi);
 	
 		
@@ -199,21 +201,23 @@ int q_chi2(){
 //	H_EWK->Add(H_ttbar);		//Zwar gleicher Prozess aber bereits NNLO, deswegen nicht mitskalieren
 //	H_EWK->Add(H_Diboson);
 //	H_EWK->Add(H_QCD);	
-	canvas->cd(i);
+	canvas->cd(1);
 	
 	chi2[i-1] = H_Data->Chi2Test(H_EWK,"UW OF P CHI2/NDF");
 
 	canvas->Update();
-if (i == 21 || i == 141 || i == 64 || i == 65){
-  if (i == 64 || i == 65){
-	canvas->cd(i - 62); 
+if (i == 21 || i == 98 || i == 55 || i == 56){
+  if (i == 55 || i == 56){
+	canvas->cd(i - 53); 
 	}
   if (i == 21){
 	canvas->cd(1);
 	}		
-  if (i == 141){
+  if (i == 98){
 	canvas->cd(4);
-	}		
+	}
+	
+//	if ( i == 55 ) {		
 	gPad->SetLogy(1);
 	gStyle->SetPaintTextFormat(".2f");		
 	H_Data->Draw("E1");
@@ -225,47 +229,50 @@ if (i == 21 || i == 141 || i == 64 || i == 65){
 	H_Data->SetLineColor(kBlack);
 	H_Data->SetTitleSize(0.5);	
 	H_Data->GetXaxis()->SetTitle("#slash{E}_{T} / #sqrt{H_{T}} [#sqrt{GeV}]");	
-	H_Data->GetYaxis()->SetTitleSize(0.062);
-  H_Data->GetXaxis()->SetTitleSize(0.062);		
+	H_Data->GetYaxis()->SetTitleSize(0.075);
+  H_Data->GetXaxis()->SetTitleSize(0.07);		
 	H_Data->GetYaxis()->SetLabelSize(0.07);
 	H_Data->GetXaxis()->SetLabelSize(0.062);
-	H_Data->GetXaxis()->SetTitleOffset(0.8);
-	gPad->SetBottomMargin(0.12);	
-	gPad->SetLeftMargin(0.12);
+	H_Data->GetXaxis()->SetTitleOffset(0.9);
+	H_Data->GetYaxis()->SetTitleOffset(0.9);	
+	gPad->SetBottomMargin(0.15);	
+	gPad->SetLeftMargin(0.13);
 	gPad->SetRightMargin(0.03);	
-	CMS_text = new TLatex(0.1,0.91,"#int L dt = 7.4 fb^{-1},  #sqrt{S} = 8 TeV,   CMS PRIVATE WORK");
-	CMS_text->SetNDC();
-  CMS_text->SetTextSize(0.05);
+	gPad->SetTopMargin(0.08);		
+//	CMS_text = new TLatex(0.1,0.91,"#int L dt = 7.4 fb^{-1},  #sqrt{S} = 8 TeV,   CMS PRIVATE WORK");
+////	CMS_text->SetNDC();
+//  CMS_text->SetTextSize(0.05);
   CMS_text->Draw();		
 	std::string s;
 	std::stringstream out;
 	out << scale_EWK;
 	s = out.str();
-	string factor = "k_{V#gamma} = ";
+	string factor = "#bf{k_{V#gamma} = }";
 	factor.append(s);
 	
 	std::string s1;
 	std::stringstream out1;
 	out1 << scale_GJets;
 	s1 = out1.str();
-	string factor1 = "#Rightarrow k_{#gammaJets} = ";
+	string factor1 = "#bf{#Rightarrow k_{#gammaJets} = }";
 	factor1.append(s1);	
 	
 	std::string s2;
 	std::stringstream out2;
 	out2 << chi2[i-1];
 	s2 = out2.str();
-	string factor2 = "#chi^{2}/ndf = ";
+	string factor2 = "#bf{#chi^{2}/ndf = }";
 	factor2.append(s2);	
 	
+	
 	gStyle->SetPaintTextFormat(".2f");		
-	kEWK = new TLatex(12.5,200,factor.c_str());
+	kEWK = new TLatex(12.5,290,factor.c_str());
   kEWK->SetTextSize(0.07);
   kEWK->Draw();	
-	kGJets = new TLatex(12.5,160,factor1.c_str());
+	kGJets = new TLatex(12.5,240,factor1.c_str());
   kGJets->SetTextSize(0.07);
   kGJets->Draw("same");	
-	Chi2T = new TLatex(12.5,120,factor2.c_str());
+	Chi2T = new TLatex(12.5,180,factor2.c_str());
   Chi2T->SetTextSize(0.07);
   Chi2T->Draw("same");	
 	gStyle->SetPaintTextFormat(".2f");	
@@ -292,14 +299,14 @@ if (i == 21 || i == 141 || i == 64 || i == 65){
 	
 	H_EWK->Draw("hist E1 same");
 	H_EWK->SetLineColor(kBlue);
-	H_EWK->SetLineWidth(3);	
+	H_EWK->SetLineWidth(4);	
 	
 	H_Data->Draw("same E1");	
 	gPad->SetLogy(0);
 	gPad->RedrawAxis();
 	gStyle->SetOptStat(00000);
-	
-	TLegend *infoBox = new TLegend(0.69, 0.4, 0.97, 0.899,"");//0.75, 0.83, 0.99, 0.99, "");
+	CMS_text->Draw();	
+	TLegend *infoBox = new TLegend(0.69, 0.4, 0.97, 0.92,"");//0.75, 0.83, 0.99, 0.99, "");
 
 	infoBox->AddEntry(H_Data,"corr. Data" , "lep");
 	infoBox->AddEntry(H_EWK,"V#gamma + #gammaJets" , "l");		
@@ -310,8 +317,8 @@ if (i == 21 || i == 141 || i == 64 || i == 65){
   infoBox->SetFillColor(kWhite); 
 	infoBox->SetTextSize(0.069);
   infoBox->Draw("same");
-	
 	}
+//	}
 		
 		
 		
@@ -324,11 +331,13 @@ if (i == 21 || i == 141 || i == 64 || i == 65){
 	  }
 	cout << "  -------------------------------------------" << endl;		
 	TGraph *chi2_graph = new TGraph(149,x,chi2);
-	chi2_graph->GetXaxis()->SetRangeUser(0.0,3.1);
-	chi2_graph->GetXaxis()->SetTitle("V#gamma scale");
+	chi2_graph->GetXaxis()->SetRangeUser(0.5,3.);
+	chi2_graph->GetXaxis()->SetTitle("scale factors");
 	double max = chi2_graph->GetMaximum();
 	chi2_graph->GetYaxis()->SetRangeUser(0,max); //(0.5,2.7);
 	chi2_graph->GetYaxis()->SetTitle("#chi^{2}/ndf");
+	chi2_graph->GetYaxis()->SetRangeUser(0,6);
+	chi2_graph->GetXaxis()->SetRangeUser(0.5,3);	
 	chi2_graph->SetMarkerStyle(21);
 	chi2_graph->SetMarkerColor(1);
 	chi2_graph->SetMarkerSize(.9);
@@ -338,28 +347,48 @@ if (i == 21 || i == 141 || i == 64 || i == 65){
 	chi2_graph->GetXaxis()->SetLabelSize(0.06);
 	chi2_graph->GetXaxis()->SetTitleOffset(0.85);
 	chi2_graph->GetYaxis()->SetTitleOffset(0.5);		
-	chi2_graph->SetTitle("#chi^{2} distribution for scale factor");
-	//chi2_graph->SetTitleSize(0.1);	
+//	chi2_graph->SetTitle("#chi^{2} distribution for scale factor determination");
+  chi2_graph->SetTitle("");
 	gStyle->SetOptStat(0);
 	gStyle->SetPadTickX(1);
 	gStyle->SetPadTickY(1);
 	gPad->SetGridx(1);
-	gPad->SetGridy(1);
-	chi2_graph->Draw("AP E1");	
+	gPad->SetGridy(1);	
+	gPad->SetBottomMargin(0.12);
+	 TPad *pad1 = new TPad("pad1","",0,0,1,1);
+   TPad *pad2 = new TPad("pad2","",0,0,1,1);
+//   pad2->SetFillStyle(4000); //will be transparent
+	 Double_t ymin = 0;
+   Double_t ymax = 8;
+   Double_t dy = (ymax-ymin)/0.8; //10 per cent margins top and bottom
+   Double_t xmin = 0;
+   Double_t xmax = 3.2;
+   Double_t dx = (xmax-xmin)/0.8; //10 per cent margins left and right
+//   pad1->Range(xmin-0.1*dx,ymin-0.1*dy,xmax+0.1*dx,ymax+0.1*dy);
+ //  pad1->Draw();
+//	 pad1->cd(); 	 
+	chi2_graph->Draw("AP E1 same");	
+	CMS_text->Draw();		
+//	pad1->Update();
+//	gPad->SetBottomMargin(0.12);
+//  pad1->Range(xmin-0.1*dx,ymin-0.1*dy,xmax+0.1*dx,ymax+0.1*dy);
+//	pad1->Update();		
 //Fit a parable
 	cout << "  -------------------------------------------" << endl;
   cout << " Fit" << endl;
 	cout << "  -------------------------------------------" << endl;	
 	if ( Vg ) {
-		chi2_graph->GetXaxis()->SetTitle("V#gamma scale");
-		TF1 *parable = new TF1("parable","[0]+[1]*pow(x-[2],2)",1.65,1.9);
-//		TF1 *parable = new TF1("parable","[0]+[1]*pow(x-[2],2)",1.,1.5);
+		chi2_graph->GetXaxis()->SetTitle("scale factors");
+		
+		TF1 *parable = new TF1("parable","[0]+[1]*pow(x-[2],2)",0.9,1.35);
+		
+//		TF1 *parable = new TF1("parable","[0]+[1]*pow(x-[2],2)",1.8,2.1);
 		parable->SetParameter(2,1.3);
 		}
 	else {
 	  chi2_graph->GetXaxis()->SetTitle("#gammaJets scale");
-		TF1 *parable = new TF1("parable","[0]+[1]*pow(x-[2],2)",2.45,2.65);
-		parable->SetParameter(2,2.4);
+		TF1 *parable = new TF1("parable","[0]+[1]*pow(x-[2],2)",2,2.65);
+		parable->SetParameter(2,2.3);
 		}
 //	TF1 *parable = new TF1("parable","[0]+[1]*pow(x-[2],2)",1.8,2.4);
 //	TF1 *parable = new TF1("parable","[0]+[1]*pow(x-[2],2)",1.6,2.2);	
@@ -377,12 +406,12 @@ if (i == 21 || i == 141 || i == 64 || i == 65){
 	double offset_x_m = parable->GetParameter(2);
 	double mean_up_m = parable->GetX(offset_y_m + 1, offset_x_m , 10);
 	double mean_down_m = parable->GetX(offset_y_m + 1, -10 , offset_x_m);
-	TLine *l_chi_p1 = new TLine(1,(offset_y_m + 1),3,(offset_y_m + 1));
+	TLine *l_chi_p1 = new TLine(0.5,(offset_y_m + 1),3,(offset_y_m + 1));
 	l_chi_p1->SetLineWidth(4);
 	l_chi_p1->SetLineStyle(7);
 	l_chi_p1->SetLineColor(kBlue);	
 	l_chi_p1->Draw("same");	
-	text = new TLatex((offset_x_m - 0.3),(offset_y_m + 1.2),"(#chi^{2}/ndf @ min) + 1");
+	text = new TLatex((offset_x_m + 0.1),(offset_y_m + 1.2),"(#chi^{2}/ndf @ min) + 1");
 	text->SetTextSize(0.055);
 	text->SetTextColor(kBlue);	
 	text->Draw("same");
@@ -392,7 +421,8 @@ if (i == 21 || i == 141 || i == 64 || i == 65){
 	t = add.str();
 	string value = "";
 	value.append(t);
-	text2 = new TLatex((offset_x_m - 0.1),(offset_y_m + 0.2),value.c_str());
+//	text2 = new TLatex((offset_x_m - 0.1),(offset_y_m + 0.2),value.c_str());
+  text2 = new TLatex((offset_x_m - 0.1),(offset_y_m + 0.2),"V#gamma");
 	text2->SetTextSize(0.055);
 	text2->SetTextColor(kRed);	
 	text2->Draw("same");	
@@ -415,38 +445,13 @@ if (i == 21 || i == 141 || i == 64 || i == 65){
 	cout << endl;
 	parable->Draw("SAME"); 
 	
-/*	TF1 *parable2 = new TF1("parable2","[0]+[1]*pow(x-[2],2)",1.7,3.2);
-	parable2->SetParName(0,"offset_y_m");
-	parable2->SetParName(1,"factor_m");
-	parable2->SetParName(2,"offset_x_m");
-	parable2->SetParameter(0,2);
-	parable2->SetParameter(1,1);
-	parable2->SetParameter(2,1.7);
-  chi2_graph->Fit("parable2","R");
-	double offset_y_m2 = parable2->GetParameter(0);
-	double factor_m2 = parable2->GetParameter(1);
-	double offset_x_m2 = parable2->GetParameter(2);
-	double mean_up_m2 = parable2->GetX(offset_y_m2 + 1, offset_x_m2 , 3.2);
-	double mean_down_m2 = parable2->GetX(offset_y_m2 + 1, 0.2 , offset_x_m2);
+	Vg = false;
+	
+	
+////////////////////////////////////////////////////////////////////////////////////////////	
 
-	cout << endl;
-	cout << "  ***Fit to scale2" << endl;
-	cout << endl;
-	cout << endl;
-	cout << "  RESULTS2:" << endl;
-	cout << "  -------------------------------------------" << endl;
-	cout << "  offset_y2 = " << offset_y_m2 << endl;
-	cout << "  -------------------------------------------" << endl;
-	cout << "  facto2r = " << factor_m2 << endl;
-	cout << "  -------------------------------------------" << endl;
-	cout << "  offset_x2 = " << offset_x_m2 << endl;
-	cout << "  -------------------------------------------" << endl;
-	cout << "  sigma_x_up2 = " << mean_up_m2 - offset_x_m2 << endl;
-	cout << "  -------------------------------------------" << endl;
-	cout << "  sigma_x_down2 = " << offset_x_m2 - mean_down_m2 << endl;
 
-	cout << endl;
-	parable2->Draw("SAME");	*/
+///////////////////////////////////////////////////////////////////////////////////////////////
 
 	if ( Vg ) {
 	double result = (scale*(dataEWK + dataGJets) - offset_x_m*dataEWK)/dataGJets;	
@@ -461,7 +466,7 @@ if (i == 21 || i == 141 || i == 64 || i == 65){
 	cout << "data:  " << data << "    GammaPixel:   " << dataFake << "    EWKBG:   " << dataEWK << "   GJets:   " << dataGJets << endl;
 	cout << "BG integral:  " << N_BG << "   signal integral:  " << N_signal << "   contamination:  " << N_signal/N_BG << endl;
 	cout << "BG integral:  " << N_BG << "   signal2 integral:  " << N_signal2 << "   contamination:  " << N_signal2/N_BG << endl;
-	
+/*	
 	
 	TH1F *MSH = new TH1F("MSH", "cut dependency (upper cut & binning)",5,75,125);
 	TH1F *MSH_2 = new TH1F("MSH_2", "cut dependency (upper cut)",5,75,125);	
@@ -573,4 +578,7 @@ if (i == 21 || i == 141 || i == 64 || i == 65){
 	gStyle->SetPadTickY(1);
 	gPad->SetGridx(1);
 	gPad->SetGridy(1);
+	
+*/
+	
 	}

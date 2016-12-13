@@ -20,22 +20,24 @@ int fake_e(){
 
   TH1::SetDefaultSumw2();	
 	
-	int rebin = 3;	
-	double order = 1.5;  // WZ, ZZ hängen davon ab. Insgesamt kaum Einfluss wegen ttbar
-	double efficiency = 0.885339;  // unabhängig von dieser zahl -> Skalierung
+	int rebin = 1;	
+	double order = 1;  // WZ, ZZ hängen davon ab. Insgesamt kaum Einfluss wegen ttbar
+	double efficiency = 0.865;  // unabhängig von dieser zahl -> Skalierung
 	double FakeRateMC = 0.009591; // 0.0095
 //	double FakeRateMC =0.008471; //0.0084;//0.008471;  // schwarze Linie skaliert damit
 	double error = 0;
 	double error_final = 0;
 	double bin_content = 0;
 //  double error_fake = 0.004234383;
-	double error_fake = 0.00053852;
+//	double error_fake = 0.00053852;
+	double error_fake = 0.001029563;	
 	
 //	string histo = "h_truth_fake_met_sel";	
 //	string histo = "h_truth_fake_tight_photon_pt_sel";
+	string histo = "h_truth_fake_met_significance_sel";
 //	string histo = "h_truth_fake_inverse_met_sel"; //"h_truth_fake_inverse_met_sel";//h_truth_electrons_pt_sel";
 //	string histo = "h_truth_fake_met_sel";
-		string histo = "h_MET_significance";
+//		string histo = "h_MET_significance";
 	
 	TFile *GJets40  	= new TFile("GJets_40_100_V06.1_sel.root");	
 	TFile *GJets100 	= new TFile("GJets_100_200_V02.1_sel.root");
@@ -46,8 +48,11 @@ int fake_e(){
 	TFile *QCD500 		= new TFile("QCD_500_1000_V02.1_sel.root");
 	TFile *QCD1000 		= new TFile("QCD_1000_inf_V02.1_sel.root");
 	TFile *TTJets 		= new TFile("TTJets_V02.1_sel.root");
+//	TFile *TTJets 		= new TFile("TTGamma_V02.1_sel.root");	
 	TFile *ZGamma 		= new TFile("ZGammaAdd.root");
 	TFile *WGamma 		= new TFile("WGamma_V02.1_sel.root");
+	TFile *WJets 		  = new TFile("WJets_V02.1_sel.root");
+//	TFile *WJets 		  = new TFile("WGamma_V02.1_sel.root");		
 	TFile *WW					= new TFile("WW_incl_V06.1_sel.root");
 	TFile *WZ					= new TFile("WZ_incl_V06.1_sel.root");	
 	TFile *ZZ					= new TFile("ZZ_incl_V06.1_sel.root");	
@@ -61,8 +66,11 @@ int fake_e(){
 	TFile *QCD500_P 		= new TFile("GammaPixel/QCD_500_1000_V02.1_sel.root");
 	TFile *QCD1000_P 		= new TFile("GammaPixel/QCD_1000_inf_V02.1_sel.root");
 	TFile *TTJets_P 		= new TFile("GammaPixel/TTJets_V02.1_sel.root");
+//	TFile *TTJets_P 		= new TFile("GammaPixel/TTGamma_V02.1_sel.root");	
 	TFile *ZGamma_P 		= new TFile("GammaPixel/ZGammaAdd.root");
-	TFile *WGamma_P 		= new TFile("GammaPixel/WGamma_V02.1_sel.root");	
+	TFile *WGamma_P 		= new TFile("GammaPixel/WGamma_V02.1_sel.root");
+	TFile *WJets_P   		= new TFile("GammaPixel/WJets_V02.1_sel.root");
+//	TFile *WJets_P   		= new TFile("GammaPixel/WGamma_V02.1_sel.root");			
 	TFile *WW_P					= new TFile("GammaPixel/WW_incl_V06.1_sel.root");	
 	TFile *WZ_P					= new TFile("GammaPixel/WZ_incl_V06.1_sel.root");	
 	TFile *ZZ_P					= new TFile("GammaPixel/ZZ_incl_V06.1_sel.root");
@@ -78,6 +86,7 @@ int fake_e(){
 	H_TTJets_signal	 = (TH1F*)TTJets->Get(histo.c_str());
 //	H_ZGamma_signal	 = (TH1F*)ZGamma->Get(histo.c_str());
 //	H_WGamma_signal		 = (TH1F*)WGamma->Get(histo.c_str());
+	H_WJets_signal	= (TH1F*)WJets->Get(histo.c_str());
 	H_WW_signal			=(TH1F*)WW->Get(histo.c_str());
 	H_WZ_signal			=(TH1F*)WZ->Get(histo.c_str());	
 	H_ZZ_signal			=(TH1F*)ZZ->Get(histo.c_str());	
@@ -89,11 +98,12 @@ int fake_e(){
 	H_GJets400_P_signal = (TH1F*)GJets400_P->Get(histo.c_str());
 	H_QCD100_P_signal	 = (TH1F*)QCD100_P->Get(histo.c_str());
 	H_QCD250_P_signal	 = (TH1F*)QCD250_P->Get(histo.c_str());
-	H_QCD500_P_signal	 = (TH1F*)QCD500_P->Get(histo.c_str());
+	H_WGamma_P_signal		 = (TH1F*)WGamma_P->Get(histo.c_str());H_QCD500_P_signal	 = (TH1F*)QCD500_P->Get(histo.c_str());
 	H_QCD1000_P_signal	 = (TH1F*)QCD1000_P->Get(histo.c_str()); */
 	H_TTJets_P_signal	 = (TH1F*)TTJets_P->Get(histo.c_str());
 //	H_ZGamma_P_signal	 = (TH1F*)ZGamma_P->Get(histo.c_str());
-//	H_WGamma_P_signal		 = (TH1F*)WGamma_P->Get(histo.c_str());	
+//	H_WGamma_P_signal		 = (TH1F*)WGamma_P->Get(histo.c_str());
+	H_WJets_P_signal		 = (TH1F*)WJets_P->Get(histo.c_str());
 	H_WW_P_signal			=(TH1F*)WW_P->Get(histo.c_str());
 	H_WZ_P_signal			=(TH1F*)WZ_P->Get(histo.c_str());	
 	H_ZZ_P_signal			=(TH1F*)ZZ_P->Get(histo.c_str());		
@@ -111,9 +121,10 @@ int fake_e(){
 	H_TTJets_signal->Scale(efficiency);
 //	H_ZGamma_signal->Scale(order*efficiency);
 //	H_WGamma_signal->Scale(order*efficiency);
+  H_WJets_signal->Scale(efficiency);
 	H_WW_signal->Scale(efficiency);
-	H_WZ_signal->Scale(order*efficiency);
-	H_ZZ_signal->Scale(order*efficiency);	
+	H_WZ_signal->Scale(efficiency);
+	H_ZZ_signal->Scale(efficiency);	
 	
 	
 /*	H_GJets40_P_signal->Scale(order*efficiency*FakeRateMC);
@@ -127,9 +138,10 @@ int fake_e(){
 	H_TTJets_P_signal->Scale(efficiency*FakeRateMC);
 //	H_ZGamma_P_signal->Scale(order*efficiency*FakeRateMC);
 //	H_WGamma_P_signal->Scale(order*efficiency*FakeRateMC);
+  H_WJets_P_signal->Scale(efficiency*FakeRateMC);
 	H_WW_P_signal->Scale(efficiency*FakeRateMC);
-	H_WZ_P_signal->Scale(order*efficiency*FakeRateMC);
-	H_ZZ_P_signal->Scale(order*efficiency*FakeRateMC);
+	H_WZ_P_signal->Scale(efficiency*FakeRateMC);
+	H_ZZ_P_signal->Scale(efficiency*FakeRateMC);
 	
 	
 /*	H_GJets40_signal->Rebin(rebin);
@@ -143,6 +155,7 @@ int fake_e(){
 	H_TTJets_signal->Rebin(rebin);
 //	H_ZGamma_signal->Rebin(rebin);
 //	H_WGamma_signal->Rebin(rebin);
+  H_WJets_signal->Rebin(rebin);
 	H_WW_signal->Rebin(rebin);
 	H_WZ_signal->Rebin(rebin);
 	H_ZZ_signal->Rebin(rebin);
@@ -158,6 +171,7 @@ int fake_e(){
 	H_TTJets_P_signal->Rebin(rebin);
 //	H_ZGamma_P_signal->Rebin(rebin);
 //	H_WGamma_P_signal->Rebin(rebin);
+  H_WJets_P_signal->Rebin(rebin);
 	H_WW_P_signal->Rebin(rebin);
 	H_WZ_P_signal->Rebin(rebin);
 	H_ZZ_P_signal->Rebin(rebin);
@@ -183,7 +197,7 @@ int fake_e(){
 	H_TTJets_P_signal->Draw("E2");
 
 	H_TTJets_signal->SetLineColor(kBlack);
-	H_TTJets_signal->SetLineWidth(2);	
+	H_TTJets_signal->SetLineWidth(1);	
 	H_TTJets_signal->Draw("E1 hist same");
 	
 	TLegend *infoBox2 = new TLegend(0.67, 0.55, 0.9, 0.9,"");
@@ -202,7 +216,8 @@ int fake_e(){
 	H_WW_P_signal->Add(H_WZ_P_signal);
 	H_WW_P_signal->Add(H_ZZ_P_signal);	
 	
-		
+//	H_WJets_P_signal->Scale(1.5);
+//	H_WJets_signal->Scale(1.5);	
 		
 	TCanvas *c3 = new TCanvas("c3","Plots",1200,700);
 		
@@ -213,7 +228,15 @@ int fake_e(){
 		H_WW_P_signal->SetBinError(i,error_final);	
 		
 		}
-	
+		
+/*	for ( int i = 0; i < bins; i++) {
+		error = H_WJets_P_signal->GetBinError(i);
+		bin_content = H_WJets_P_signal->GetBinContent(i);
+		error_final = sqrt( (bin_content * 1./FakeRateMC * error_fake)*(bin_content * 1./FakeRateMC * error_fake) + error*error );
+		H_WJets_P_signal->SetBinError(i,error_final);	
+		
+		}		
+*/	
 	c3->SetLogy(1);
 	H_WW_P_signal->SetLineColor(kRed);
 	H_WW_P_signal->SetFillColor(kRed);	
@@ -221,7 +244,7 @@ int fake_e(){
 	H_WW_P_signal->Draw("E2");
 
 	H_WW_signal->SetLineColor(kBlack);
-	H_WW_signal->SetLineWidth(2);	
+	H_WW_signal->SetLineWidth(1);	
 	H_WW_signal->Draw("E1 hist same");	
 	
 	TLegend *infoBox3 = new TLegend(0.67, 0.55, 0.9, 0.9,"");
@@ -259,10 +282,13 @@ int fake_e(){
 	H_GJets40_P_signal->Add(H_WW_P_signal);	 */
 	
 	H_TTJets_signal->Add(H_WW_signal);	
-	H_TTJets_P_signal->Add(H_WW_P_signal);	
+	H_TTJets_P_signal->Add(H_WW_P_signal);
+	
+//	H_TTJets_signal->Add(H_WJets_signal);	
+//	H_TTJets_P_signal->Add(H_WJets_P_signal);		
 
 	
-	TCanvas *c1 = new TCanvas("c1","Plots",1200,700);
+	TCanvas *c1 = new TCanvas("c1","Plots",790,600);
 		gStyle->SetOptStat(0);
 
 /*	for ( int i = 0; i < bins; i++) {
@@ -286,7 +312,7 @@ int fake_e(){
 	TPad *canvasDefault_1 = new TPad("canvasDefault_1", "newpad",0.0,0.0,1.0,0.325);	
 
   canvasDefault_1->SetTopMargin(0.01);
-  canvasDefault_1->SetBottomMargin(0.3);
+  canvasDefault_1->SetBottomMargin(0.35);
   canvasDefault_1->SetRightMargin(0.1);
   canvasDefault_1->SetFillStyle(0);
 	
@@ -307,26 +333,29 @@ int fake_e(){
 //	numerator->Divide(H_GJets40_P_signal);
   numerator->Divide(H_TTJets_P_signal);
 	numerator->SetTitle("");
-	numerator->SetMaximum(2.1);	
+	numerator->SetMaximum(2.2);	
 	numerator->SetMinimum(0.1);
 	numerator->SetLineColor(kBlack);
-	numerator->SetLineWidth(2);
+	numerator->SetLineWidth(1);
+	numerator->SetMarkerSize(1);	
 	numerator->GetYaxis()->SetNdivisions(5);
-  numerator->GetYaxis()->SetTitle("ratio");
-//  numerator->GetXaxis()->SetTitle("#slash{E}_{T} [GeV]");	
-  numerator->GetXaxis()->SetTitle("truth electron p_{T} [GeV]");
+  numerator->GetYaxis()->SetTitle("Sim./Pred.");
+  numerator->GetXaxis()->SetTitle("#slash{E}_{T} significance");	
+//  numerator->GetXaxis()->SetTitle("truth electron p_{T} [GeV]");
   numerator->GetYaxis()->CenterTitle();	
-  numerator->GetYaxis()->SetTitleSize(0.2);
-  numerator->GetXaxis()->SetTitleSize(0.2);		
-	numerator->GetYaxis()->SetLabelSize(0.2);
-	numerator->GetXaxis()->SetLabelSize(0.17);
-  numerator->GetYaxis()->SetTitleOffset(0.25);
-  numerator->GetXaxis()->SetTitleOffset(0.75);		
+  numerator->GetYaxis()->SetTitleSize(0.17);
+  numerator->GetXaxis()->SetTitleSize(0.15);		
+	numerator->GetYaxis()->SetLabelSize(0.15);
+	numerator->GetXaxis()->SetLabelSize(0.15);
+  numerator->GetYaxis()->SetTitleOffset(0.30);
+  numerator->GetXaxis()->SetTitleOffset(0.85);
+	numerator->GetXaxis()->SetRangeUser(0,140);	
+  numerator->SetMarkerStyle(8);	
 	prediction->Divide(prediction);
 	prediction->SetFillStyle(3002);	
 	prediction->SetFillColor(kRed);
-	prediction->SetLineWidth(3);	
-	prediction->SetMarkerSize(3);	
+	prediction->SetLineWidth(1);	
+	prediction->SetMarkerSize(4);	
 /*	for ( int i = 0; i < bins; i++) {
 		error_final = H_GJets40_P_signal->GetBinError(i)/(H_GJets40_P_signal->GetBinContent(i));
 		prediction->SetBinError(i,error_final);			
@@ -361,12 +390,14 @@ int fake_e(){
   canvasDefault_1->Draw();	
 	 	
 	c1->cd();
-	
+	CMS_text = new TLatex(0.11,0.91,"#scale[1.2]{CMS}#scale[0.5]{ }#scale[0.8]{#bf{#it{Simulation}}}#bf{, 7.4 fb^{-1} (8 TeV)}");
+	CMS_text->SetNDC();
+  CMS_text->SetTextSize(0.055);
   TPad *canvasDefault_2 = new TPad("canvasDefault_2", "newpad",0.0,0.325,1,1);
   canvasDefault_2->Draw(); 
   canvasDefault_2->cd();
   canvasDefault_2->SetTopMargin(0.1);
-  canvasDefault_2->SetBottomMargin(0.01);
+  canvasDefault_2->SetBottomMargin(0.001);
   canvasDefault_2->SetRightMargin(0.1);
   canvasDefault_1->SetFillStyle(0);
 	
@@ -385,22 +416,24 @@ int fake_e(){
 	H_TTJets_P_signal->SetFillStyle(3002);	
 	H_TTJets_P_signal->Draw("E2");
 	H_TTJets_P_signal->SetTitle("");
-	H_TTJets_P_signal->GetYaxis()->SetTitle("# Events");
-	H_TTJets_P_signal->GetYaxis()->SetTitleSize(0.1);
-	H_TTJets_P_signal->GetYaxis()->SetLabelSize(0.1);			
-	H_TTJets_P_signal->GetYaxis()->SetTitleOffset(0.5);		
-	
+	H_TTJets_P_signal->GetXaxis()->SetRangeUser(0,140);	
+	H_TTJets_P_signal->GetYaxis()->SetRangeUser(0.07,50);	
+	H_TTJets_P_signal->GetYaxis()->SetTitle("Events / bin");
+	H_TTJets_P_signal->GetYaxis()->SetTitleSize(0.078);
+	H_TTJets_P_signal->GetYaxis()->SetLabelSize(0.07);			
+	H_TTJets_P_signal->GetYaxis()->SetTitleOffset(0.65);		
+
 	H_TTJets_signal->SetLineColor(kBlack);
-	H_TTJets_signal->SetLineWidth(2);	
+	H_TTJets_signal->SetLineWidth(1);	
+	H_TTJets_signal->SetMarkerStyle(8);
 	H_TTJets_signal->Draw("E1 hist same"); 
-	
+  CMS_text->Draw();	
 
 	prediction->SetLabelSize(0.0);
 	prediction->GetXaxis()->SetTitleSize(0.00);
 	prediction->GetYaxis()->SetLabelSize(0.1);
-	prediction->GetYaxis()->SetTitle("# events");
+	prediction->GetYaxis()->SetTitle("Events / bin");
 	prediction->GetYaxis()->SetTitleSize(0.1);	
-
 	
 	prediction->GetXaxis()->SetTitle("");
 	
@@ -409,15 +442,15 @@ int fake_e(){
   infoBox->AddEntry(H_GJets40_P_signal,"#gamma_{pixel} * fakerate","f");	
   infoBox->AddEntry(H_GJets40_signal,"generated e","l");	 */	
 	
-	TLegend *infoBox = new TLegend(0.65, 0.6, 0.9, 0.9,"");
+	TLegend *infoBox = new TLegend(0.55, 0.6, 0.9, 0.9,"");
   infoBox->SetHeader("Total background");		
-  infoBox->AddEntry(H_TTJets_P_signal,"#gamma_{pixel} * fakefactor","f");	
+  infoBox->AddEntry(H_TTJets_P_signal,"e #rightarrow #gamma prediction","f");	
 	infoBox->SetBorderSize(0);
-	infoBox->AddEntry(H_TTJets_signal,"generated e #rightarrow #gamma_{signal}","l");	 	
+	infoBox->AddEntry(numerator,"simulated e #rightarrow #gamma_{signal}","lep");	 	
   infoBox->SetFillStyle(0);
   infoBox->SetShadowColor(0);  // 0 = transparent
   infoBox->SetFillColor(kWhite); 
-	infoBox->SetTextSize(0.065);
+	infoBox->SetTextSize(0.055);
   infoBox->Draw();
 	
 	

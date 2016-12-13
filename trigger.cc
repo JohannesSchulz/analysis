@@ -196,9 +196,51 @@ int trigger(){
 	H_numerator_final_met_leg_loose_wo = (TH1F*)Data->Get("h_numerator_final_met_leg_loose_wo"); 
 	H_denumerator_final_met_leg_loose_wo = (TH1F*)Data->Get("h_denumerator_final_met_leg_loose_wo");	
 	
-		
+/////////////////
+//NEUE STUDIEN///
+/////////////////	
+	H_numerator_selection_pt_leg_met_sign = (TH1F*)DataMET->Get("h_numerator_selection_pt_leg_met_sign"); 
+	H_denumerator_selection_pt_leg_met_sign = (TH1F*)DataMET->Get("h_denumerator_selection_pt_leg_met_sign");
 	
+	H_numerator_selection_met_sign = (TH1F*)Data->Get("h_numerator_selection_met_sign"); 
+	H_denumerator_selection_met_sign = (TH1F*)Data->Get("h_denumerator_selection_met_sign");			
 	
+	H_numerator_selection_trans_mass = (TH1F*)Data->Get("h_numerator_selection_trans_mass"); 
+	H_denumerator_selection_trans_mass = (TH1F*)Data->Get("h_denumerator_selection_trans_mass");
+	
+	H_numerator_selection_sigma = (TH1F*)Data->Get("h_numerator_selection_sigma"); 
+	H_denumerator_selection_sigma = (TH1F*)Data->Get("h_denumerator_selection_sigma");	 
+	
+	H_numerator_selection_met_sign_met_cut = (TH1F*)Data->Get("h_numerator_selection_met_sign_met_cut"); 
+	H_denumerator_selection_met_sign_met_cut = (TH1F*)Data->Get("h_denumerator_selection_met_sign_met_cut");	 		
+	
+	H_numerator_selection_trans_mass_met_cut = (TH1F*)Data->Get("h_numerator_selection_trans_mass_met_cut"); 
+	H_denumerator_selection_trans_mass_met_cut = (TH1F*)Data->Get("h_denumerator_selection_trans_mass_met_cut");	
+	
+	H_numerator_selection_sigma_met_cut = (TH1F*)Data->Get("h_numerator_selection_sigma_met_cut"); 
+	H_denumerator_selection_sigma_met_cut = (TH1F*)Data->Get("h_denumerator_selection_sigma_met_cut");	
+	
+	H_numerator_selection_sigma->Rebin(4);
+	H_denumerator_selection_sigma->Rebin(4);	
+	H_numerator_selection_sigma_met_cut->Rebin(4);
+	H_denumerator_selection_sigma_met_cut->Rebin(4);
+	
+	H_numerator_selection_met_sign->Rebin(1.5);
+	H_denumerator_selection_met_sign->Rebin(1.5);	
+	H_numerator_selection_met_sign->Rebin(1.5);
+	H_denumerator_selection_met_sign->Rebin(1.5);				
+	H_numerator_selection_trans_mass->Rebin(4);
+	H_denumerator_selection_trans_mass->Rebin(4);
+	H_numerator_selection_met_sign_met_cut->Rebin(1.5);
+	H_denumerator_selection_met_sign_met_cut->Rebin(1.5);	 			
+	H_numerator_selection_trans_mass_met_cut->Rebin(4);
+	H_denumerator_selection_trans_mass_met_cut->Rebin(4);	
+
+	
+	TEfficiency *T_new_study = new TEfficiency(*H_numerator_selection_trans_mass_met_cut, *H_denumerator_selection_trans_mass_met_cut);
+	
+	 
+//////////////////////////////////////////	
 	H_denumerator_loose_eta = (TH1F*)Data->Get("h_denumerator_loose_eta");
 	H_denumerator_loose_eta_r9 = (TH1F*)Data->Get("h_denumerator_loose_eta_r9");	
 	H_numerator_loose_eta = (TH1F*)Data->Get("h_numerator_loose_eta");
@@ -220,8 +262,10 @@ int trigger(){
 	H2_denumerator->RebinX(2);
 	H2_denumerator->RebinY(2);	
 	H2_numerator->RebinX(2);	
-	H2_numerator->RebinY(2);	
-	
+	H2_numerator->RebinY(2);
+	H2_numerator->GetYaxis()->SetTitleOffset(2);		
+	H2_denumerator->GetYaxis()->SetTitleOffset(2);
+		
 	H_numerator_trigger = (TH1F*)Data->Get("h_numerator_trigger");
 	H_denumerator_trigger = (TH1F*)Data->Get("h_denumerator_trigger");
 	
@@ -326,12 +370,14 @@ int trigger(){
 
 //Histo options
 
+	 gStyle->SetMarkerSize(1);
+	 gStyle->SetMarkerStyle(8); 
 	 H_denumerator_selection_met->SetTitle("");
-	 H_denumerator_selection_met->GetYaxis()->SetTitle("#varepsilon_{#slash{E}_{T}-req.}");
+	 H_denumerator_selection_met->GetYaxis()->SetTitle("#varepsilon_{#slash{E}_{T} part}");
 	 H_denumerator_selection_met->GetYaxis()->SetTitleOffset(0.5);	
 	 H_denumerator_selection_met->GetXaxis()->SetTitleOffset(0.7);
 	 H_denumerator_selection_met->GetXaxis()->SetRangeUser(0,400);	 
-	 H_denumerator_selection_met->GetYaxis()->SetTitleSize(0.5);	
+	 H_denumerator_selection_met->GetYaxis()->SetTitleSize(0.6);	
 	 H_denumerator_selection_met->GetXaxis()->SetTitleSize(0.15);	 		
 	 H_denumerator_selection_met->GetXaxis()->SetTitle("#slash{E}_{T} [GeV]"); 
 	 
@@ -339,16 +385,16 @@ int trigger(){
 	 H_denumerator_selection_pt->SetTitle("");
 	 H_denumerator_selection_pt->GetYaxis()->SetTitle("#varepsilon_{#gamma-req.}");
 	 H_denumerator_selection_pt->GetYaxis()->SetTitleOffset(0.5);	
-	 H_denumerator_selection_pt->GetXaxis()->SetTitleOffset(0.7);
+	 H_denumerator_selection_pt->GetXaxis()->SetTitleOffset(0.8);
 	 H_denumerator_selection_pt->GetXaxis()->SetRangeUser(0,400);	 
-	 H_denumerator_selection_pt->GetYaxis()->SetTitleSize(0.5);	
+	 H_denumerator_selection_pt->GetYaxis()->SetTitleSize(0.6);	
 	 H_denumerator_selection_pt->GetXaxis()->SetTitleSize(0.15);	 		
-	 H_denumerator_selection_pt->GetXaxis()->SetTitle("#gamma p_{T} [GeV]");	 	
+	 H_denumerator_selection_pt->GetXaxis()->SetTitle("1st gamma_{tight} p_{T} [GeV]");	 	
 
-	 H_numerator_selection_met->GetYaxis()->SetTitle("#varepsilon_{#slash{E}_{T}-req.}");
+	 H_numerator_selection_met->GetYaxis()->SetTitle("#varepsilon_{#slash{E}_{T} part}");
 	 H_numerator_selection_met->GetYaxis()->SetTitleOffset(0.5);	
 	 H_numerator_selection_met->GetXaxis()->SetTitleOffset(0.7); 
-	 H_numerator_selection_met->GetYaxis()->SetTitleSize(0.5);	
+	 H_numerator_selection_met->GetYaxis()->SetTitleSize(0.6);	
 	 H_numerator_selection_met->GetXaxis()->SetTitleSize(0.15);		 		
 	 H_numerator_selection_met->GetXaxis()->SetTitle("#slash{E}_{T} [GeV]"); 
 	 H_numerator_selection_met->GetXaxis()->SetRangeUser(0,400);
@@ -357,9 +403,9 @@ int trigger(){
 	 H_denumerator_JET_corr_100_2->GetYaxis()->SetTitle("#varepsilon_{#DeltaR}");
 	 H_denumerator_JET_corr_100_2->GetYaxis()->SetTitleOffset(0.5);	
 	 H_denumerator_JET_corr_100_2->GetXaxis()->SetTitleOffset(0.7); 
-	 H_denumerator_JET_corr_100_2->GetYaxis()->SetTitleSize(0.5);	
+	 H_denumerator_JET_corr_100_2->GetYaxis()->SetTitleSize(0.6);	
 	 H_denumerator_JET_corr_100_2->GetXaxis()->SetTitleSize(0.15);		 		
-	 H_denumerator_JET_corr_100_2->GetXaxis()->SetTitle("#DeltaR(#gamma, nearest Jet)"); 
+	 H_denumerator_JET_corr_100_2->GetXaxis()->SetTitle("#DeltaR(1st #gamma, nearest Jet)"); 
 	 
 	 
 	 
@@ -471,7 +517,7 @@ int trigger(){
 	h_numerator->Draw();
 	h_denumerator->SetLineColor(kRed);
 	h_denumerator->Draw("same"); */
-	TCanvas *canvas3 = new TCanvas("canvas3","Plots",700,600);
+	TCanvas *canvas3 = new TCanvas("canvas3","Plots",790,600);
 	
   canvasDefault_1 = new TPad("canvasDefault_1", "newpad",0.0,0.0,1.0,0.41);//0.325);		
 
@@ -493,12 +539,12 @@ int trigger(){
 	TSelection_met->GetPaintedGraph()->GetXaxis()->SetRangeUser(0,400);	
 	TSelection_met->GetPaintedGraph()->GetYaxis()->SetRangeUser(0,1.05);		
 	TSelection_met->GetPaintedGraph()->GetXaxis()->SetTitleSize(0.1);	
-  TSelection_met->GetPaintedGraph()->GetYaxis()->SetTitleSize(0.12);	
+  TSelection_met->GetPaintedGraph()->GetYaxis()->SetTitleSize(0.15);	
   TSelection_met->GetPaintedGraph()->GetXaxis()->SetLabelSize(0.1);	
   TSelection_met->GetPaintedGraph()->GetYaxis()->SetLabelSize(0.1);		
-  TSelection_met->GetPaintedGraph()->GetYaxis()->SetTitleOffset(0.38);
+  TSelection_met->GetPaintedGraph()->GetYaxis()->SetTitleOffset(0.35);
 	TSelection_met->SetTitle("");//"#slash{E}_{T}-req. efficiency");	
-	TSelection_met->GetPaintedGraph()->GetYaxis()->SetTitle("#varepsilon_{#slash{E}_{T}-req.}");
+	TSelection_met->GetPaintedGraph()->GetYaxis()->SetTitle("#varepsilon_{#slash{E}_{T} part}");
 	TSelection_met->GetPaintedGraph()->GetXaxis()->SetTitleOffset(0.7);		
 	TSelection_met->GetPaintedGraph()->GetXaxis()->SetTitle("#slash{E}_{T} [GeV]"); 		
 	
@@ -508,24 +554,28 @@ int trigger(){
 	for ( int i = 1; i < H_denumerator_selection_met->GetNbinsX(); i++){
 		ratio3->SetBinContent(i,0);			
 		}
+	ratio3->SetMarkerStyle(8);
+	ratio3->SetMarkerSize(1);		
   ratio3->Draw("AXIS");
-  ratio3->Draw("same AXIG");	
+  ratio3->Draw(" same AXIG");	
 	ratio3->GetYaxis()->SetRangeUser(0,1.05);		
-	ratio3->GetXaxis()->SetTitleSize(0.1);	
-  ratio3->GetYaxis()->SetTitleSize(0.12);	
+	ratio3->GetXaxis()->SetTitleSize(0.125);	
+  ratio3->GetYaxis()->SetTitleSize(0.14);	
   ratio3->GetXaxis()->SetLabelSize(0.1);	
   ratio3->GetYaxis()->SetLabelSize(0.1);		
-  ratio3->GetYaxis()->SetTitleOffset(0.38);
+  ratio3->GetYaxis()->SetTitleOffset(0.35);
 	ratio3->SetTitle("");//"#slash{E}_{T}-req. efficiency");	
-	ratio3->GetYaxis()->SetTitle("#varepsilon_{#slash{E}_{T}-req.}");
+	ratio3->GetYaxis()->SetTitle("#varepsilon_{#slash{E}_{T} part}");
 	ratio3->GetXaxis()->SetTitleOffset(0.9);		
-	ratio3->GetXaxis()->SetTitle("#slash{E}_{T} [GeV]"); 	
+	ratio3->GetXaxis()->SetTitle("#bf{#slash{E}_{T} [GeV]}"); 	
 	ratio3->GetYaxis()->SetRangeUser(0,1.05);	
+	TSelection_met->SetMarkerSize(1);
+	TSelection_met->SetMarkerStyle(8);		
 	TSelection_met->Draw("same");	
-
+	gPad->Update();
 	EffiMet = new TLatex(105,0.2,"#varepsilon_{#slash{E}_{T}-req.} = (98.3^{+0.8}_{-1.3} (stat.)) %"); 
   EffiMet->SetTextSize(0.1);
-  EffiMet->Draw();
+ // EffiMet->Draw();
 	TLine *l_cut_met = new TLine(100,0,100,1.05);
 	l_cut_met->SetLineWidth(4);
 	l_cut_met->Draw("same");
@@ -546,14 +596,14 @@ int trigger(){
  	 canvasDefault_2->SetRightMargin(0.05);
  	 canvasDefault_2->SetLeftMargin(0.11);	 
  	 canvasDefault_2->SetFillStyle(0);
-	 H_denumerator_selection_met->SetMaximum(H_denumerator_selection_met->GetMaximum()*4);
+	 H_denumerator_selection_met->SetMaximum(H_denumerator_selection_met->GetMaximum()*40);
 	 H_denumerator_selection_met->GetYaxis()->SetTitle("Events / bin");
-	 H_denumerator_selection_met->GetYaxis()->SetTitleOffset(0.7);	
+	 H_denumerator_selection_met->GetYaxis()->SetTitleOffset(0.6);	
 	 H_denumerator_selection_met->GetXaxis()->SetTitleOffset(0.5);		
 	 H_denumerator_selection_met->GetXaxis()->SetTitle("#slash{E}_{T} [GeV]"); 	 
-	 H_denumerator_selection_met->GetYaxis()->SetTitleSize(0.065); 	
-	 H_denumerator_selection_met->GetYaxis()->SetLabelSize(0.06); 		  
-	 H_denumerator_selection_met->GetXaxis()->SetRangeUser(0,400); 	 		 
+	 H_denumerator_selection_met->GetYaxis()->SetTitleSize(0.08); 	
+	 H_denumerator_selection_met->GetYaxis()->SetLabelSize(0.071); 		  
+	 H_denumerator_selection_met->GetXaxis()->SetRangeUser(0,400); 	 	 		 
 	 H_denumerator_selection_met->GetXaxis()->SetTitleSize(0.0); 
 	 H_denumerator_selection_met->Draw("hist");
 	 H_numerator_selection_met->Draw("same f hist");	 	 	
@@ -568,16 +618,17 @@ int trigger(){
 	 gStyle->SetOptStat(00000);
 	 gPad->Update();  	 			 	
   canvasDefault_2->SetLogy(1);
-	CMS_text = new TLatex(0.1,0.91,"#int L dt = 7.4 fb^{-1},  #sqrt{S} = 8 TeV,   CMS PRIVATE WORK");
+	//CMS_text = new TLatex(0.1,0.91,"#int L dt = 7.4 fb^{-1},  #sqrt{S} = 8 TeV,   CMS PRIVATE WORK");	
+	CMS_text = new TLatex(0.11,0.91,"#scale[1.2]{CMS}#scale[0.5]{ }#scale[0.8]{#bf{#it{Private Work}}}#bf{, 7.4 fb^{-1} (8 TeV)}");
 	CMS_text->SetNDC();
-  CMS_text->SetTextSize(0.05);
+  CMS_text->SetTextSize(0.055);
   CMS_text->Draw();		
-	TLegend *infoBox = new TLegend(0.27, 0.65, 0.95, 0.9,"");//0.75, 0.83, 0.99, 0.99, "");
-  infoBox->AddEntry(H_denumerator_selection_met,"Events triggered by baseline trigger","l");
-  infoBox->AddEntry(H_numerator_selection_met,"Events triggered by signal and baseline trigger","f");	
+	TLegend *infoBox = new TLegend(0.21, 0.65, 0.95, 0.9,"");//0.75, 0.83, 0.99, 0.99, "");
+  infoBox->AddEntry(H_denumerator_selection_met,"Events accepted by photon baseline trigger","l");
+  infoBox->AddEntry(H_numerator_selection_met,"Events accepted by signal and photon baseline trigger","f");	
   infoBox->SetShadowColor(0);  // 0 = transparent
   infoBox->SetFillColor(kWhite); 
-	infoBox->SetTextSize(0.05);
+	infoBox->SetTextSize(0.055);
   infoBox->Draw();	
 
 	gStyle->SetPadTickX(1);
@@ -590,7 +641,8 @@ int trigger(){
 	gStyle->SetPadTickX(1);
 	gStyle->SetPadTickY(1);
 	TSelection_met->SetLineColor(kBlack);
-	TSelection_met->SetMarkerStyle(8);	
+	TSelection_met->SetMarkerStyle(8);
+	TSelection_met->SetMarkerSize(1);		
 	gPad->Update();	
 	
 //////////////////////////////////////////////////////////////////////////////////	
@@ -653,7 +705,7 @@ int trigger(){
 
 	TSelection_pt->SetMarkerStyle(8);
 	TSelection_pt->SetMarkerSize(1);
-	TSelection_pt->SetLineWidth(1);		
+	TSelection_pt->SetLineWidth(2);		
 //	Teffi2->Draw();
 	gPad->Update();
 	TSelection_pt->GetPaintedGraph()->GetXaxis()->SetTitleSize(0.06);	
@@ -662,9 +714,9 @@ int trigger(){
   TSelection_pt->GetPaintedGraph()->GetYaxis()->SetLabelSize(0.06);		
   TSelection_pt->GetPaintedGraph()->GetYaxis()->SetTitleOffset(0.9);
 	TSelection_pt->SetTitle("");//"#slash{E}_{T}-req. efficiency");
-	TSelection_pt->GetPaintedGraph()->GetXaxis()->SetTitle("#gamma p_{T} [GeV]");	
-  TSelection_pt->GetPaintedGraph()->GetYaxis()->SetTitle("#varepsilon_{#gamma-req.}");
-	TSelection_pt->GetPaintedGraph()->GetXaxis()->SetTitleOffset(0.7);		
+	TSelection_pt->GetPaintedGraph()->GetXaxis()->SetTitle("1st gamma_{tight} p_{T} [GeV]");	
+  TSelection_pt->GetPaintedGraph()->GetYaxis()->SetTitle("#varepsilon_{photon part}");
+	TSelection_pt->GetPaintedGraph()->GetXaxis()->SetTitleOffset(0.9);		
 	TSelection_pt->GetPaintedGraph()->GetYaxis()->SetTitleOffset(0.7);		
 	Effipt = new TLatex(50,0.3,"#varepsilon_{#gamma-req.} = (88.0 #pm 0.7(stat.)) %");
   Effipt->SetTextSize(0.06);
@@ -683,7 +735,7 @@ int trigger(){
 	T_DeltaRCut_2->SetLineColor(kRed);
 	T_htCut_2->SetMarkerStyle(8);
 	T_htCut_2->SetLineColor(kRed);	
-	T_htCut_2->SetMarkerSize(2);
+	T_htCut_2->SetMarkerSize(1);
 	T_htCut_2->SetLineWidth(2);	
 	T_DeltaRCut_2->Draw("same");		
 //	T_htCut_2->Draw("same");
@@ -695,7 +747,7 @@ int trigger(){
 	TVert->Draw();
 	gPad->Update();
 	TVert->SetMarkerStyle(8);
-	TVert->SetMarkerSize(1);
+	TVert->SetMarkerSize(2);
 	TVert->SetLineWidth(2);		
 	TVert->SetTitle("Efficiency");	
 	TVert->GetPaintedGraph()->GetXaxis()->SetTitle("# vertices");	
@@ -720,7 +772,7 @@ int trigger(){
 	TVertMET->Draw();
 	gPad->Update();
 	TVertMET->SetMarkerStyle(8);
-	TVertMET->SetMarkerSize(1);
+	TVertMET->SetMarkerSize(2);
 	TVertMET->SetLineWidth(2);	
 	TVertMET->SetTitle("Efficiency");	
 	TVertMET->GetPaintedGraph()->GetXaxis()->SetTitle("# vertices");	
@@ -986,9 +1038,9 @@ int trigger(){
 	infoBox->SetTextSize(0.025);
   infoBox->Draw(); */
 
-	gStyle->SetMarkerStyle(8);	
+//	gStyle->SetMarkerStyle(8);	
 	
-	TCanvas *cdelta2 = new TCanvas("cdelta2","Plots",700,600);
+	TCanvas *cdelta2 = new TCanvas("cdelta2","Plots",790,600);
 
 
   canvasDefault_1 = new TPad("canvasDefault_1", "newpad",0.0,0.0,1.0,0.41);//0.325);		
@@ -998,7 +1050,7 @@ int trigger(){
   canvasDefault_1->SetRightMargin(0.05);
   canvasDefault_1->SetLeftMargin(0.11);	
   canvasDefault_1->SetFillStyle(0);
-  canvasDefault_1->cd(); 
+  canvasDefault_1->cd();
 	T_delta_2_100_JET->Draw("");
 	DR = new TLatex(0.8,0.3,"#DeltaR = #sqrt{#Delta #Phi^{2} + #Delta #eta^{2}}");
 	Arrow = new TLatex(0.5,0.6,"#rightarrow");
@@ -1021,15 +1073,15 @@ int trigger(){
 	T_delta_2_100_JET->GetPaintedGraph()->GetXaxis()->SetRangeUser(0,4.2);	
 	T_delta_2_100_JET->GetPaintedGraph()->GetYaxis()->SetRangeUser(0,1.05);		
 	T_delta_2_100_JET->GetPaintedGraph()->GetXaxis()->SetTitleSize(0.1);	
-  T_delta_2_100_JET->GetPaintedGraph()->GetYaxis()->SetTitleSize(0.12);	
+  T_delta_2_100_JET->GetPaintedGraph()->GetYaxis()->SetTitleSize(0.6);	
   T_delta_2_100_JET->GetPaintedGraph()->GetXaxis()->SetLabelSize(0.1);	
   T_delta_2_100_JET->GetPaintedGraph()->GetYaxis()->SetLabelSize(0.1);		
   T_delta_2_100_JET->GetPaintedGraph()->GetYaxis()->SetTitleOffset(0.38);
 	T_delta_2_100_JET->SetTitle("");//"#slash{E}_{T}-req. efficiency");	
 	T_delta_2_100_JET->GetPaintedGraph()->GetYaxis()->SetTitle("#varepsilon_{#DeltaR}");
 	T_delta_2_100_JET->GetPaintedGraph()->GetXaxis()->SetTitleOffset(0.7);		
-	T_delta_2_100_JET->GetPaintedGraph()->GetXaxis()->SetTitle("#DeltaR(#gamma, nearest Jet)"); 		
-	 
+	T_delta_2_100_JET->GetPaintedGraph()->GetXaxis()->SetTitle("#DeltaR(1st #gamma, nearest Jet)"); 		
+	canvasDefault_1->Update();
 	H_denumerator_JET_corr_100_2->GetXaxis()->SetRangeUser(0,4.2);	
 	TH1F *ratio2 = (TH1F*)H_denumerator_JET_corr_100_2->Clone("ratio");
 
@@ -1039,15 +1091,15 @@ int trigger(){
   ratio2->Draw("AXIS");
   ratio2->Draw("same AXIG");	
 	ratio2->GetYaxis()->SetRangeUser(0,1.05);		
-	ratio2->GetXaxis()->SetTitleSize(0.1);	
-  ratio2->GetYaxis()->SetTitleSize(0.12);	
+	ratio2->GetXaxis()->SetTitleSize(0.125);	
+  ratio2->GetYaxis()->SetTitleSize(0.14);	
   ratio2->GetXaxis()->SetLabelSize(0.1);	
   ratio2->GetYaxis()->SetLabelSize(0.1);		
-  ratio2->GetYaxis()->SetTitleOffset(0.38);
+  ratio2->GetYaxis()->SetTitleOffset(0.35);
 	ratio2->SetTitle("");//"#slash{E}_{T}-req. efficiency");	
 	ratio2->GetYaxis()->SetTitle("#varepsilon_{#DeltaR}");
 	ratio2->GetXaxis()->SetTitleOffset(0.9);		
-	ratio2->GetXaxis()->SetTitle("#DeltaR(#gamma, nearest Jet)"); 	
+	ratio2->GetXaxis()->SetTitle("#DeltaR(1st #gamma, nearest Jet)"); 	
 	ratio2->GetYaxis()->SetRangeUser(0,1.05);	
 	T_delta_2_100_JET->Draw("same");	
 	
@@ -1077,11 +1129,11 @@ int trigger(){
 	
 	 H_denumerator_JET_corr_100_2->SetMaximum(10000);
 	 H_denumerator_JET_corr_100_2->GetYaxis()->SetTitle("Events / bin");
-	 H_denumerator_JET_corr_100_2->GetYaxis()->SetTitleOffset(0.7);	
+	 H_denumerator_JET_corr_100_2->GetYaxis()->SetTitleOffset(0.6);	
 	 H_denumerator_JET_corr_100_2->GetXaxis()->SetTitleOffset(0.5);		
-	 H_denumerator_JET_corr_100_2->GetXaxis()->SetTitle("#DeltaR(#gamma, nearest Jet)"); 	 
-	 H_denumerator_JET_corr_100_2->GetYaxis()->SetTitleSize(0.065); 	
-	 H_denumerator_JET_corr_100_2->GetYaxis()->SetLabelSize(0.06); 		  
+	 H_denumerator_JET_corr_100_2->GetXaxis()->SetTitle("#DeltaR(1st #gamma, nearest Jet)"); 	 
+	 H_denumerator_JET_corr_100_2->GetYaxis()->SetTitleSize(0.08); 	
+	 H_denumerator_JET_corr_100_2->GetYaxis()->SetLabelSize(0.071); 		  
 	 H_denumerator_JET_corr_100_2->GetXaxis()->SetRangeUser(0,4.2); 	 		 
 	 H_denumerator_JET_corr_100_2->GetXaxis()->SetTitleSize(0.0); 
 	 H_denumerator_JET_corr_100_2->Draw("hist");
@@ -1101,11 +1153,11 @@ int trigger(){
   canvasDefault_2->SetLogy(1);
   CMS_text->Draw();	
 	TLegend *infoBox = new TLegend(0.27, 0.65, 0.95, 0.9,"");//0.75, 0.83, 0.99, 0.99, "");
-  infoBox->AddEntry(H_denumerator_JET_corr_100_2,"Events triggered by baseline trigger","l");
-  infoBox->AddEntry(H_numerator_JET_corr_100_2,"Events triggered by signal and baseline trigger","f");	
+  infoBox->AddEntry(H_denumerator_JET_corr_100_2,"Events accepted by #slash{E}_{T} baseline trigger","l");
+  infoBox->AddEntry(H_numerator_JET_corr_100_2,"Events accepted by signal and #slash{E}_{T} baseline trigger","f");	
   infoBox->SetShadowColor(0);  // 0 = transparent
   infoBox->SetFillColor(kWhite); 
-	infoBox->SetTextSize(0.05);
+	infoBox->SetTextSize(0.055);
   infoBox->Draw();
 		
 
@@ -1160,7 +1212,7 @@ int trigger(){
   infoBox->Draw();	*/
 
 	
-	TCanvas *cdelta3 = new TCanvas("cdelta3","Plots",700,600);
+	TCanvas *cdelta3 = new TCanvas("cdelta3","Plots",790,600);
 	
 	canvasDefault_1 = new TPad("canvasDefault_1", "newpad",0.0,0.0,1.0,0.41);//0.325);		
 
@@ -1179,14 +1231,14 @@ int trigger(){
 	TSelection_pt->GetPaintedGraph()->GetXaxis()->SetRangeUser(0,400);	
 	TSelection_pt->GetPaintedGraph()->GetYaxis()->SetRangeUser(0,1.05);		
 	TSelection_pt->GetPaintedGraph()->GetXaxis()->SetTitleSize(0.1);	
-  TSelection_pt->GetPaintedGraph()->GetYaxis()->SetTitleSize(0.12);	
+  TSelection_pt->GetPaintedGraph()->GetYaxis()->SetTitleSize(0.13);	
   TSelection_pt->GetPaintedGraph()->GetXaxis()->SetLabelSize(0.1);	
   TSelection_pt->GetPaintedGraph()->GetYaxis()->SetLabelSize(0.1);		
   TSelection_pt->GetPaintedGraph()->GetYaxis()->SetTitleOffset(0.38);
 	TSelection_pt->SetTitle("");//"#slash{E}_{T}-req. efficiency");	
-	TSelection_pt->GetPaintedGraph()->GetYaxis()->SetTitle("#varepsilon_{#gamma-req.}");
-	TSelection_pt->GetPaintedGraph()->GetXaxis()->SetTitleOffset(0.9);		
-	TSelection_pt->GetPaintedGraph()->GetXaxis()->SetTitle("#gamma p_{T} [GeV]"); 	
+	TSelection_pt->GetPaintedGraph()->GetYaxis()->SetTitle("#varepsilon_{photon part}");
+	TSelection_pt->GetPaintedGraph()->GetXaxis()->SetTitleOffset(1.1);		
+	TSelection_pt->GetPaintedGraph()->GetXaxis()->SetTitle("1st gamma_{tight} p_{T} [GeV]"); 	
 		gPad->SetGrid();	
 	TH1F *ratio = (TH1F*)H_denumerator_selection_pt->Clone("ratio");
 
@@ -1196,21 +1248,21 @@ int trigger(){
   ratio->Draw("AXIS");
   ratio->Draw("same AXIG");	
 	ratio->GetYaxis()->SetRangeUser(0,1.05);		
-	ratio->GetXaxis()->SetTitleSize(0.1);	
-  ratio->GetYaxis()->SetTitleSize(0.12);	
+	ratio->GetXaxis()->SetTitleSize(0.125);	
+  ratio->GetYaxis()->SetTitleSize(0.14);	
   ratio->GetXaxis()->SetLabelSize(0.1);	
   ratio->GetYaxis()->SetLabelSize(0.1);		
-  ratio->GetYaxis()->SetTitleOffset(0.38);
+  ratio->GetYaxis()->SetTitleOffset(0.35);
 	ratio->SetTitle("");//"#slash{E}_{T}-req. efficiency");	
-	ratio->GetYaxis()->SetTitle("#varepsilon_{#gamma-req.}");
-	ratio->GetXaxis()->SetTitleOffset(0.9);		
-	ratio->GetXaxis()->SetTitle("#gamma p_{T} [GeV]"); 	
+	ratio->GetYaxis()->SetTitle("#varepsilon_{photon part}");
+	ratio->GetXaxis()->SetTitleOffset(1);		
+	ratio->GetXaxis()->SetTitle("1st #gamma_{tight} p_{T} [GeV]"); 	
 	ratio->GetYaxis()->SetRangeUser(0,1.05);	
 	TSelection_pt->Draw("same");
 	
 	EffiPt = new TLatex(45,0.2,"#varepsilon_{#gamma-req.} = (88.0 #pm 0.7(stat.)) %");
   EffiPt->SetTextSize(0.1);
-  EffiPt->Draw();
+ // EffiPt->Draw();
 	TLine *l_cut_pt = new TLine(40,0,40,1.05);
 	l_cut_pt->SetLineWidth(4);
 	l_cut_pt->Draw("same");
@@ -1238,11 +1290,11 @@ int trigger(){
 	 H_denumerator_selection_pt->SetMaximum(20000);
 //	 H_denumerator_selection_pt->GetXaxis()->SetRangeUser(0,400); 	 
 	 H_denumerator_selection_pt->GetYaxis()->SetTitle("Events / bin");
-	 H_denumerator_selection_pt->GetYaxis()->SetTitleOffset(0.7);	
+	 H_denumerator_selection_pt->GetYaxis()->SetTitleOffset(0.6);	
 	 H_denumerator_selection_pt->GetXaxis()->SetTitleOffset(0.5);		
-	 H_denumerator_selection_pt->GetXaxis()->SetTitle("#gamma p_{T} [GeV]"); 	 
-	 H_denumerator_selection_pt->GetYaxis()->SetTitleSize(0.065); 	
-	 H_denumerator_selection_pt->GetYaxis()->SetLabelSize(0.06); 		  	 		 
+	 H_denumerator_selection_pt->GetXaxis()->SetTitle("1st #gamma_{tight} p_{T} [GeV]"); 	 
+	 H_denumerator_selection_pt->GetYaxis()->SetTitleSize(0.08); 	
+	 H_denumerator_selection_pt->GetYaxis()->SetLabelSize(0.071); 		  	 		 
 	 H_denumerator_selection_pt->GetXaxis()->SetTitleSize(0.0); 
 	 gPad->Update(); 	 
  	 	
@@ -1259,11 +1311,11 @@ int trigger(){
   canvasDefault_2->SetLogy(1);
   CMS_text->Draw();	
 	TLegend *infoBox = new TLegend(0.27, 0.65, 0.95, 0.9,"");//0.75, 0.83, 0.99, 0.99, "");
-  infoBox->AddEntry(H_denumerator_selection_pt,"Events triggered by baseline trigger","l");
-  infoBox->AddEntry(H_numerator_selection_pt,"Events triggered by signal and baseline trigger","f");	
+  infoBox->AddEntry(H_denumerator_selection_pt,"Events accepted by #slash{E}_{T} baseline trigger","l");
+  infoBox->AddEntry(H_numerator_selection_pt,"Events accepted by signal and #slash{E}_{T} baseline trigger","f");	
   infoBox->SetShadowColor(0);  // 0 = transparent
   infoBox->SetFillColor(kWhite); 
-	infoBox->SetTextSize(0.05);
+	infoBox->SetTextSize(0.055);
   infoBox->Draw();	
 
 	gStyle->SetPadTickX(1);
@@ -1388,10 +1440,62 @@ int trigger(){
   T_MET_calc->SetMarkerStyle(8);
   T_MET_calc->Draw();
 	
+	ep = new TLatex(0.845,0.925,"#bf{#varepsilon_{trig}}");
+	ep->SetNDC();
+  ep->SetTextSize(0.055);
+		
+	CMS_text_2 = new TLatex(0.19,0.92,"#scale[1.2]{CMS}#scale[0.5]{ }#scale[0.8]{#bf{#it{Private Work}}}#bf{, 7.4 fb^{-1} (8 TeV)}");
+	CMS_text_2->SetNDC();	
+	
+	CMS_text_2->SetTextSize(0.045);	
+	
 	TCanvas *c2D = new TCanvas("c2D","Plots",600,600);
-	gStyle->SetPalette(55,0);
+	gStyle->SetPalette(55,0); 
+//	 gPad->SetTopMargin(0.1);
+ 	 gPad->SetBottomMargin(0.12);
+ 	 gPad->SetRightMargin(0.14);
+ 	 gPad->SetLeftMargin(0.18);	 
+	T_2D->GetPassedHistogram()->GetYaxis()->SetTitleOffset(4);
+	gStyle->SetTitleOffset(1.3,"y");
+	gStyle->SetTitleSize(0.05,"y");
+	gStyle->SetTitleOffset(0.9,"x");
+	gStyle->SetTitleSize(0.05,"x");	
+	gStyle->SetLabelSize(0.045,"y");
+	gStyle->SetLabelSize(0.045,"x");		
+//	TH2F *test = new TH2F("test", "test" );	 
 	T_2D->Draw("colz");
+	
+	TLine *l_met = new TLine(100,0,100,400);
+	l_met->SetLineWidth(4);
+	TLine *l_pt = new TLine(0,40,400,40);
+	l_pt->SetLineWidth(4);
+	
 	T_2D->GetTotalHistogram()->GetZaxis()->SetNdivisions(50);
+	T_2D->GetTotalHistogram()->GetZaxis()->SetTitle("#bf{#varepsilon}");
+	T_2D->GetTotalHistogram()->GetZaxis()->SetTitleSize(2);		
+	T_2D->GetTotalHistogram()->GetXaxis()->SetTitle("#slash{E}_{T} [GeV]");
+	T_2D->GetTotalHistogram()->GetYaxis()->SetTitle("1st #gamma_{tight} p_{T} [GeV]");
+	T_2D->GetPassedHistogram()->GetYaxis()->SetTitleOffset(4);
+	T_2D->GetTotalHistogram()->GetXaxis()->SetTitleSize(2);
+	T_2D->GetTotalHistogram()->GetYaxis()->SetTitleSize(2);
+	T_2D->Draw("colz");
+	l_met->Draw("same");
+	l_pt->Draw("same");		
+	CMS_text_2->Draw("same");
+	
+	ep->Draw("");	
+	gPad->Update();
+	
+	TCanvas *ccc = new TCanvas("ccc","Plots",600,600);
+ 	 gPad->SetBottomMargin(0.14);
+	gStyle->SetTitleOffset(0.9,"y");
+	T_new_study->Draw("");
+	T_new_study->SetMarkerStyle(8);
+	T_new_study->SetTitle("");//"#slash{E}_{T}-req. efficiency");
+	T_new_study->GetTotalHistogram()->GetXaxis()->SetTitle(	T_new_study->GetTotalHistogram()->GetXaxis()->GetTitle());	
+  T_new_study->GetTotalHistogram()->GetYaxis()->SetTitle("#varepsilon");
+	CMS_text->Draw();
+
 }
 
 

@@ -22,8 +22,8 @@ int significance(){
 //	int bin_low = 0;
 //	int bin_high = 7;
 
-	double EWK_scale = 1.33;
-	double GJets_scale = 2.385;
+	double EWK_scale = 1.15;
+	double GJets_scale = 2.35;
 //	double EWK_scale = 2.045;
 //	double GJets_scale = 2.095;	
 	
@@ -36,11 +36,16 @@ int significance(){
   double trigger_effi = 0.865;	
 //	double trigger_effi = 0.885339;
 //	string histo = "h_selection_high2";
-//	string histo = "h_stage5_inverse_met";	
-//		string histo = "h_final_n_loose_photons_blnd";
-		string histo = "h_stage10_met_significance_32";
+//	string histo = "h_stage10_inverse_met";	
+	//	string histo = "h_final_n_loose_photons_unblind";
+	//	string histo = "h_stage1_met_significance";
+//		string histo = "h_METoverSqHT_double_control_3_regions_100_10_80";
 //		string histo = "h_stage1_N-1_met_ratio_pt_ratio";
 //  string histo = "h_final_MET_significance_unblind";
+//  string histo = "h_met";
+//  string histo = "h_sum_signal_over_sqMET";
+string histo = "h_stage9_met_significance";
+//	string histo = "h_stage10_met_significance_32";
 	MCweight = MCweight * trigger_effi;
 
 //	string histo = "h_inverse_met_selection_high";	//"h_selection_high2";//h_inverse_met_selection_low_log.pdf
@@ -48,7 +53,7 @@ int significance(){
   TFile *Data  			= new TFile("PhotonParkedD_V06.1_sel.root");
 	TFile *GJets	  	= new TFile("GJetsAdd.root");	
 //	TFile *ZGamma 		= new TFile("ZGammaAdd.root");
-TFile *ZGamma 		= new TFile("ZGammatest/Znew.root");
+TFile *ZGamma 		= new TFile("ZGammaAdd.root");
 //	TFile *WGamma 		= new TFile("WGamma_V02.1_sel.root");	
 //	TFile *WGamma 		= new TFile("WGamma_split.root");		
 	TFile *WGamma 		= new TFile("WGammaAdd.root");		
@@ -129,12 +134,12 @@ TFile *ZGamma 		= new TFile("ZGammatest/Znew.root");
 	TCanvas *c_z = new TCanvas("c_z","Plots",1000,700);	
 	c_z->Divide(1,1);
 		
-	TCanvas *c2 = new TCanvas("c2","Plots",700,700);		
+	TCanvas *c2 = new TCanvas("c2","Plots",750,700);		
 	TH2F *h_xs = new TH2F("h_xs", "LO cross section of signals in fb", 11, 467.5, 742.5, 11, 477.5, 752.5);
 	c2->Divide(1,1);				
 		
 	TCanvas *c3 = new TCanvas("c3","Plots",700,700);		
-	TH1F *h_sensi = new TH1F("h_sensi", "S/#sqrt{(S+B)}", 10, 25.5, 35.5);	
+	TH1F *h_sensi = new TH1F("h_sensi", "S/#sqrt{(S+B)}", 13, 25.5, 38.5);	
 	c3->Divide(1,1);		
 	
 	
@@ -290,6 +295,16 @@ if ( plot ){
 	TH2F *h_Z_A = new TH2F("h_Z_A", "Z_{A}",11, 467.5, 742.5, 11, 477.5, 752.5);		
 	TLine *l_excl = new TLine(467.5,500,500,500);
 	TLine *l_diag = new TLine(477.5,477.5,742.5,742.5);	
+	TLatex	*exclusion = new TLatex(510,500,"current exclusion limit"); 
+	exclusion->SetTextSize(0.045);
+	TLatex	*diagonal = new TLatex(600,550,"Wino mass = Bino mass"); 
+	diagonal->SetTextSize(0.045);
+	TLatex	*signal540 = new TLatex(500,730,"Signal: M_{Wino} = 540 GeV"); 
+	signal540->SetTextSize(0.045);	
+	TLatex	*signal640 = new TLatex(500,680,"Signal: M_{Wino} = 640 GeV"); 
+	signal640->SetTextSize(0.045);		
+		
+	
 //	h_significance->Fill(430,440,significance_440_430);
 
 	h_significance->Fill(480,490,significance_490_480);
@@ -317,25 +332,53 @@ if ( plot ){
 	
 //	gStyle->GetPalette()->SetWmax(20);
 	gStyle->SetPaintTextFormat(".2f");	
-	h_significance->GetYaxis()->SetTitleSize(0.05);
+/*	h_significance->GetYaxis()->SetTitleSize(0.05);
   h_significance->GetXaxis()->SetTitleSize(0.05);		
 	h_significance->GetYaxis()->SetLabelSize(0.05);
 	h_significance->GetXaxis()->SetLabelSize(0.05);
 	h_significance->GetXaxis()->SetTitleOffset(0.95);
+*/	
+	h_significance->GetYaxis()->SetTitleSize(0.05);	
+	h_significance->GetXaxis()->SetTitleSize(0.05);
+	h_significance->GetYaxis()->SetLabelSize(0.05);	
+	h_significance->GetXaxis()->SetLabelSize(0.05);
+	h_significance->GetZaxis()->SetLabelSize(0.05);			
+	h_significance->SetTitleSize(0.05);
+	h_significance->SetTitleOffset(0.7);			
+	h_significance->GetYaxis()->SetTitleOffset(1.2);	
+	h_significance->GetXaxis()->SetTitleOffset(0.9);	
 	
 	h_significance->GetYaxis()->SetTitle("Wino mass [GeV]");
 	h_significance->GetYaxis()->SetTitleOffset(0.95);		
 	h_significance->GetXaxis()->SetTitle("Bino mass [GeV]");	
-	h_significance->SetMarkerSize(1.7);
+	h_significance->SetMarkerSize(1.8);
 //	h_significance->SetContour(30);
-	
 	h_significance->Draw("text colz");
-	l_excl->SetLineWidth(2);
-	l_diag->SetLineWidth(2);		
+	exclusion->Draw("");
+	diagonal->Draw("");	
+//	signal540->Draw("");	
+	//signal640->Draw("");
+	TEllipse *el1 = new TEllipse(630,640,12,12);
+	TEllipse *el2 = new TEllipse(530,540,12,12);		
+	el1->SetFillColor(kRed);
+	el1->SetLineColor(kRed);	
+	el1->SetFillStyle(0);
+	el1->SetLineWidth(4);
+	el2->SetFillColor(kRed);
+	el2->SetLineColor(kRed);	
+	el2->SetFillStyle(0);
+	el2->SetLineWidth(4);		
+	l_excl->SetLineWidth(7);
+	l_diag->SetLineWidth(3);		
 	l_excl->Draw("same");
-	l_diag->Draw("same");		
+	l_diag->Draw("same");
+	el2->Draw("");	
+	el1->Draw("");			
 	gStyle->SetOptStat(0000);
-
+  gStyle->SetPadTickX(1);
+	gStyle->SetPadTickY(1);
+	gPad->SetGridx(1);
+	gPad->SetGridy(1);
 	
 	
 	c1->Update();	
@@ -364,35 +407,55 @@ if ( plot ){
 	h_Z_A->Fill(705,715,Z_A_715_705);		
 	h_Z_A->Fill(730,740,Z_A_740_730);
 	
-	h_Z_A->GetYaxis()->SetTitleSize(0.05);
+/*	h_Z_A->GetYaxis()->SetTitleSize(0.05);
   h_Z_A->GetXaxis()->SetTitleSize(0.05);		
 	h_Z_A->GetYaxis()->SetLabelSize(0.05);
 	h_Z_A->GetXaxis()->SetLabelSize(0.05);	
 	h_Z_A->GetXaxis()->SetTitleOffset(0.95);
+*/	
+	h_Z_A->GetYaxis()->SetTitleSize(0.05);	
+	h_Z_A->GetXaxis()->SetTitleSize(0.05);
+	h_Z_A->GetYaxis()->SetLabelSize(0.05);	
+	h_Z_A->GetXaxis()->SetLabelSize(0.05);
+	h_Z_A->GetZaxis()->SetLabelSize(0.05);			
+	h_Z_A->SetTitleSize(0.05);
+	h_Z_A->SetTitleOffset(0.7);			
+	h_Z_A->GetYaxis()->SetTitleOffset(1.2);	
+	h_Z_A->GetXaxis()->SetTitleOffset(0.9);	
 	
 	h_Z_A->GetYaxis()->SetTitle("Wino mass [GeV]");	
 	h_Z_A->GetYaxis()->SetTitleOffset(0.95);	
 	h_Z_A->GetXaxis()->SetTitle("Bino mass [GeV]");	
-	h_Z_A->SetMarkerSize(1.7);
+	h_Z_A->SetMarkerSize(1.8);
 	h_Z_A->Draw("text colz");	
 	l_excl->Draw("same");
-	l_diag->Draw("same");		
+	l_diag->Draw("same");			
 	gStyle->SetOptStat(0000);	
 	gStyle->SetStatFontSize(2);		
 	c_z->Update();
-	
 	}	
 	c4->cd(1);
 	
 	h_sensi_bin->Fill(bin_low,significance_640_630);
 	cout << "Bin:  " << bin_low << ",   and Significance:  " << significance_640_630 << endl;
+	cout << "value of bin:    "  <<  H_Signal_640_630_signal->GetBinLowEdge(bin_low) << endl;
 //	h_sensi_bin->Fill(bin_high,significance_640_630);	
 	h_sensi_bin->SetLineWidth(3);	
-	h_sensi_bin->GetXaxis()->SetTitle("bin range");	
-	h_sensi_bin->GetYaxis()->SetTitle("S/#sqrt{(S+B)}");
-	h_sensi_bin->GetYaxis()->SetTitleOffset(1.1);			
+	h_sensi_bin->GetYaxis()->SetTitleSize(0.045);	
+	h_sensi_bin->GetXaxis()->SetTitleSize(0.03);
+	h_sensi_bin->GetYaxis()->SetLabelSize(0.05);	
+	h_sensi_bin->GetXaxis()->SetLabelSize(0.05);
+	h_sensi_bin->GetZaxis()->SetLabelSize(0.05);			
+	h_sensi_bin->SetTitleSize(0.05);
+	h_sensi_bin->SetTitleOffset(0.7);			
+	h_sensi_bin->GetYaxis()->SetTitleOffset(1.5);	
+	h_sensi_bin->GetXaxis()->SetTitleOffset(1);	
+	h_sensi_bin->GetXaxis()->SetTitle("lower bin");	
+	h_sensi_bin->GetYaxis()->SetTitle("S/#sqrt{(S+B)}");		
 	h_sensi_bin->Draw("hist");		
-	gStyle->SetOptStat(0000);		
+	gStyle->SetOptStat(0000);	
+	gPad->SetLeftMargin(0.13);	
+	gPad->SetBottomMargin(0.13);		
 	}
 	c2->cd(1);
 //	h_xs->Fill(430,440,);
@@ -418,35 +481,65 @@ if ( plot ){
 	h_xs->Fill(680,690,2.181);
 	h_xs->Fill(705,715,1.715);			
 	h_xs->Fill(730,740,1.378);
-	h_xs->SetMarkerSize(1.7);
+	h_xs->SetMarkerSize(1.8);
 	h_xs->GetYaxis()->SetTitle("Wino mass [GeV]");	
-	h_xs->GetXaxis()->SetTitle("Bino mass [GeV]");		
+	h_xs->GetXaxis()->SetTitle("Bino mass [GeV]");
+	h_xs->GetYaxis()->SetTitleSize(0.05);	
+	h_xs->GetXaxis()->SetTitleSize(0.05);
+	h_xs->GetYaxis()->SetLabelSize(0.05);	
+	h_xs->GetXaxis()->SetLabelSize(0.05);
+	h_xs->GetZaxis()->SetLabelSize(0.05);			
+	h_xs->SetTitleSize(0.05);
+	h_xs->SetTitleOffset(0.7);			
+	h_xs->GetYaxis()->SetTitleOffset(1.2);	
+	h_xs->GetXaxis()->SetTitleOffset(0.9);	
+	gPad->SetLeftMargin(0.12);		
 	h_xs->Draw("text colz");
 	l_excl->Draw("same");
-	l_diag->Draw("same");		
+	l_diag->Draw("same");
+	exclusion->Draw("");
+	diagonal->Draw("");		
 	gStyle->SetOptStat(0000);
   gStyle->SetPadTickX(1);
 	gStyle->SetPadTickY(1);
 	gPad->SetGridx(1);
 	gPad->SetGridy(1);
+	gPad->SetLeftMargin(0.12);
 	c3->cd(1);
 	
-	h_sensi->Fill(26,1.81417);	
-	h_sensi->Fill(27,1.83326);
-	h_sensi->Fill(28,1.87494);	
-	h_sensi->Fill(29,1.90219);	
-	h_sensi->Fill(30,1.90161);		
-	h_sensi->Fill(31,1.91943);		
-	h_sensi->Fill(32,1.92826);
-	h_sensi->Fill(33,1.92396);	
-	h_sensi->Fill(34,1.91813);	
-	h_sensi->Fill(35,1.89882);	
-	h_sensi->Fill(36,1.87026);		
+	h_sensi->Fill(26,1.82803);	
+	h_sensi->Fill(27,1.85477);
+	h_sensi->Fill(28,1.90027);	
+	h_sensi->Fill(29,1.92576);	
+	h_sensi->Fill(30,1.92481);		
+	h_sensi->Fill(31,1.93923);		
+	h_sensi->Fill(32,1.94491);
+	h_sensi->Fill(33,1.93907);	
+	h_sensi->Fill(34,1.93039);	
+	h_sensi->Fill(35,1.91002);	
+	h_sensi->Fill(36,1.8838);	
+	h_sensi->Fill(37,1.86499);		
+	h_sensi->Fill(38,1.84589);		
+	h_sensi->Fill(39,1.83303);	
 	h_sensi->SetLineWidth(3);	
-	h_sensi->GetXaxis()->SetTitle("Cut Value");	
+	h_sensi->GetXaxis()->SetTitle("lower cut on #Sigma [#sqrt{GeV}]");	
 	h_sensi->GetYaxis()->SetTitle("S/#sqrt{(S+B)}");
-	h_sensi->GetYaxis()->SetTitleOffset(1.1);			
 	
+	h_sensi->GetYaxis()->SetTitleSize(0.045);	
+	h_sensi->GetXaxis()->SetTitleSize(0.03);
+	h_sensi->GetYaxis()->SetLabelSize(0.05);	
+	h_sensi->GetXaxis()->SetLabelSize(0.05);
+	h_sensi->GetZaxis()->SetLabelSize(0.05);			
+	h_sensi->SetTitleSize(0.05);
+	h_sensi->SetTitleOffset(0.7);			
+	h_sensi->GetYaxis()->SetTitleOffset(1.5);	
+	h_sensi->GetXaxis()->SetTitleOffset(1);	
+	exclusion->Draw("same");
+	diagonal->Draw("same");	
+	signal540->Draw("same");	
+	signal640->Draw("same");	
+	gPad->SetLeftMargin(0.13);	
+	gPad->SetBottomMargin(0.13);		
 	gStyle->SetOptStat(0000);		
 	h_sensi->Draw("hist");
 	}

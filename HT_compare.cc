@@ -24,16 +24,20 @@ int HT_compare(){
 	h_Had			=(TH1F*)Had->Get("h_HT");	
 	h_Data		=(TH1F*)Data->Get("h_HT");	
 	
-	TCanvas *c = new TCanvas("c","Plots",1200,700);
+	TCanvas *c = new TCanvas("c","Plots",800,700);
 	
-	h_Data->GetXaxis()->SetTitle("H_{T} of all jets [GeV]");	
-  h_Data->GetYaxis()->SetTitle("# Events");
+	gPad->SetBottomMargin(0.12);
+	gPad->SetLeftMargin(0.12);	
+	h_Data->GetXaxis()->SetTitle("H_{T}[GeV]");	
+  h_Data->GetYaxis()->SetTitle("Events / bin");
 	h_Data->GetXaxis()->SetTitleSize(0.06);	
   h_Data->GetYaxis()->SetTitleSize(0.07);	
   h_Data->GetXaxis()->SetLabelSize(0.06);	
   h_Data->GetYaxis()->SetLabelSize(0.06);	
-  h_Data->GetXaxis()->SetTitleOffset(0.8);	
-  h_Data->GetYaxis()->SetTitleOffset(0.7);	
+  h_Data->GetXaxis()->SetTitleOffset(0.9);	
+  h_Data->GetYaxis()->SetTitleOffset(0.85);	
+	h_Data->GetXaxis()->SetRangeUser(180,1300);
+	h_Data->GetYaxis()->SetRangeUser(80,190000);	
 	gStyle->SetOptStat(0000);
 	h_Data->SetLineColor(kRed);
 	h_Data->SetLineWidth(3);
@@ -52,16 +56,25 @@ int HT_compare(){
 	Arrow3->SetTextSize(0.1);		
 	Arrow3->Draw("same");	
 	
- opis = new TPaveText(0,0,450,182000);
- opis->SetFillColor(kGray+2);
-  opis->SetFillStyle(3244);
- opis->Draw();  
-	
-	TLegend *infoBox = new TLegend(0.77, 0.8, 0.99, 0.99,"");//0.75, 0.83, 0.99, 0.99, "");
-	infoBox->SetHeader("H_{T} comparison");
+	gPad->SetLogy(1);
+ opis = new TPaveText(175,80,500,190000);
+// opis->SetFillColor(kGray+2);
+//  opis->SetFillStyle(3244);
+ opis->SetFillColor(kGreen+2);
+ opis->SetLineColor(kGreen+2);
+ opis->SetLineWidth(4); 
+ opis->SetFillStyle(0);
 
-	infoBox->AddEntry(h_Data,"new analysis","lep");	
-	infoBox->AddEntry(h_Had,"#gamma analysis with jets","lep");
+ opis->Draw();
+   
+	CMS_text = new TLatex(0.11,0.91,"#scale[1.2]{CMS}#scale[0.5]{ }#scale[0.8]{#bf{#it{Private Work}}}#bf{, 7.4 fb^{-1} (8 TeV)}");
+	CMS_text->SetNDC();
+  CMS_text->SetTextSize(0.055);
+  CMS_text->Draw();		
+	
+	TLegend *infoBox = new TLegend(0.5, 0.75, 0.9, 0.9,"");//0.75, 0.83, 0.99, 0.99, "");
+	infoBox->AddEntry(h_Data,"Photon parked dataset","lep");	
+	infoBox->AddEntry(h_Had,"Photon + H_{T} dataset","lep");
 	
   infoBox->SetShadowColor(0);  // 0 = transparent
   infoBox->SetFillColor(kWhite); 

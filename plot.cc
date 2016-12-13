@@ -27,12 +27,16 @@
 TObject *obj;
 TFile   *sourceFile1, *sourceFile2, *sourceFile3,  *sourceFile4,
 				*sourceFile5, *sourceFile6, *sourceFile7,  *sourceFile8,
-				*sourceFile9, *sourceFile10, *sourceFile11,  *sourceFile12,
-				*sourceFile13, *sourceFile14, *sourceFile15, *sourceFile16, 
-				*sourceFile17, *sourceFile18, *sourceFile19, *sourceFile20,
+				*sourceFile9, *sourceFile10,
+				*sourceFile11, *sourceFile12,*sourceFile13, *sourceFile14,
+				*sourceFile15, *sourceFile16, *sourceFile17, *sourceFile19,
 				*sourceFile21, *sourceFile22, *sourceFile23, *sourceFile24,				
 				*sourceFile25, *sourceFile26, *sourceFile27, *sourceFile28,
-				*sourceFile29, *sourceFile30;				
+				*sourceFile29, *sourceFile30,
+				*sourceFile31, *sourceFile32, *sourceFile33, *sourceFile34,				
+				*sourceFile35, *sourceFile36, *sourceFile37, *sourceFile38,
+				*sourceFile39, *sourceFile40, *sourceFile41;
+											
 TH1F *plain;
 TF1 *f;			
 TString outputFolder,outputFilename;
@@ -49,8 +53,10 @@ bool plot_data = true;
 // *******************************************
 // Variables
 TString imageType = "pdf";
-int outputWidth   = 960;
-int outputHeight  = 720;
+int outputWidth   = 600;
+int outputHeight  = 600;
+//int outputWidth   = 960;
+//int outputHeight  = 720;
 bool showStats = false;
 double weight = 1.;
 double rebin = 10;
@@ -72,10 +78,10 @@ double scale_GJets_error = 0.63; //absolut
 */
 
 
-double scale_ISR = 1.34;
-double scale_GJets = 2.19;
-double scale_ISR_error = 0.2; //absolut
-double scale_GJets_error = 0.47; //absolut
+double scale_ISR = 1.15;
+double scale_GJets = 2.35;
+double scale_ISR_error = 0.23; //absolut
+double scale_GJets_error = 0.37; //absolut
 
 /*
 double scale_ISR = 1.2;
@@ -144,7 +150,7 @@ TString fileName1 = "PhotonParkedD_V06.1_sel.root";
 //TString fileName2 = "TTJets_V02.1_sel.root"; // higher order
 TString fileName2 = "TTGamma_V02.1_sel.root";
 //TString fileName3 = "ZGamma_V02.1_sel.root";
-TString fileName3 = "ZGammatest/Znew.root";
+TString fileName3 = "ZGammaAdd.root";
 //TString fileName3 = "ZGammaAdd.root";
 //TString fileName3 = "ZG_merge.root";
 //TString fileName17 = "ZGammaNuNu_V02.1_sel.root";
@@ -174,6 +180,31 @@ TString fileName16 = "signal_540_530.root";
 TString fileName17 = "signal_640_630.root";
 
 TString fileName19 = "GammaPixel.root";
+
+
+TString fileName21 = "signal_490_480.root";
+TString fileName22 = "signal_515_505.root";
+TString fileName23 = "signal_515_480.root";	
+TString fileName24 = "signal_540_480.root";
+TString fileName25 = "signal_540_505.root";	
+TString fileName26 = "signal_540_530.root";	
+TString fileName27 = "signal_565_555.root";	
+TString fileName28 = "signal_565_530.root";	
+TString fileName29 = "signal_565_505.root";	
+
+TString fileName30 = "signal_590_580.root";
+TString fileName31 = "signal_590_555.root";	
+TString fileName32 = "signal_590_530.root";		
+TString fileName33 = "signal_615_605.root";	
+TString fileName34 = "signal_615_580.root";
+TString fileName35 = "signal_615_555.root";		
+TString fileName36 = "signal_640_630.root";	
+TString fileName37 = "signal_640_605.root";	
+TString fileName38 = "signal_640_580.root";		
+TString fileName39 = "signal_665_655.root";	
+
+TString fileName40 = "signal_690_680.root";	
+TString fileName41 = "signal_715_705.root";		
 
 //TString fileName19 = "signal_640_630.root";
 
@@ -211,22 +242,31 @@ TString    fileLabel16 = fileName16;
 TString    fileLabel17 = fileName17;
 TString    fileLabel19 = fileName19;
 
-/*if ( GJetsPt ) {
-	TString    fileLabel18 = fileName18;		
-	TString    fileLabel30 = fileName30;
-	TString    fileLabel20 = fileName20;		
-	TString    fileLabel21 = fileName21;		
-	TString    fileLabel22 = fileName22;
-	TString    fileLabel23 = fileName23;		
-	TString    fileLabel24 = fileName24;		
-	TString    fileLabel25 = fileName25;
-	TString    fileLabel26 = fileName26;
-	TString    fileLabel27 = fileName27;
-	TString    fileLabel28 = fileName28;
-	TString    fileLabel29 = fileName29; 
-
-	} */
 		
+TString    fileLabel21 = fileName21;		
+TString    fileLabel22 = fileName22;
+TString    fileLabel23 = fileName23;		
+TString    fileLabel24 = fileName24;		
+TString    fileLabel25 = fileName25;
+TString    fileLabel26 = fileName26;
+TString    fileLabel27 = fileName27;
+TString    fileLabel28 = fileName28;
+TString    fileLabel29 = fileName29;
+
+TString    fileLabel30 = fileName30;		
+TString    fileLabel31 = fileName31;		
+TString    fileLabel32 = fileName32;
+TString    fileLabel33 = fileName33;		
+TString    fileLabel34 = fileName34;		
+TString    fileLabel35 = fileName35;
+TString    fileLabel36 = fileName36;
+TString    fileLabel37 = fileName37;
+TString    fileLabel38 = fileName38;
+TString    fileLabel39 = fileName39;
+
+TString    fileLabel40 = fileName40;		
+TString    fileLabel41 = fileName41;		
+
 bool compare(TH1F* x, TH1F* y){
 	
 	//return (x < y);
@@ -235,22 +275,26 @@ bool compare(TH1F* x, TH1F* y){
 	}
 	
 
-void plotHistograms(TH1F* htemp1, TH1F* htemp2, TH1F* htemp3, TH1F* htemp4,TH1F* htemp5, TH1F* htemp6, TH1F* htemp7, TH1F* htemp8, TH1F* htemp9, TH1F* htemp10, TH1F*
-htemp11, TH1F* htemp12, TH1F* htemp13, TH1F* htemp14, TH1F* htemp15, TH1F* htemp16,TH1F* htemp17, TH1F* htemp19, TString filename) {
-//TH1F* htemp18, TH1F* htemp20,TH1F* htemp21, TH1F* htemp22, TH1F* htemp23, TH1F* htemp24, TH1F* htemp25, TH1F* htemp26, TH1F* htemp27, TH1F* htemp28, TH1F* htemp29,TH1F* htemp30, TString filename) {// {TH1F* htemp18, TH1F* htemp19, TH1F* htemp20, TH1F*
-//htemp21, TH1F* htemp22, TH1F* htemp23, TH1F* htemp24, TH1F* htemp25, TH1F* htemp26, TH1F* htemp27, TH1F* htemp28, TH1F* htemp29, TString filename) {
+void plotHistograms(
+TH1F* htemp1, TH1F* htemp2, TH1F* htemp3, TH1F* htemp4, TH1F* htemp5, TH1F* htemp6, TH1F* htemp7, TH1F* htemp8, TH1F* htemp9, TH1F* htemp10,
+TH1F* htemp11, TH1F* htemp12, TH1F* htemp13, TH1F* htemp14, TH1F* htemp15, TH1F* htemp16, TH1F* htemp17, TH1F* htemp19,
+TH1F* htemp21, TH1F* htemp22, TH1F* htemp23, TH1F* htemp24, TH1F* htemp25, TH1F* htemp26, TH1F* htemp27, TH1F* htemp28, TH1F* htemp29, TH1F* htemp30,
+TH1F* htemp31, TH1F* htemp32, TH1F* htemp33, TH1F* htemp34, TH1F* htemp35, TH1F* htemp36, TH1F* htemp37, TH1F* htemp38, TH1F* htemp39, TH1F* htemp40, TH1F* htemp41, TString filename) {
 
   //TString title = htemp1->GetName();
   TString title = htemp1->GetTitle();
 
   // Make sure histograms exist
-  if ( !htemp2 || !htemp3 ||!htemp4 ||!htemp5 ||!htemp6 || !htemp7 ||!htemp8 || !htemp9 ||!htemp10 ||!htemp11 || !htemp12 ||!htemp13 ||!htemp14 || !htemp15
-	||!htemp16 ||!htemp17 ||!htemp19 ) {
-	//||!htemp18 ||!htemp20 ||!htemp21 || !htemp22 ||!htemp23 ||!htemp24 || !htemp25	||!htemp26 ||!htemp27 ||!htemp28 ||!htemp29 || htemp30) { // ||!htemp20 ||!htemp21 || !htemp22 ||!htemp23 ||!htemp24 || !htemp25
-//	||!htemp26 ||!htemp27 ||!htemp28 ||!htemp29 || htemp30) {
+  if (
+	!htemp1 || !htemp2 || !htemp3 ||!htemp4 ||!htemp5 ||!htemp6 || !htemp7 ||!htemp8 || !htemp9 ||!htemp10 ||
+	!htemp11 || !htemp12 ||!htemp13 ||!htemp14 || !htemp15 ||!htemp16 ||!htemp17 || !htemp19 ||
+	!htemp21 || !htemp22 ||!htemp23 ||!htemp24 || !htemp25	||!htemp26 ||!htemp27 ||!htemp28 ||!htemp29 || !htemp30 ||
+  !htemp31 || !htemp32 ||!htemp33 ||!htemp34 || !htemp35	||!htemp36 ||!htemp37 ||!htemp38 ||!htemp39 || !htemp40 ||
+	!htemp41) { 
+	
     cout << "Histogram missing from a file: " << htemp1->GetName() << endl;
     return;
-  } 
+  }  
 // htemp2 = ttbar is NNLO and htemp13 = WW is NLO
 
  htemp3->Scale(1.424); //k factor
@@ -308,8 +352,35 @@ htemp11, TH1F* htemp12, TH1F* htemp13, TH1F* htemp14, TH1F* htemp15, TH1F* htemp
  htemp14->Scale(efficiency);
  htemp15->Scale(efficiency); 
  htemp16->Scale(efficiency*scale_540); 
- htemp17->Scale(efficiency*scale_640);  
+ htemp17->Scale(efficiency*scale_640); 
  
+ htemp21->Scale(efficiency*scale_640); 
+ htemp22->Scale(efficiency*scale_640); 
+ htemp23->Scale(efficiency*scale_640); 
+ htemp24->Scale(efficiency*scale_640); 
+ htemp25->Scale(efficiency*scale_640); 
+ htemp26->Scale(efficiency*scale_640); 
+ htemp27->Scale(efficiency*scale_640);  
+ htemp28->Scale(efficiency*scale_640); 
+ htemp29->Scale(efficiency*scale_640);
+ 
+ htemp30->Scale(efficiency*scale_640); 
+ htemp31->Scale(efficiency*scale_640); 
+ htemp32->Scale(efficiency*scale_640); 
+ htemp33->Scale(efficiency*scale_640); 
+ htemp34->Scale(efficiency*scale_640); 
+ htemp35->Scale(efficiency*scale_640); 
+ htemp36->Scale(efficiency*scale_640); 
+ htemp37->Scale(efficiency*scale_640);  
+ htemp38->Scale(efficiency*scale_640); 
+ htemp39->Scale(efficiency*scale_640); 
+ 
+ htemp40->Scale(efficiency*scale_640); 
+ htemp41->Scale(efficiency*scale_640); 
+
+
+ 
+  
 /* if (GJetsPt){
  htemp18->Scale(efficiency);
  htemp30->Scale(efficiency);
@@ -325,25 +396,43 @@ htemp11, TH1F* htemp12, TH1F* htemp13, TH1F* htemp14, TH1F* htemp15, TH1F* htemp
  htemp29->Scale(efficiency); 
  const double METsign10[] = {0,15,26,34,60,100,140,180,230,350}; } */
  //  float METsign14[] = {0,15,22,26,30,34,40,46,60,80,100,140,180,230,350};
-// const double METsign10[] = {0,15,22,34,60,80,100,140,180,230,350}; 
- rebin = 2;
- const double METsign10[] = {0,15,26,34,60,100,140,230,350};
+// const double METsign10[] = {0,15,22,34,60,80,100,140,180,230,350};
+ 
+ rebin =1;
+ 
+ const double METsign10[] = {60,80,100,140,180,230,350};
 // const double METsign10[] = {0,15,26,34,60,100,140,180,230,350}; 
 // const double PT[] = {30,68.8,117.3,165.8,214.3,291.9,388.9,1000}; 
- const double PT[] = {30,59.1,97.9,136.7,224.0,301.6,388.9,1000};
+ const double MT[] = {0,120,180,240,300,360,420,480,540,600,660,800,1000}; 
+ const double PTCR[] = {0,20,40,60,80,100,120,140,160,180,200,220,240,260,280,300,320,340,380,420,500,700};
+ const double PTbefore[] = {0,20,40,60,80,100,120,140,160,180,200,220,240,260,280,300,320,340,360,380,400,440,480,520,560,600,650,700,750,800,900,1000};
+ const double PT[] = {160,320,480,640,800,1120,2000}; 
+ const double PTbefore2[] = {0,20,40,60,80,100,120,140,160,180,200,220,240,260,280,300,320,340,360,380,400,420,440,460,480,500,520,540,560,580,600,620,640,680,750};   
+ 
+ 
 //if ( true ) {
-
- if(title == "h_trans_mass_pt_40" || title == "h_METoverSqHT_double_control_20" || title == "h_tight_photon_pt_before" || title == "h_MET_significance_scale" ||title == "h_MET_significance" || title == "h_pt_dep_1" ||title == "h_pt_dep_2" ||title == "h_pt_dep_3" ||title == "h_pt_dep_4"|| title == "h_pt_orth" ||title == "h_final_MET_significance_unblind" ||title == "h_photon_pt_trans_mass_control" || title == "h_photon_pt_trans_mass_signal" || title == "h_METoverSqHT_100_12" || title == "h_cutflow"
+   if (title == "h_METoverSqHT_double_control_3_regions_100_10_80" || title == "h_sum_signal" || title == "h_MET_significance_per_gev_14" || title == "h_trans_mass_pt_CR" || title == "h_tight_photon_pt_before" || title == "h_trans_mass_pt_before_per_gev"|| title == "h_MET_significance_per_gev_14_CR" ||  title == "h_n_jets_cleaned_before" ||  title == "h_trans_mass_pt_before_per_gev") {
+//if (title == "h_MET_significance_MT_sideband" || title == "h_MET_significance_MT_sideband_2"|| title == "h_MET_significance_per_gev_14" || title == "h_sum_signal"|| title == "h_HT_raw"|| title == "h_MET_significance_metsig_sideband") {
+/* if(title == "h_HT_CR" ||title == "h_jet_pt_CR" ||title == "h_tight_photon_pt_before" ||title == "h_tight_photon_pt_CR" ||title == "h_trans_mass_pt_40" || title == "h_METoverSqHT_double_control_20" || title == "h_MET_significance_scale" ||title == "h_MET_significance" || title == "h_pt_dep_1" ||title == "h_pt_dep_2" ||title == "h_pt_dep_3" ||title == "h_pt_dep_4"|| title == "h_pt_orth" ||title == "h_final_MET_significance_unblind" ||title == "h_photon_pt_trans_mass_control" || title == "h_photon_pt_trans_mass_signal" || title == "h_METoverSqHT_100_12" || title == "h_cutflow"
  ||title == "h_METoverSqHT_trans_mass_control" || title == "h_METoverSqHT_met_sign_control"
  || title == "h_met_significance_40"|| title == "h_photon_pt_met_sign_control" ||title == "h_photon_pt_met_sign_signal"||title == "h_tight_1photons_pt" || title == "h_final_MET_significance_blind" || title == "h_MET_significance_per_gev_14" || title ==
- "h_MET_significance_per_gev_14_blind" || title == "h_final_n_loose_photons_blind") {
-
-
-// if( title == "h_pt_dep_4" ) {
+ "h_MET_significance_per_gev_14_before" || title == "h_final_n_loose_photons_blind") {
+*/
+// if(title == "h_cutflow" || title == "h_upper_right_SR" || title == "h_upper_left_SR" || title == "h_lower_right_SR" || title == "h_lower_left_SR") {
  
-  if (title == "h_MET_significance_scale" || title == "h_pt_dep_1" ||title == "h_pt_dep_2" ||title == "h_pt_dep_3"
- || title == "h_pt_orth" ||title == "h_tight_1photons_pt"||title == "h_tight_photon_pt_before"|| title == "h_photon_pt_trans_mass_control" || title == "h_photon_pt_trans_mass_signal"
- || title == "h_photon_pt_met_sign_control" ||title == "h_photon_pt_met_sign_signal") {
+// if(title == "h_MET_significance_metsig_sideband" ||  title == "h_HT_raw" ||title == "h_InvMass_2jets_CR" ||title == "h_Angle_MJ1_CR" ||  title == "h_final_MET_significance_unblind"|| title == "h_n_jets_cleaned_CR" || title == "h_MET_significance_per_gev_14" || title == "h_sum_signal_over_sqMET") {
+
+// if(title == "h_MET_significance_per_gev_14_before" || title == "h_n_jets_cleaned_before" || title == "h_n_jets_cleaned_CR"|| title == "h_tight_photon_pt_before" || title == "h_tight_photon_pt_CR" || title ==
+// "h_METoverSqHT_double_control_3_regions_100_10_80"|| title == "h_trans_mass_pt_before") {
+
+ 
+ minimum = 0.005;
+// plot_data = true; 
+rebin = 2;
+ 
+  if (title == "h_MET_significance_metsig_sideband" ||title == "h_met" || title == "h_InvMass_2jets_CR" ||title == "h_Angle_MJ1_CR" ||title == "h_HT_CR" ||title == "h_tight_photon_pt_before" ||title == "h_MET_significance_scale" || title == "h_pt_dep_1" ||title == "h_pt_dep_2" ||title == "h_pt_dep_3"
+ || title == "h_pt_orth" ||title == "h_tight_1photons_pt"|| title == "h_photon_pt_trans_mass_control" || title == "h_photon_pt_trans_mass_signal"
+ || title == "h_photon_pt_met_sign_control" ||title == "h_photon_pt_met_sign_signal" ) {
  htemp1 = (TH1F*)htemp1->Rebin(rebin);
  htemp2 = (TH1F*)htemp2->Rebin(rebin);
  htemp3 = (TH1F*)htemp3->Rebin(rebin);
@@ -364,8 +453,9 @@ htemp11, TH1F* htemp12, TH1F* htemp13, TH1F* htemp14, TH1F* htemp15, TH1F* htemp
  htemp19 = (TH1F*)htemp19->Rebin(rebin);
  } 
   
-	rebin = 8;
- if (title == "h_final_MET_significance_unblind" || title == "h_final_MET_significance_blind" || title == "h_MET_significance_per_gev_14" || title == "h_MET_significance_per_gev_14_blind") {
+ rebin = 6;
+ 
+ if ( title == "h_MET_significance_per_gev_14") {
  htemp1 = (TH1F*)htemp1->Rebin(rebin,"htemp1",METsign10);
  htemp2 = (TH1F*)htemp2->Rebin(rebin,"htemp2",METsign10);
  htemp3 = (TH1F*)htemp3->Rebin(rebin,"htemp3",METsign10);
@@ -387,8 +477,9 @@ htemp11, TH1F* htemp12, TH1F* htemp13, TH1F* htemp14, TH1F* htemp15, TH1F* htemp
  } 
  
 // htemp1->SetBinErrorOption(kPoisson);
- rebin = 7;
- if (title == "h_pt_dep_4") {
+ rebin = 6;
+ if (title == "h_sum_signal") { 
+// if (title == "h_pt_dep_4") {
  htemp1 = (TH1F*)htemp1->Rebin(rebin,"htemp1",PT);
  htemp2 = (TH1F*)htemp2->Rebin(rebin,"htemp2",PT);
  htemp3 = (TH1F*)htemp3->Rebin(rebin,"htemp3",PT);
@@ -407,7 +498,73 @@ htemp11, TH1F* htemp12, TH1F* htemp13, TH1F* htemp14, TH1F* htemp15, TH1F* htemp
  htemp16 = (TH1F*)htemp16->Rebin(rebin,"htemp16",PT);
  htemp17 = (TH1F*)htemp17->Rebin(rebin,"htemp17",PT); 
  htemp19 = (TH1F*)htemp19->Rebin(rebin,"htemp19",PT);
- }  
+ }
+ rebin = 12;
+ if (title == "h_trans_mass_pt_CR" || title == "h_trans_mass_pt_before") {
+ htemp1 = (TH1F*)htemp1->Rebin(rebin,"htemp1",MT);
+ htemp2 = (TH1F*)htemp2->Rebin(rebin,"htemp2",MT);
+ htemp3 = (TH1F*)htemp3->Rebin(rebin,"htemp3",MT);
+ htemp4 = (TH1F*)htemp4->Rebin(rebin,"htemp4",MT);
+ htemp5 = (TH1F*)htemp5->Rebin(rebin,"htemp5",MT);
+ htemp6 = (TH1F*)htemp6->Rebin(rebin,"htemp6",MT);
+ htemp7 = (TH1F*)htemp7->Rebin(rebin,"htemp7",MT);
+ htemp8 = (TH1F*)htemp8->Rebin(rebin,"htemp8",MT);
+ htemp9 = (TH1F*)htemp9->Rebin(rebin,"htemp9",MT);
+ htemp10 = (TH1F*)htemp10->Rebin(rebin,"htemp10",MT);
+ htemp11 = (TH1F*)htemp11->Rebin(rebin,"htemp11",MT);
+ htemp12 = (TH1F*)htemp12->Rebin(rebin,"htemp12",MT);
+ htemp13 = (TH1F*)htemp13->Rebin(rebin,"htemp13",MT); 
+ htemp14 = (TH1F*)htemp14->Rebin(rebin,"htemp14",MT);
+ htemp15 = (TH1F*)htemp15->Rebin(rebin,"htemp15",MT); 
+ htemp16 = (TH1F*)htemp16->Rebin(rebin,"htemp16",MT);
+ htemp17 = (TH1F*)htemp17->Rebin(rebin,"htemp17",MT); 
+ htemp19 = (TH1F*)htemp19->Rebin(rebin,"htemp19",MT);
+ } 
+ 
+ rebin = 21;
+  if (title == "h_tight_photon_pt_CR") {
+ htemp1 = (TH1F*)htemp1->Rebin(rebin,"htemp1",PTCR);
+ htemp2 = (TH1F*)htemp2->Rebin(rebin,"htemp2",PTCR);
+ htemp3 = (TH1F*)htemp3->Rebin(rebin,"htemp3",PTCR);
+ htemp4 = (TH1F*)htemp4->Rebin(rebin,"htemp4",PTCR);
+ htemp5 = (TH1F*)htemp5->Rebin(rebin,"htemp5",PTCR);
+ htemp6 = (TH1F*)htemp6->Rebin(rebin,"htemp6",PTCR);
+ htemp7 = (TH1F*)htemp7->Rebin(rebin,"htemp7",PTCR);
+ htemp8 = (TH1F*)htemp8->Rebin(rebin,"htemp8",PTCR);
+ htemp9 = (TH1F*)htemp9->Rebin(rebin,"htemp9",PTCR);
+ htemp10 = (TH1F*)htemp10->Rebin(rebin,"htemp10",PTCR);
+ htemp11 = (TH1F*)htemp11->Rebin(rebin,"htemp11",PTCR);
+ htemp12 = (TH1F*)htemp12->Rebin(rebin,"htemp12",PTCR);
+ htemp13 = (TH1F*)htemp13->Rebin(rebin,"htemp13",PTCR); 
+ htemp14 = (TH1F*)htemp14->Rebin(rebin,"htemp14",PTCR);
+ htemp15 = (TH1F*)htemp15->Rebin(rebin,"htemp15",PTCR); 
+ htemp16 = (TH1F*)htemp16->Rebin(rebin,"htemp16",PTCR);
+ htemp17 = (TH1F*)htemp17->Rebin(rebin,"htemp17",PTCR); 
+ htemp19 = (TH1F*)htemp19->Rebin(rebin,"htemp19",PTCR);
+ } 
+ 
+/* rebin = 34;
+ if (title == "h_jet_pt_CR"|| title == "h_trans_mass_pt_before") {
+ htemp1 = (TH1F*)htemp1->Rebin(rebin,"htemp1",PTbefore2);
+ htemp2 = (TH1F*)htemp2->Rebin(rebin,"htemp2",PTbefore2);
+ htemp3 = (TH1F*)htemp3->Rebin(rebin,"htemp3",PTbefore2);
+ htemp4 = (TH1F*)htemp4->Rebin(rebin,"htemp4",PTbefore2);
+ htemp5 = (TH1F*)htemp5->Rebin(rebin,"htemp5",PTbefore2);
+ htemp6 = (TH1F*)htemp6->Rebin(rebin,"htemp6",PTbefore2);
+ htemp7 = (TH1F*)htemp7->Rebin(rebin,"htemp7",PTbefore2);
+ htemp8 = (TH1F*)htemp8->Rebin(rebin,"htemp8",PTbefore2);
+ htemp9 = (TH1F*)htemp9->Rebin(rebin,"htemp9",PTbefore2);
+ htemp10 = (TH1F*)htemp10->Rebin(rebin,"htemp10",PTbefore2);
+ htemp11 = (TH1F*)htemp11->Rebin(rebin,"htemp11",PTbefore2);
+ htemp12 = (TH1F*)htemp12->Rebin(rebin,"htemp12",PTbefore2);
+ htemp13 = (TH1F*)htemp13->Rebin(rebin,"htemp13",PTbefore2); 
+ htemp14 = (TH1F*)htemp14->Rebin(rebin,"htemp14",PTbefore2);
+ htemp15 = (TH1F*)htemp15->Rebin(rebin,"htemp15",PTbefore2); 
+ htemp16 = (TH1F*)htemp16->Rebin(rebin,"htemp16",PTbefore2);
+ htemp17 = (TH1F*)htemp17->Rebin(rebin,"htemp17",PTbefore2); 
+ htemp19 = (TH1F*)htemp19->Rebin(rebin,"htemp19",PTbefore2);
+ } 
+*/  
 /*if (GJetsPt){
  htemp18->Rebin(rebin);
  htemp20->Rebin(rebin);
@@ -440,7 +597,7 @@ htemp11, TH1F* htemp12, TH1F* htemp13, TH1F* htemp14, TH1F* htemp15, TH1F* htemp
 //	htemp17 ->SetFillColor(kGreen);
 //	htemp17	->SetFillStyle(1001);	
 //	htemp4  ->SetFillColor(kCyan);
-	htemp4  ->SetFillColor(kGray);
+	htemp4  ->SetFillColor(kViolet);
 	htemp4	->SetFillStyle(1001);
 	htemp4  ->SetLineColor(kBlack);
 	htemp4	->SetLineWidth(1);	
@@ -562,42 +719,135 @@ if (BGs.size() != 0){
 		} */
 		//overflow
 		
-	
+/*	
 	N_bins = htemp3->GetNbinsX();
 	//data
-	htemp1->SetBinContent(N_bins, htemp1->GetBinContent(N_bins) + htemp1->GetBinContent(N_bins+1));
-	htemp1->SetBinError(N_bins, sqrt(htemp1->GetBinError(N_bins)*htemp1->GetBinError(N_bins) + htemp1->GetBinContent(N_bins+1)*htemp1->GetBinContent(N_bins+1)));
+	htemp1->SetBinError(N_bins, sqrt(htemp1->GetBinError(N_bins)*htemp1->GetBinError(N_bins) + htemp1->GetBinError(N_bins+1)*htemp1->GetBinError(N_bins+1)));
+	htemp1->SetBinContent(N_bins, htemp1->GetBinContent(N_bins) + htemp1->GetBinContent(N_bins+1));	
 	//signal 540
-	htemp16->SetBinContent(N_bins, htemp16->GetBinContent(N_bins) + htemp16->GetBinContent(N_bins+1));
-	htemp16->SetBinError(N_bins, sqrt(htemp16->GetBinError(N_bins)*htemp16->GetBinError(N_bins) + htemp16->GetBinContent(N_bins+1)*htemp16->GetBinContent(N_bins+1)));
+
+	htemp16->SetBinError(N_bins, sqrt(htemp16->GetBinError(N_bins)*htemp16->GetBinError(N_bins) + htemp16->GetBinError(N_bins+1)*htemp16->GetBinError(N_bins+1)));
+	htemp16->SetBinContent(N_bins, htemp16->GetBinContent(N_bins) + htemp16->GetBinContent(N_bins+1));	
 	//signal 640
-	htemp17->SetBinContent(N_bins, htemp17->GetBinContent(N_bins) + htemp17->GetBinContent(N_bins+1));
-	htemp17->SetBinError(N_bins, sqrt(htemp17->GetBinError(N_bins)*htemp17->GetBinError(N_bins) + htemp17->GetBinContent(N_bins+1)*htemp17->GetBinContent(N_bins+1)));	
+
+	htemp17->SetBinError(N_bins, sqrt(htemp17->GetBinError(N_bins)*htemp17->GetBinError(N_bins) + htemp17->GetBinError(N_bins+1)*htemp17->GetBinError(N_bins+1)));
+	htemp17->SetBinContent(N_bins, htemp17->GetBinContent(N_bins) + htemp17->GetBinContent(N_bins+1));		
 	//Vgamma
-	htemp3->SetBinContent(N_bins, htemp3->GetBinContent(N_bins) + htemp3->GetBinContent(N_bins+1));
-	htemp3->SetBinError(N_bins, sqrt(htemp3->GetBinError(N_bins)*htemp3->GetBinError(N_bins) + htemp3->GetBinContent(N_bins+1)*htemp3->GetBinContent(N_bins+1)));
+
+	htemp3->SetBinError(N_bins, sqrt(htemp3->GetBinError(N_bins)*htemp3->GetBinError(N_bins) + htemp3->GetBinError(N_bins+1)*htemp3->GetBinError(N_bins+1)));
+	htemp3->SetBinContent(N_bins, htemp3->GetBinContent(N_bins) + htemp3->GetBinContent(N_bins+1));	
+	
 	//Vgamma scaled with uncertainty up
-	htemp5->SetBinContent(N_bins, htemp5->GetBinContent(N_bins) + htemp5->GetBinContent(N_bins+1));
-	htemp5->SetBinError(N_bins, sqrt(htemp5->GetBinError(N_bins)*htemp5->GetBinError(N_bins) + htemp5->GetBinContent(N_bins+1)*htemp5->GetBinContent(N_bins+1)));
+
+	htemp5->SetBinError(N_bins, sqrt(htemp5->GetBinError(N_bins)*htemp5->GetBinError(N_bins) + htemp5->GetBinError(N_bins+1)*htemp5->GetBinError(N_bins+1)));
+	htemp5->SetBinContent(N_bins, htemp5->GetBinContent(N_bins) + htemp5->GetBinContent(N_bins+1));	
 	
 	
 	//ttgamma
-	htemp2->SetBinContent(N_bins, htemp2->GetBinContent(N_bins) + htemp2->GetBinContent(N_bins+1));
-	htemp2->SetBinError(N_bins, sqrt(htemp2->GetBinError(N_bins)*htemp2->GetBinError(N_bins) + htemp2->GetBinContent(N_bins+1)*htemp2->GetBinContent(N_bins+1)));
+
+	htemp2->SetBinError(N_bins, sqrt(htemp2->GetBinError(N_bins)*htemp2->GetBinError(N_bins) + htemp2->GetBinError(N_bins+1)*htemp2->GetBinError(N_bins+1)));
+	htemp2->SetBinContent(N_bins, htemp2->GetBinContent(N_bins) + htemp2->GetBinContent(N_bins+1));	
 	//gammaJets
-	htemp9->SetBinContent(N_bins, htemp9->GetBinContent(N_bins) + htemp9->GetBinContent(N_bins+1));
-	htemp9->SetBinError(N_bins, sqrt(htemp9->GetBinError(N_bins)*htemp9->GetBinError(N_bins) + htemp9->GetBinContent(N_bins+1)*htemp9->GetBinContent(N_bins+1)));
+
+	htemp9->SetBinError(N_bins, sqrt(htemp9->GetBinError(N_bins)*htemp9->GetBinError(N_bins) + htemp9->GetBinError(N_bins+1)*htemp9->GetBinError(N_bins+1)));
+	htemp9->SetBinContent(N_bins, htemp9->GetBinContent(N_bins) + htemp9->GetBinContent(N_bins+1));	
 	//QCD
-	htemp7->SetBinContent(N_bins, htemp7->GetBinContent(N_bins) + htemp7->GetBinContent(N_bins+1));
-	htemp7->SetBinError(N_bins, sqrt(htemp7->GetBinError(N_bins)*htemp7->GetBinError(N_bins) + htemp7->GetBinContent(N_bins+1)*htemp7->GetBinContent(N_bins+1)));
+
+	htemp7->SetBinError(N_bins, sqrt(htemp7->GetBinError(N_bins)*htemp7->GetBinError(N_bins) + htemp7->GetBinError(N_bins+1)*htemp7->GetBinError(N_bins+1)));
+	htemp7->SetBinContent(N_bins, htemp7->GetBinContent(N_bins) + htemp7->GetBinContent(N_bins+1));	
 	//Diboson
-	htemp13->SetBinContent(N_bins, htemp13->GetBinContent(N_bins) + htemp13->GetBinContent(N_bins+1));
-	htemp13->SetBinError(N_bins, sqrt(htemp13->GetBinError(N_bins)*htemp13->GetBinError(N_bins) + htemp13->GetBinContent(N_bins+1)*htemp13->GetBinContent(N_bins+1)));
-	//GammaPixel
+
+	htemp13->SetBinError(N_bins, sqrt(htemp13->GetBinError(N_bins)*htemp13->GetBinError(N_bins) + htemp13->GetBinError(N_bins+1)*htemp13->GetBinError(N_bins+1)));
+	htemp13->SetBinContent(N_bins, htemp13->GetBinContent(N_bins) + htemp13->GetBinContent(N_bins+1));	
+	//Signal
 	htemp19->SetBinContent(N_bins, htemp19->GetBinContent(N_bins) + htemp19->GetBinContent(N_bins+1));
-	htemp19->SetBinError(N_bins, sqrt(htemp19->GetBinError(N_bins)*htemp19->GetBinError(N_bins) + htemp19->GetBinContent(N_bins+1)*htemp19->GetBinContent(N_bins+1)));
-			
-				
+	htemp19->SetBinError(N_bins, sqrt(htemp19->GetBinError(N_bins)*htemp19->GetBinError(N_bins) + htemp19->GetBinError(N_bins+1)*htemp19->GetBinError(N_bins+1)));
+	
+	//Signal
+
+	htemp21->SetBinError(N_bins, sqrt(htemp21->GetBinError(N_bins)*htemp21->GetBinError(N_bins) + htemp21->GetBinError(N_bins+1)*htemp21->GetBinError(N_bins+1)));	
+	htemp21->SetBinContent(N_bins, htemp21->GetBinContent(N_bins) + htemp21->GetBinContent(N_bins+1));	
+	//Signal
+
+	htemp22->SetBinError(N_bins, sqrt(htemp22->GetBinError(N_bins)*htemp22->GetBinError(N_bins) + htemp22->GetBinError(N_bins+1)*htemp22->GetBinError(N_bins+1)));	
+	htemp22->SetBinContent(N_bins, htemp22->GetBinContent(N_bins) + htemp22->GetBinContent(N_bins+1));			
+	//Signal
+
+	htemp23->SetBinError(N_bins, sqrt(htemp23->GetBinError(N_bins)*htemp23->GetBinError(N_bins) + htemp23->GetBinError(N_bins+1)*htemp23->GetBinError(N_bins+1)));	
+	htemp23->SetBinContent(N_bins, htemp23->GetBinContent(N_bins) + htemp23->GetBinContent(N_bins+1));				
+	//Signal
+	htemp24->SetBinContent(N_bins, htemp24->GetBinContent(N_bins) + htemp24->GetBinContent(N_bins+1));
+	htemp24->SetBinError(N_bins, sqrt(htemp24->GetBinError(N_bins)*htemp24->GetBinError(N_bins) + htemp24->GetBinError(N_bins+1)*htemp24->GetBinError(N_bins+1)));				
+	//Signal
+
+	htemp25->SetBinError(N_bins, sqrt(htemp25->GetBinError(N_bins)*htemp25->GetBinError(N_bins) + htemp25->GetBinError(N_bins+1)*htemp25->GetBinError(N_bins+1)));	
+	htemp25->SetBinContent(N_bins, htemp25->GetBinContent(N_bins) + htemp25->GetBinContent(N_bins+1));				
+	//Signal
+	
+	htemp26->SetBinError(N_bins, sqrt(htemp26->GetBinError(N_bins)*htemp26->GetBinError(N_bins) + htemp26->GetBinError(N_bins+1)*htemp26->GetBinError(N_bins+1)));
+	htemp26->SetBinContent(N_bins, htemp26->GetBinContent(N_bins) + htemp26->GetBinContent(N_bins+1));
+		
+	//Signal
+
+	htemp27->SetBinError(N_bins, sqrt(htemp27->GetBinError(N_bins)*htemp27->GetBinError(N_bins) + htemp27->GetBinError(N_bins+1)*htemp27->GetBinError(N_bins+1)));
+	htemp27->SetBinContent(N_bins, htemp27->GetBinContent(N_bins) + htemp27->GetBinContent(N_bins+1));	
+	//Signal
+
+	htemp28->SetBinError(N_bins, sqrt(htemp28->GetBinError(N_bins)*htemp28->GetBinError(N_bins) + htemp28->GetBinError(N_bins+1)*htemp28->GetBinError(N_bins+1)));
+	htemp28->SetBinContent(N_bins, htemp28->GetBinContent(N_bins) + htemp28->GetBinContent(N_bins+1));	
+	//Signal
+	htemp29->SetBinContent(N_bins, htemp29->GetBinContent(N_bins) + htemp29->GetBinContent(N_bins+1));
+	htemp29->SetBinError(N_bins, sqrt(htemp29->GetBinError(N_bins)*htemp29->GetBinError(N_bins) + htemp29->GetBinError(N_bins+1)*htemp29->GetBinError(N_bins+1)));
+	//Signal
+
+	htemp30->SetBinError(N_bins, sqrt(htemp30->GetBinError(N_bins)*htemp30->GetBinError(N_bins) + htemp30->GetBinError(N_bins+1)*htemp30->GetBinError(N_bins+1)));
+	htemp30->SetBinContent(N_bins, htemp30->GetBinContent(N_bins) + htemp30->GetBinContent(N_bins+1));	
+	
+
+	htemp31->SetBinError(N_bins, sqrt(htemp31->GetBinError(N_bins)*htemp31->GetBinError(N_bins) + htemp31->GetBinError(N_bins+1)*htemp31->GetBinError(N_bins+1)));
+	htemp31->SetBinContent(N_bins, htemp31->GetBinContent(N_bins) + htemp31->GetBinContent(N_bins+1));	
+	//Signal
+
+	htemp32->SetBinError(N_bins, sqrt(htemp32->GetBinError(N_bins)*htemp32->GetBinError(N_bins) + htemp32->GetBinError(N_bins+1)*htemp32->GetBinError(N_bins+1)));
+	htemp32->SetBinContent(N_bins, htemp32->GetBinContent(N_bins) + htemp32->GetBinContent(N_bins+1));	
+	//Signal
+
+	htemp33->SetBinError(N_bins, sqrt(htemp33->GetBinError(N_bins)*htemp33->GetBinError(N_bins) + htemp33->GetBinError(N_bins+1)*htemp33->GetBinError(N_bins+1)));
+	htemp33->SetBinContent(N_bins, htemp33->GetBinContent(N_bins) + htemp33->GetBinContent(N_bins+1));	
+	//Signal
+
+	htemp34->SetBinError(N_bins, sqrt(htemp34->GetBinError(N_bins)*htemp34->GetBinError(N_bins) + htemp34->GetBinError(N_bins+1)*htemp34->GetBinError(N_bins+1)));
+	htemp34->SetBinContent(N_bins, htemp34->GetBinContent(N_bins) + htemp34->GetBinContent(N_bins+1));	
+		
+
+	htemp35->SetBinError(N_bins, sqrt(htemp35->GetBinError(N_bins)*htemp35->GetBinError(N_bins) + htemp35->GetBinError(N_bins+1)*htemp35->GetBinError(N_bins+1)));
+	htemp35->SetBinContent(N_bins, htemp35->GetBinContent(N_bins) + htemp35->GetBinContent(N_bins+1));	
+	//Signal
+
+	htemp36->SetBinError(N_bins, sqrt(htemp36->GetBinError(N_bins)*htemp36->GetBinError(N_bins) + htemp36->GetBinError(N_bins+1)*htemp36->GetBinError(N_bins+1)));
+		htemp36->SetBinContent(N_bins, htemp36->GetBinContent(N_bins) + htemp36->GetBinContent(N_bins+1));
+	//Signal
+
+	htemp37->SetBinError(N_bins, sqrt(htemp37->GetBinError(N_bins)*htemp37->GetBinError(N_bins) + htemp37->GetBinError(N_bins+1)*htemp37->GetBinError(N_bins+1)));
+	htemp37->SetBinContent(N_bins, htemp37->GetBinContent(N_bins) + htemp37->GetBinContent(N_bins+1));	
+	//Signal
+
+	htemp38->SetBinError(N_bins, sqrt(htemp38->GetBinError(N_bins)*htemp38->GetBinError(N_bins) + htemp38->GetBinError(N_bins+1)*htemp38->GetBinError(N_bins+1)));	
+	htemp38->SetBinContent(N_bins, htemp38->GetBinContent(N_bins) + htemp38->GetBinContent(N_bins+1));	
+	
+
+	htemp39->SetBinError(N_bins, sqrt(htemp39->GetBinError(N_bins)*htemp39->GetBinError(N_bins) + htemp39->GetBinError(N_bins+1)*htemp39->GetBinError(N_bins+1)));
+	htemp39->SetBinContent(N_bins, htemp39->GetBinContent(N_bins) + htemp39->GetBinContent(N_bins+1));	
+	//Signal
+
+	htemp40->SetBinError(N_bins, sqrt(htemp40->GetBinError(N_bins)*htemp40->GetBinError(N_bins) + htemp40->GetBinError(N_bins+1)*htemp40->GetBinError(N_bins+1)));
+	htemp40->SetBinContent(N_bins, htemp40->GetBinContent(N_bins) + htemp40->GetBinContent(N_bins+1));	
+	//Signal
+
+	htemp41->SetBinError(N_bins, sqrt(htemp41->GetBinError(N_bins)*htemp41->GetBinError(N_bins) + htemp41->GetBinError(N_bins+1)*htemp41->GetBinError(N_bins+1)));
+	htemp41->SetBinContent(N_bins, htemp41->GetBinContent(N_bins) + htemp41->GetBinContent(N_bins+1));	
+		
+*/				
 	std::map<TH1F*, std::string> histoname;
 	std::vector< TH1F* > BGs;	
 		
@@ -635,10 +885,6 @@ if (BGs.size() != 0){
 		histoname[htemp15] = fileLabel15;		
 		
 	}
-			
-	
-	
-	
 	else {
 		htemp3->Add(htemp4);
 		htemp5->Add(htemp6);		
@@ -665,10 +911,8 @@ if (BGs.size() != 0){
 		htemp18->Add(htemp28);		
 		htemp18->Add(htemp29);	
 		} */
-		
-
-									
-	//	if ( htemp7 != 0)	BGs.push_back(htemp7); // if QCD seperated than uncommand
+							
+//		if ( htemp7 != 0)	BGs.push_back(htemp7); // if QCD seperated than uncommand
 		if ( !GJetsPt) {		
 	  	if ( htemp9 != 0)	BGs.push_back(htemp9); //GammaJets
 			}
@@ -677,15 +921,19 @@ if (BGs.size() != 0){
 			} */
 	 	if ( htemp13 != 0)	BGs.push_back(htemp13);		//Dibo
 	 	if ( htemp3 != 0)	BGs.push_back(htemp3);		 //VGamma
-//	 	if ( htemp4 != 0)	BGs.push_back(htemp4);				
-		histoname[htemp2] = "t#bar{t}#gamma";
-		histoname[htemp3] =  "V#gamma ";		
+	// 	if ( htemp4 != 0)	BGs.push_back(htemp4);   //WGamma
+		histoname[htemp1] = "#bf{#bf{Data}}";				
+		histoname[htemp2] = "#bf{t#bar{t}#gamma}";
+		histoname[htemp3] =  "#bf{V#gamma}";
+		histoname[htemp4] =  "#bf{W#gamma}";				
 //		histoname[htemp17] = fileLabel17;		
 //		histoname[htemp4] = fileLabel4;	
-		histoname[htemp7] = "QCD";	
-		histoname[htemp9] = "#gammaJets";
-		histoname[htemp13] = "DiBoson";	
-		histoname[htemp19] = "e#rightarrow#gamma";		
+		histoname[htemp7] = "#bf{QCD}";	
+		histoname[htemp9] = "#bf{#gammaJets}";
+		histoname[htemp13] = "#bf{DiBoson}";	
+		histoname[htemp19] = "#bf{e#rightarrow#gamma}";	
+		histoname[htemp17] = "#bf{MW_640_MB_630}";	
+		histoname[htemp16] = "#bf{MW_540_MB_530}";					
 /*		if (GJetsPt) {
 			histoname[htemp18] = "#gammaJets";			
 			} */
@@ -706,14 +954,15 @@ if (BGs.size() != 0){
 //		cout << "error nortmal:  " << htemp3->GetBinContent(3) << endl;		
 		
 	for ( int i = 1; i < (bins+1); i++) {
-		error_Vg = htemp3->GetBinContent(i)*(sqrt((scale_ISR_error/scale_ISR)*(scale_ISR_error/scale_ISR) + (trigger_error*trigger_error) ));	
+		error_Vg = htemp3->GetBinContent(i)*(scale_ISR_error/scale_ISR);
+	//	error_Vg =error_Vg + (htemp4->GetBinContent(i)*(sqrt((scale_ISR_error/scale_ISR)*(scale_ISR_error/scale_ISR) + (trigger_error*trigger_error) )));			
 	//	cout << "error VG:  " << error_Vg << endl;
 //		error_Vg = sqrt( error_Vg*error_Vg + (htemp5->GetBinContent(i)*htemp5->GetBinContent(i)) );
-		error_gJ = htemp9->GetBinContent(i)*(sqrt((scale_GJets_error/scale_GJets)*(scale_GJets_error/scale_GJets) + (trigger_error*trigger_error)));
+		error_gJ = htemp9->GetBinContent(i)*(scale_GJets_error/scale_GJets);
 		error_e_fake = (htemp19->GetBinContent(i)/e_Fakerate)*e_fake_error;
-		error_qcd = htemp7->GetBinContent(i)*(sqrt((qcd_error*qcd_error) + (trigger_error*trigger_error))); //Pay attention if QCD is added to GJets
-		error_tt  = htemp2->GetBinContent(i)*(sqrt((tt_error*tt_error) + (trigger_error*trigger_error)));		
-		error_dibo = (htemp13->GetBinContent(i))*(sqrt((dibo_error*dibo_error) + (trigger_error*trigger_error)));			
+		error_qcd = htemp7->GetBinContent(i)*(sqrt((qcd_error*qcd_error) + (trigger_error*trigger_error)+ (lumi_error*lumi_error))); //Pay attention if QCD is added to GJets
+		error_tt  = htemp2->GetBinContent(i)*(sqrt((tt_error*tt_error) + (trigger_error*trigger_error)+ (lumi_error*lumi_error)));		
+		error_dibo = (htemp13->GetBinContent(i))*(sqrt((dibo_error*dibo_error) + (trigger_error*trigger_error)+ (lumi_error*lumi_error)));			
 	//	error_total[i-1] = sqrt((error_Vg * error_Vg) + (error_gJ * error_gJ) + (error_e_fake * error_e_fake) + (error_qcd * error_qcd) + (error_tt * error_tt) +
 	//	(error_dibo * error_dibo));
 		error_total[i-1] = error_Vg + error_gJ + error_e_fake + error_qcd + error_tt + error_dibo;		
@@ -785,8 +1034,9 @@ if (BGs.size() != 0){
 	
  	for ( int i = 1; i < (bins+1); i++) {
 		 //h_uncertainty->SetBinContent(i,tempStack->GetStack()->Last()->GetBinContent(i)); //i); //tempStack->GetHistogram()->GetBinContent(i));
-		 h_uncertainty->SetBinError(i,sqrt((((h_uncertainty->GetBinContent(i))*lumi_error) * ((h_uncertainty->GetBinContent(i))*lumi_error)) +
-		 (error_total[i-1] * error_total[i-1])));	
+		 h_uncertainty->SetBinError(i,error_total[i-1]);
+//		 h_uncertainty->SetBinError(i,sqrt((((h_uncertainty->GetBinContent(i))*lumi_error) * ((h_uncertainty->GetBinContent(i))*lumi_error)) +
+//		 (error_total[i-1] * error_total[i-1])));	
 	//	 h_uncertainty->SetBinError(i,h_uncertainty->GetBinContent(i)*lumi_error + error_total[i-1]);		
 		 h_stat_uncertainty->SetBinContent(i,1);	
 		 h_stat_uncertainty->SetBinError(i,(denumerator->GetBinError(i)/denumerator->GetBinContent(i)));		 	 
@@ -796,13 +1046,16 @@ if (BGs.size() != 0){
 		 }		
 	h_uncertainty->SetLineColor(kRed);
 	h_uncertainty->SetFillColor(kRed);	
-	h_uncertainty->SetFillStyle(3002);
+	h_uncertainty->SetFillStyle(3354);
+	h_uncertainty->SetMarkerSize(2);	
 	h_stat_uncertainty->SetLineColor(kBlue);
 	h_stat_uncertainty->SetFillColor(kBlue);	
-	h_stat_uncertainty->SetFillStyle(3344);	
+	h_stat_uncertainty->SetFillStyle(3345);	
+	h_stat_uncertainty->SetMarkerSize(2);
 	h_ratio->SetLineColor(kRed);
 	h_ratio->SetFillColor(kRed);	
-	h_ratio->SetFillStyle(3002);	
+	h_ratio->SetFillStyle(3354);
+	h_ratio->SetMarkerSize(2);		
 			
 //	canvasDefault_1 = new TPad("canvasDefault_1", "newpad",0.0,0.0,1.0,0.1);//0.325);	
 	if (plot_data){
@@ -824,17 +1077,21 @@ if (BGs.size() != 0){
 	numerator->SetMinimum(0.1);
 //	numerator->SetMaximum(4.);	
 //	numerator->SetMinimum(0.3);
-	numerator->SetLineWidth(0);	
+	numerator->SetLineWidth(1);	
 //	numerator->GetYaxis()->SetMoreLogLabels();
 	numerator->GetYaxis()->SetNdivisions(5);	
-  numerator->GetYaxis()->SetTitle("Data / BG");
-  numerator->GetYaxis()->CenterTitle();	
-  numerator->GetYaxis()->SetTitleSize(0.15);
+	numerator->GetXaxis()->SetNdivisions(5);		
+  numerator->GetYaxis()->SetTitle("Data / bkg");
+//  numerator->GetXaxis()->SetTitle("S_{T}^{#gamma} [GeV]");	
+//  numerator->GetYaxis()->CenterTitle();	
+  numerator->GetYaxis()->SetTitleSize(0.158);
   numerator->GetXaxis()->SetTitleSize(0.15);		
 	numerator->GetYaxis()->SetLabelSize(0.15);
 	numerator->GetXaxis()->SetLabelSize(0.15);
-  numerator->GetYaxis()->SetTitleOffset(0.32);
-  numerator->GetXaxis()->SetTitleOffset(0.9);
+	numerator->GetXaxis()->SetLabelOffset(0.02);	
+  numerator->GetYaxis()->SetTitleOffset(0.35);
+  numerator->GetXaxis()->SetTitleOffset(0.95);
+	//0.95
 	
 	//TF1 *poly = new TF1("poly","[0]+[1]*pow(x-[2],2)",2.2,2.5);
 			
@@ -843,11 +1100,14 @@ if (BGs.size() != 0){
   canvasDefault_1->SetTopMargin(0.01);
   canvasDefault_1->SetBottomMargin(0.35);
   canvasDefault_1->SetRightMargin(0.1);
+  canvasDefault_1->SetLeftMargin(0.12);	
   canvasDefault_1->SetFillStyle(0);
   canvasDefault_1->cd(); 
 	numerator->Draw("E1");
+	numerator->SetMarkerSize(1.4);
 	h_ratio->Draw("same E2");
 	h_stat_uncertainty->Draw("same E2");
+	numerator->Draw("same E1");	
 	gPad->SetGrid();
 	gStyle->SetGridStyle(3);	
 
@@ -903,14 +1163,14 @@ if (BGs.size() != 0){
 	
 	//numerator->Draw();	
 	
-	infoBoxError = new TLegend(0.64, 0.78, 0.89, 0.89,"");//0.75, 0.83, 0.99, 0.99, "");	
-	infoBoxError->AddEntry(h_ratio,"#sigma^{syst}","f");
-	infoBoxError->AddEntry(h_stat_uncertainty,"#sigma^{stat}","f");	
+	infoBoxError = new TLegend(0.5, 0.78, 0.89, 0.89,"");//0.75, 0.83, 0.99, 0.99, "");	
+	infoBoxError->AddEntry(h_ratio,"#bf{#sigma^{syst}}","f");
+	infoBoxError->AddEntry(h_stat_uncertainty,"#bf{#sigma^{stat}}","f");	
   infoBoxError->SetFillStyle(0);	
   infoBoxError->SetShadowColor(0);  // 0 = transparent
   infoBoxError->SetFillColor(kWhite); 
 	infoBoxError->SetBorderSize(0);
-	infoBoxError->SetTextSize(0.16);
+	infoBoxError->SetTextSize(0.19);
 	infoBoxError->SetNColumns(2);	
   infoBoxError->Draw();	
   canvasDefault->cd();
@@ -922,12 +1182,16 @@ if (BGs.size() != 0){
   data->GetXaxis()->SetTitleSize(0.15);
 	data->GetXaxis()->SetLabelSize(0.06);	
 	data->GetYaxis()->SetLabelSize(0.07);
-	data->GetYaxis()->SetTitle("# Events");
-	data->GetYaxis()->SetTitleSize(0.06);
-	data->GetXaxis()->SetTitleOffset(1);	
-	data->GetYaxis()->SetTitleOffset(0.8);
+	data->GetYaxis()->SetTitle("Events / unit");
+	data->GetYaxis()->SetTitleSize(0.08);
+//	data->GetXaxis()->SetTitleOffset(0.9);
+	data->GetXaxis()->SetTitleOffset(1.3);
+	data->GetXaxis()->SetLabelOffset(1.3);			
+	data->GetYaxis()->SetTitleOffset(0.75);
 	data->SetMinimum(minimum);
+	data->SetMarkerSize(1.4);
 	data->SetTitle("");
+	data->SetLineWidth(1);
  	
 	if (plot_data) {	
 
@@ -937,6 +1201,7 @@ if (BGs.size() != 0){
  	 canvasDefault_2->SetTopMargin(0.1);
  	 canvasDefault_2->SetBottomMargin(0.01);
  	 canvasDefault_2->SetRightMargin(0.1);
+	 canvasDefault_2->SetLeftMargin(0.12);	
  	 canvasDefault_2->SetFillStyle(0);		 
 	 data->GetXaxis()->SetTitleSize(0.0);
 	// data->GetYaxis()->SetNdivisions(20);
@@ -948,14 +1213,152 @@ if (BGs.size() != 0){
 	 data->Draw("same E1");
 //	 gPad->SetGrid();		 	
 	 }
+/*
+	cout << "_____________________________________________________________________" << endl;
+	cout << "_____________________________________________________________________" << endl;	
+  cout << "Region:   " << title << endl;
+	cout << "BG:   " << histoname[htemp2] << endl;
+	cout << "BG yield:   " <<htemp2->GetBinContent(1) << endl;
+	cout << "BG syst uncertainty abs:   " << htemp2->GetBinContent(1)*(sqrt((tt_error*tt_error) + (trigger_error*trigger_error)+	(lumi_error*lumi_error))) << endl;	
+	cout << "BG stat uncertainty abs:   " <<htemp2->GetBinError(1) << endl;	
+	cout << "------------------------------------------------------------" << endl;	 
+	cout << "BG:   " << histoname[htemp3] << endl;
+	cout << "BG yield:   " <<htemp3->GetBinContent(1) << endl;
+	cout << "BG syst uncertainty abs:   " << htemp3->GetBinContent(1)*(scale_ISR_error/scale_ISR) << endl;	
+	cout << "BG stat uncertainty abs:   " <<htemp3->GetBinError(1) << endl;	
+	cout << "------------------------------------------------------------" << endl;	
+	cout << "BG:   " << histoname[htemp7] << endl;
+	cout << "BG yield:   " <<htemp7->GetBinContent(1) << endl;
+	cout << "BG syst uncertainty abs:   " << htemp7->GetBinContent(1)*(sqrt((qcd_error*qcd_error) + (trigger_error*trigger_error)+	(lumi_error*lumi_error))) << endl;	
+	cout << "BG stat uncertainty abs:   " <<htemp7->GetBinError(1) << endl;	
+	cout << "------------------------------------------------------------" << endl;	
+	cout << "BG:   " << histoname[htemp9] << endl;
+	cout << "BG yield:   " <<htemp9->GetBinContent(1) << endl;
+	cout << "BG syst uncertainty abs:   " << htemp9->GetBinContent(1)*(scale_GJets_error/scale_GJets) << endl;	
+	cout << "BG stat uncertainty abs:   " <<htemp9->GetBinError(1) << endl;	
+	cout << "------------------------------------------------------------" << endl;		
+	cout << "BG:   " << histoname[htemp13] << endl;
+	cout << "BG yield:   " <<htemp13->GetBinContent(1) << endl;
+	cout << "BG syst uncertainty abs:   " << htemp13->GetBinContent(1)*(sqrt((dibo_error*dibo_error) + (trigger_error*trigger_error)+	(lumi_error*lumi_error))) << endl;	
+	cout << "BG stat uncertainty abs:   " <<htemp13->GetBinError(1) << endl;	
+	cout << "------------------------------------------------------------" << endl;			
+	cout << "BG:   " << histoname[htemp19] << endl;
+	cout << "BG yield:   " <<htemp19->GetBinContent(1) << endl;
+	cout << "BG syst uncertainty abs:   " << htemp19->GetBinContent(1)/e_Fakerate*e_fake_error << endl;	
+	cout << "BG stat uncertainty abs:   " <<htemp19->GetBinError(1) << endl;	
+	cout << "------------------------------------------------------------" << endl;			
+	cout << "_____________________________________________________________________" << endl;	 
+	cout << "_____________________________________________________________________" << endl;	 
+	cout << "_____________________________________________________________________" << endl;
+  cout << "Region:   " << title << endl;
+	cout << "Signal:   " << histoname[htemp17] << endl;
+	cout << "Signal yield:   " <<htemp17->GetBinContent(1) << endl;
+	cout << "Signal stat. uncertainty:   " <<htemp17->GetBinError(1) << endl;	
+	cout << "------------------------------------------------------------" << endl;
+	cout << "Signal:   " << fileLabel16 << endl;
+	cout << "Signal yield:   " <<htemp16->GetBinContent(1) << endl;
+	cout << "Signal stat. uncertainty:   " <<htemp16->GetBinError(1) << endl;	
+	cout << "------------------------------------------------------------" << endl;
+	cout << "Signal:   " << fileLabel21 << endl;
+	cout << "Signal yield:   " <<htemp21->GetBinContent(1) << endl;
+	cout << "Signal stat. uncertainty:   " <<htemp21->GetBinError(1) << endl;	
+	cout << "------------------------------------------------------------" << endl;
+	cout << "Signal:   " << fileLabel22 << endl;
+	cout << "Signal yield:   " <<htemp22->GetBinContent(1) << endl;
+	cout << "Signal stat. uncertainty:   " <<htemp22->GetBinError(1) << endl;	
+	cout << "------------------------------------------------------------" << endl;	
+	cout << "Signal:   " << fileLabel23 << endl;
+	cout << "Signal yield:   " <<htemp23->GetBinContent(1) << endl;
+	cout << "Signal stat. uncertainty:   " <<htemp23->GetBinError(1) << endl;	
+	cout << "------------------------------------------------------------" << endl;
+	cout << "Signal:   " << fileLabel24 << endl;
+	cout << "Signal yield:   " <<htemp24->GetBinContent(1) << endl;
+	cout << "Signal stat. uncertainty:   " <<htemp24->GetBinError(1) << endl;	
+	cout << "------------------------------------------------------------" << endl;	
+	cout << "Signal:   " << fileLabel25 << endl;
+	cout << "Signal yield:   " <<htemp25->GetBinContent(1) << endl;
+	cout << "Signal stat. uncertainty:   " <<htemp25->GetBinError(1) << endl;	
+	cout << "------------------------------------------------------------" << endl;
+	cout << "Signal:   " << fileLabel26 << endl;
+	cout << "Signal yield:   " <<htemp26->GetBinContent(1) << endl;
+	cout << "Signal stat. uncertainty:   " <<htemp26->GetBinError(1) << endl;	
+	cout << "------------------------------------------------------------" << endl;		
+	cout << "Signal:   " << fileLabel27 << endl;
+	cout << "Signal yield:   " <<htemp27->GetBinContent(1) << endl;
+	cout << "Signal stat. uncertainty:   " <<htemp27->GetBinError(1) << endl;	
+	cout << "------------------------------------------------------------" << endl;
+	cout << "Signal:   " << fileLabel28 << endl;
+	cout << "Signal yield:   " <<htemp28->GetBinContent(1) << endl;
+	cout << "Signal stat. uncertainty:   " <<htemp28->GetBinError(1) << endl;	
+	cout << "------------------------------------------------------------" << endl;		
+	cout << "Signal:   " << fileLabel29 << endl;
+	cout << "Signal yield:   " <<htemp29->GetBinContent(1) << endl;
+	cout << "Signal stat. uncertainty:   " <<htemp29->GetBinError(1) << endl;	
+	cout << "------------------------------------------------------------" << endl;
+	cout << "Signal:   " << fileLabel30 << endl;
+	cout << "Signal yield:   " <<htemp30->GetBinContent(1) << endl;
+	cout << "Signal stat. uncertainty:   " <<htemp30->GetBinError(1) << endl;	
+	cout << "------------------------------------------------------------" << endl;	
+	cout << "Signal:   " << fileLabel31 << endl;
+	cout << "Signal yield:   " <<htemp31->GetBinContent(1) << endl;
+	cout << "Signal stat. uncertainty:   " <<htemp31->GetBinError(1) << endl;	
+	cout << "------------------------------------------------------------" << endl;
+	cout << "Signal:   " << fileLabel32 << endl;
+	cout << "Signal yield:   " <<htemp32->GetBinContent(1) << endl;
+	cout << "Signal stat. uncertainty:   " <<htemp32->GetBinError(1) << endl;	
+	cout << "------------------------------------------------------------" << endl;	
+	cout << "Signal:   " << fileLabel33 << endl;
+	cout << "Signal yield:   " <<htemp33->GetBinContent(1) << endl;
+	cout << "Signal stat. uncertainty:   " <<htemp33->GetBinError(1) << endl;	
+	cout << "------------------------------------------------------------" << endl;
+	cout << "Signal:   " << fileLabel34 << endl;
+	cout << "Signal yield:   " <<htemp34->GetBinContent(1) << endl;
+	cout << "Signal stat. uncertainty:   " <<htemp34->GetBinError(1) << endl;	
+	cout << "------------------------------------------------------------" << endl;	
+	cout << "Signal:   " << fileLabel35 << endl;
+	cout << "Signal yield:   " <<htemp35->GetBinContent(1) << endl;
+	cout << "Signal stat. uncertainty:   " <<htemp35->GetBinError(1) << endl;	
+	cout << "------------------------------------------------------------" << endl;
+	cout << "Signal:   " << fileLabel36 << endl;
+	cout << "Signal yield:   " <<htemp36->GetBinContent(1) << endl;
+	cout << "Signal stat. uncertainty:   " <<htemp36->GetBinError(1) << endl;	
+	cout << "------------------------------------------------------------" << endl;		
+	cout << "Signal:   " << fileLabel37 << endl;
+	cout << "Signal yield:   " <<htemp37->GetBinContent(1) << endl;
+	cout << "Signal stat. uncertainty:   " <<htemp37->GetBinError(1) << endl;	
+	cout << "------------------------------------------------------------" << endl;
+	cout << "Signal:   " << fileLabel38 << endl;
+	cout << "Signal yield:   " <<htemp38->GetBinContent(1) << endl;
+	cout << "Signal stat. uncertainty:   " <<htemp38->GetBinError(1) << endl;	
+	cout << "------------------------------------------------------------" << endl;		
+	cout << "Signal:   " << fileLabel39 << endl;
+	cout << "Signal yield:   " <<htemp39->GetBinContent(1) << endl;
+	cout << "Signal stat. uncertainty:   " <<htemp39->GetBinError(1) << endl;	
+	cout << "------------------------------------------------------------" << endl;
+	cout << "Signal:   " << fileLabel40 << endl;
+	cout << "Signal yield:   " <<htemp40->GetBinContent(1) << endl;
+	cout << "Signal stat. uncertainty:   " <<htemp40->GetBinError(1) << endl;	
+	cout << "------------------------------------------------------------" << endl;	
+	cout << "Signal:   " << fileLabel41 << endl;
+	cout << "Signal yield:   " <<htemp41->GetBinContent(1) << endl;
+	cout << "Signal stat. uncertainty:   " <<htemp41->GetBinError(1) << endl;	
+	cout << "------------------------------------------------------------" << endl;
 
+*/	
+	
+/*	cout << "------------------------------------------------------------" << endl;	
+	cout << "Data yield:     " << htemp1->GetBinContent(1) << endl;
+	cout << "BG yield:       " << h_uncertainty->GetBinContent(1) << endl;
+	cout << "BG stat. uncertainty:       " << h_stat_uncertainty->GetBinError(1)*h_uncertainty->GetBinContent(1) << endl;	
+	cout << "BG syst. uncertainty:       " << h_uncertainty->GetBinError(1)<< endl;	
+*/		
 	if (!plot_data){
 	
 	  canvasDefault_2 = new TPad("canvasDefault_2", "newpad",0.0,0.0,1,1); //0.32
 	  canvasDefault_2->Draw(); 
  	  canvasDefault_2->cd();
  	  canvasDefault_2->SetTopMargin(0.1);
- 	  canvasDefault_2->SetBottomMargin(0.1);
+ 	  canvasDefault_2->SetBottomMargin(0.13);
  	  canvasDefault_2->SetRightMargin(0.1);
  	  canvasDefault_2->SetFillStyle(0);	
 	//	data->GetXaxis()->SetTitleSize(0.5); 
@@ -964,17 +1367,19 @@ if (BGs.size() != 0){
   	tempStack->Draw("hist f");	
 		canvasDefault->Update();		
 		canvasDefault->Modified();				
-	  tempStack->GetHistogram()->GetXaxis()->SetTitle(xtitle.c_str());		
-		tempStack->GetHistogram()->GetXaxis()->SetTitleSize(0.04);
-		tempStack->GetHistogram()->GetXaxis()->SetLabelSize(0.04);	
-		tempStack->GetHistogram()->GetYaxis()->SetLabelSize(0.04);
-		tempStack->GetHistogram()->GetYaxis()->SetTitle("# Events");
-		tempStack->GetHistogram()->GetYaxis()->SetTitleSize(0.04);
+	  tempStack->GetHistogram()->GetXaxis()->SetTitle(xtitle.c_str());	
+		tempStack->GetHistogram()->GetXaxis()->SetTitleSize(0.055);
+		tempStack->GetHistogram()->GetXaxis()->SetLabelSize(0.05);	
+		tempStack->GetHistogram()->GetYaxis()->SetLabelSize(0.06);
+		tempStack->GetHistogram()->GetYaxis()->SetTitle("Events / bin");
+		tempStack->GetHistogram()->GetYaxis()->SetTitleSize(0.06);
 		tempStack->GetHistogram()->GetXaxis()->SetTitleOffset(1);	
 		tempStack->GetHistogram()->GetYaxis()->SetTitleOffset(1);
 
 		tempStack->GetHistogram()->SetMinimum(minimum);
 		tempStack->SetMinimum(minimum);
+		tempStack->GetHistogram()->SetMaximum(1.5*tempStack->GetMaximum());
+		tempStack->SetMaximum(1.5*tempStack->GetMaximum());		
 		tempStack->GetHistogram()->SetTitle("");
 		tempStack->Draw("same hist f");		
 		canvasDefault->Modified();					
@@ -1006,22 +1411,22 @@ if (BGs.size() != 0){
 
   // Draw the legend
 	if (plot_data){	
-  infoBoxData = new TLegend(0.64, 0.82, 0.89, 0.89,"");//0.75, 0.83, 0.99, 0.99, "");	
+  infoBoxData = new TLegend(0.5, 0.82, 0.89, 0.89,"");//0.75, 0.83, 0.99, 0.99, "");	
 	infoBoxData->AddEntry(htemp1,fileLabel1,"lep");
   infoBoxData->SetFillStyle(0);	
   infoBoxData->SetShadowColor(0);  // 0 = transparent
   infoBoxData->SetFillColor(kWhite); 
 	infoBoxData->SetBorderSize(0);
-	infoBoxData->SetTextSize(0.05);
+	infoBoxData->SetTextSize(0.058);
   infoBoxData->Draw();		
-  infoBox = new TLegend(0.64, 0.6, 0.89, 0.83,"");//0.75, 0.83, 0.99, 0.99, "");  infoBox = new TLegend(0.66, 0.49, 0.9, 0.89,"");
+  infoBox = new TLegend(0.5, 0.6, 0.89, 0.83,"");//0.75, 0.83, 0.99, 0.99, "");  infoBox = new TLegend(0.66, 0.49, 0.9, 0.89,"");
 //  infoBox->AddEntry(htemp1,fileLabel1,"lep");	
 	for ( int i = 0; i < BGs.size(); i++) {
 		int size = BGs.size() - 1;
 	  int reverse = size - i;
 	  infoBox->AddEntry(BGs[reverse],histoname[BGs[reverse]].c_str() , "f"); 
 		}
-	infoBox->AddEntry(h_uncertainty,"#sigma^{syst}","f");
+	infoBox->AddEntry(h_uncertainty,"#bf{#sigma^{syst}}","f");
 //  infoBox->AddEntry(htemp18,fileLabel18,"l");		
 	infoBox->SetNColumns(2);
 //  infoBox->AddEntry(htemp16,"M_{Wino} = 540 GeV","l");	
@@ -1030,22 +1435,26 @@ if (BGs.size() != 0){
   infoBox->SetShadowColor(0);  // 0 = transparent
   infoBox->SetFillColor(kWhite); 
 	infoBox->SetBorderSize(0);
-	infoBox->SetTextSize(0.05);
+	infoBox->SetTextSize(0.058);
   infoBox->Draw();
-  infoBoxSignal = new TLegend(0.64, 0.49, 0.89, 0.59,"");//0.75, 0.83, 0.99, 0.99, "");	
-	infoBoxSignal->AddEntry(htemp16,"M_{Wino} = 540 GeV","l");
-	infoBoxSignal->AddEntry(htemp17,"M_{Wino} = 640 GeV","l");
+  infoBoxSignal = new TLegend(0.5, 0.49, 0.89, 0.59,"");//0.75, 0.83, 0.99, 0.99, "");	
+	infoBoxSignal->AddEntry(htemp16,"#bf{M_{Wino} = 540 GeV}","l");
+	infoBoxSignal->AddEntry(htemp17,"#bf{M_{Wino} = 640 GeV}","l");
   infoBoxSignal->SetFillStyle(0);	
   infoBoxSignal->SetShadowColor(0);  // 0 = transparent
   infoBoxSignal->SetFillColor(kWhite); 
 	infoBoxSignal->SetBorderSize(0);
-	infoBoxSignal->SetTextSize(0.05);
+	infoBoxSignal->SetTextSize(0.058);
   infoBoxSignal->Draw();	
+  cout << "Data:   " << htemp1->Integral(0,-1) << endl;	
+  cout << "B:   " << h_uncertainty->Integral(0,-1) << endl;
+  cout << "S:   " << htemp17->Integral(0,-1) << endl;		
 	
-	
-	CMS_text = new TLatex(0.1,0.91,"#int L dt = 7.4 fb^{-1},  #sqrt{S} = 8 TeV,   CMS PRIVATE WORK");
+//	CMS_text = new TLatex(0.1,0.91,"#int L dt = 7.4 fb^{-1},  #sqrt{S} = 8 TeV,   CMS PRIVATE WORK");
+//  CMS_text = new TLatex(0.1,0.91,"#scale[1.2]{CMS}#scale[0.5]{ }#scale[0.8]{#bf{#it{Private Work}}}#bf{, 7.4 fb^{-1} (8 TeV)}");
+  CMS_text = new TLatex(0.11,0.92,"#scale[1.2]{CMS}#scale[7]{   }#bf{L_{int} = 7.4 fb^{-1}  (8 TeV),  #geq1#gamma + MET}");
 	CMS_text->SetNDC();
-  CMS_text->SetTextSize(0.05);
+  CMS_text->SetTextSize(0.058);
   CMS_text->Draw();	
 
 /*	CMS_text = new TLatex(0.37,0.82,"#int L dt = 7.4 fb^{-1},  #sqrt{S} = 8 TeV");
@@ -1064,22 +1473,22 @@ if (BGs.size() != 0){
 	
 	}
 	else {
-	infoBoxData = new TLegend(0.64, 0.81, 0.89, 0.89,"");//0.75, 0.83, 0.99, 0.99, "");	
+	infoBoxData = new TLegend(0.5, 0.81, 0.89, 0.89,"");//0.75, 0.83, 0.99, 0.99, "");	
 	infoBoxData->AddEntry(htemp1,fileLabel1,"lep");
   infoBoxData->SetFillStyle(0);	
   infoBoxData->SetShadowColor(0);  // 0 = transparent
   infoBoxData->SetFillColor(kWhite); 
 	infoBoxData->SetBorderSize(0);
-	infoBoxData->SetTextSize(0.035);
+	infoBoxData->SetTextSize(0.039);
  // infoBoxData->Draw();		
-  infoBox = new TLegend(0.64, 0.7, 0.89, 0.89,"");//0.75, 0.83, 0.99, 0.99, "");  infoBox = new TLegend(0.66, 0.49, 0.9, 0.89,"");
+  infoBox = new TLegend(0.5, 0.7, 0.89, 0.89,"");//0.75, 0.83, 0.99, 0.99, "");  infoBox = new TLegend(0.66, 0.49, 0.9, 0.89,"");
 //  infoBox->AddEntry(htemp1,fileLabel1,"lep");	
 	for ( int i = 0; i < BGs.size(); i++) {
 		int size = BGs.size() - 1;
 	  int reverse = size - i;
 	  infoBox->AddEntry(BGs[reverse],histoname[BGs[reverse]].c_str() , "f"); 
 		}	
-	infoBox->AddEntry(h_uncertainty,"#sigma_{syst}","f");
+	infoBox->AddEntry(h_uncertainty,"#bf{#sigma_{syst}}","f");
 //  infoBox->AddEntry(htemp18,fileLabel18,"l");		
 	infoBox->SetNColumns(2);
 //  infoBox->AddEntry(htemp16,"M_{Wino} = 540 GeV","l");	
@@ -1088,16 +1497,16 @@ if (BGs.size() != 0){
   infoBox->SetShadowColor(0);  // 0 = transparent
   infoBox->SetFillColor(kWhite); 
 	infoBox->SetBorderSize(0);
-	infoBox->SetTextSize(0.035);
+	infoBox->SetTextSize(0.039);
   infoBox->Draw();
-  infoBoxSignal = new TLegend(0.64, 0.62, 0.89, 0.69,"");//0.75, 0.83, 0.99, 0.99, "");	
-	infoBoxSignal->AddEntry(htemp16,"M_{Wino} = 540 GeV","l");
-	infoBoxSignal->AddEntry(htemp17,"M_{Wino} = 640 GeV","l");
+  infoBoxSignal = new TLegend(0.5, 0.62, 0.89, 0.69,"");//0.75, 0.83, 0.99, 0.99, "");	
+	infoBoxSignal->AddEntry(htemp16,"#bf{M_{Wino} = 540 GeV}","l");
+	infoBoxSignal->AddEntry(htemp17,"#bf{M_{Wino} = 640 GeV}","l");
   infoBoxSignal->SetFillStyle(0);	
   infoBoxSignal->SetShadowColor(0);  // 0 = transparent
   infoBoxSignal->SetFillColor(kWhite); 
 	infoBoxSignal->SetBorderSize(0);
-	infoBoxSignal->SetTextSize(0.035);
+	infoBoxSignal->SetTextSize(0.039);
   infoBoxSignal->Draw();	
 /*  infoBox = new TLegend(0.64, 0.55, 0.9, 0.89,"");//0.75, 0.83, 0.99, 0.99, "");
 	for ( int i = 0; i < BGs.size(); i++) {
@@ -1117,9 +1526,11 @@ if (BGs.size() != 0){
 	infoBox->SetTextSize(0.035);
   infoBox->Draw(); */	
 	
-	CMS_text = new TLatex(0.1,0.91,"#int L dt = 7.4 fb^{-1},  #sqrt{S} = 8 TeV,   CMS PRIVATE WORK");
+	//CMS_text = new TLatex(0.1,0.91,"#int L dt = 7.4 fb^{-1},  #sqrt{S} = 8 TeV,   CMS PRIVATE WORK");  
+//	CMS_text = new TLatex(0.1,0.91,"#scale[1.2]{CMS}#scale[0.5]{ }#scale[0.8]{#bf{#it{Private Work}}}#bf{, 7.4 fb^{-1} (8 TeV)}");
+	CMS_text = new TLatex(0.11,0.92,"#scale[1.2]{CMS}#scale[7]{   }#bf{L_{int} = 7.4 fb^{-1}  (8 TeV),  #geq1#gamma + MET}");	
 	CMS_text->SetNDC();
-  CMS_text->SetTextSize(0.03);
+  CMS_text->SetTextSize(0.037);
   CMS_text->Draw();		
 /*	CMS_text = new TLatex(0.34,0.82,"#int L dt = 7.4 fb^{-1},  #sqrt{S} = 8 TeV");
 	CMS_text->SetNDC();
@@ -1141,9 +1552,9 @@ if (BGs.size() != 0){
 	double signal_max = htemp16->GetMaximum();
 	
 	if ( plot_data){
-		data->SetMaximum(5*data_max);
+		data->SetMaximum(4*data_max);
 		if ( data_max < stack_max ) {
-			data->SetMaximum(5*stack_max);
+			data->SetMaximum(4*stack_max);
 			}			
 		data->SetMinimum(minimum);						
 //		data->SetMinimum(0.05);	
@@ -1158,24 +1569,26 @@ if (BGs.size() != 0){
 	}
 	
 	if ( !plot_data){ 
-	  tempStack->GetHistogram()->SetMaximum(5*stack_max);		
+	  tempStack->GetHistogram()->SetMaximum(2*stack_max);
+	  tempStack->SetMaximum(2*stack_max);				
 		if ( signal_max > stack_max ) {
-	    tempStack->GetHistogram()->SetMaximum(5*signal_max);	
-	    tempStack->SetMaximum(5*signal_max);				
+	    tempStack->GetHistogram()->SetMaximum(2*signal_max);	
+	    tempStack->SetMaximum(2*signal_max);				
 			}	
+		tempStack->GetHistogram()->SetMinimum(minimum);
+		tempStack->SetMinimum(minimum);					
 	 	tempStack->Draw("hist f");	
 		canvasDefault->Update();		
 		canvasDefault->Modified();						
-	  tempStack->GetHistogram()->GetXaxis()->SetTitle(xtitle.c_str());		
-		tempStack->GetHistogram()->GetXaxis()->SetTitleSize(0.04);
-		tempStack->GetHistogram()->GetXaxis()->SetLabelSize(0.04);	
-		tempStack->GetHistogram()->GetYaxis()->SetLabelSize(0.04);
-		tempStack->GetHistogram()->GetYaxis()->SetTitle("# Events");
-		tempStack->GetHistogram()->GetYaxis()->SetTitleSize(0.04);
+	  tempStack->GetHistogram()->GetXaxis()->SetTitle(xtitle.c_str());	
+		tempStack->GetHistogram()->GetXaxis()->SetTitleSize(0.055);
+		tempStack->GetHistogram()->GetXaxis()->SetLabelSize(0.05);	
+		tempStack->GetHistogram()->GetYaxis()->SetLabelSize(0.05);
+		tempStack->GetHistogram()->GetYaxis()->SetTitle("Events / bin");
+		tempStack->GetHistogram()->GetYaxis()->SetTitleSize(0.06);
 		tempStack->GetHistogram()->GetXaxis()->SetTitleOffset(1);	
-		tempStack->GetHistogram()->GetYaxis()->SetTitleOffset(1);
+		tempStack->GetHistogram()->GetYaxis()->SetTitleOffset(0.95);
 	//	tempStack->GetHistogram()->SetMinimum(0.001);
-		tempStack->GetHistogram()->SetMinimum(minimum);
 		tempStack->GetHistogram()->SetTitle("");
 		tempStack->Draw("same hist f");	
 	//	data->SetMaximum(stack_max+(stack_max/2));
@@ -1190,7 +1603,7 @@ if (BGs.size() != 0){
 		htemp16->Draw("same hist");	
 		h_uncertainty->Draw("same E2");
 	//	canvasDefault->Update();	
-		gPad->RedrawAxis();
+	//	gPad->RedrawAxis();
 	} 
 
   CMS_text->Draw();
@@ -1229,9 +1642,12 @@ void recurseOverKeys( TDirectory *target1 ) {
 
       // **************************
       // Plot & Save this Histogram
-      TH1F *htemp1, *htemp2, *htemp3, *htemp4,*htemp5, *htemp6, *htemp7, *htemp8, *htemp9, *htemp10, *htemp11, *htemp12, *htemp13, *htemp14, *htemp15,
-			*htemp16, *htemp17, *htemp19;//*htemp18, *htemp20, *htemp21, *htemp22, *htemp23, *htemp24, *htemp25,	*htemp26, *htemp27, *htemp28, *htemp29 *htemp30 ;// *htemp18, *htemp19, *htemp20, *htemp21, *htemp22, *htemp23, *htemp24, *htemp25,
-		//	*htemp26, *htemp27, *htemp28, *htemp29;
+      TH1F *htemp1, *htemp2, *htemp3, *htemp4, *htemp5, *htemp6, *htemp7, *htemp8, *htemp9, *htemp10,
+			*htemp11, *htemp12, *htemp13, *htemp14, *htemp15, *htemp16, *htemp17, *htemp19,
+			*htemp21, *htemp22, *htemp23, *htemp24, *htemp25,	*htemp26, *htemp27, *htemp28, *htemp29, *htemp30, 
+			*htemp31, *htemp32, *htemp33, *htemp34, *htemp35,	*htemp36, *htemp37, *htemp38, *htemp39, *htemp40,
+			*htemp41;
+
 
       htemp1 = (TH1F*)obj;
       TString histName = htemp1->GetName();
@@ -1244,7 +1660,8 @@ void recurseOverKeys( TDirectory *target1 ) {
         sourceFile6->GetObject(path+"/"+histName, htemp6);				
         sourceFile7->GetObject(path+"/"+histName, htemp7);				
         sourceFile8->GetObject(path+"/"+histName, htemp8);
-        sourceFile9->GetObject(path+"/"+histName, htemp9);				
+        sourceFile9->GetObject(path+"/"+histName, htemp9);
+								
         sourceFile10->GetObject(path+"/"+histName, htemp10);				
         sourceFile11->GetObject(path+"/"+histName, htemp11);
         sourceFile12->GetObject(path+"/"+histName, htemp12);	
@@ -1253,11 +1670,8 @@ void recurseOverKeys( TDirectory *target1 ) {
         sourceFile15->GetObject(path+"/"+histName, htemp15);
         sourceFile16->GetObject(path+"/"+histName, htemp16);																				
         sourceFile17->GetObject(path+"/"+histName, htemp17);			
-        sourceFile19->GetObject(path+"/"+histName, htemp19);
-/*    if (GJetsPt){
-        sourceFile18->GetObject(path+"/"+histName, htemp18);			
-		    sourceFile30->GetObject(path+"/"+histName, htemp30);				
-        sourceFile20->GetObject(path+"/"+histName, htemp20);				
+        sourceFile19->GetObject(path+"/"+histName, htemp19);	
+												
         sourceFile21->GetObject(path+"/"+histName, htemp21);
         sourceFile22->GetObject(path+"/"+histName, htemp22);	
         sourceFile23->GetObject(path+"/"+histName, htemp23);				
@@ -1266,8 +1680,22 @@ void recurseOverKeys( TDirectory *target1 ) {
         sourceFile26->GetObject(path+"/"+histName, htemp26);																				
         sourceFile27->GetObject(path+"/"+histName, htemp27);				
         sourceFile28->GetObject(path+"/"+histName, htemp28);																				
-        sourceFile29->GetObject(path+"/"+histName, htemp29);		
-				}			*/	
+        sourceFile29->GetObject(path+"/"+histName, htemp29);
+					
+        sourceFile30->GetObject(path+"/"+histName, htemp30);				
+        sourceFile31->GetObject(path+"/"+histName, htemp31);
+        sourceFile32->GetObject(path+"/"+histName, htemp32);	
+        sourceFile33->GetObject(path+"/"+histName, htemp33);				
+        sourceFile34->GetObject(path+"/"+histName, htemp34);
+        sourceFile35->GetObject(path+"/"+histName, htemp35);
+        sourceFile36->GetObject(path+"/"+histName, htemp36);																				
+        sourceFile37->GetObject(path+"/"+histName, htemp37);				
+        sourceFile38->GetObject(path+"/"+histName, htemp38);																				
+        sourceFile39->GetObject(path+"/"+histName, htemp39);
+				
+        sourceFile40->GetObject(path+"/"+histName, htemp40);				
+        sourceFile41->GetObject(path+"/"+histName, htemp41);
+											
 							
       } else {
 			sourceFile2->GetObject(histName, htemp2);
@@ -1277,7 +1705,8 @@ void recurseOverKeys( TDirectory *target1 ) {
 			sourceFile6->GetObject(histName, htemp6);			
       sourceFile7->GetObject(histName, htemp7);				
       sourceFile8->GetObject(histName, htemp8);
-      sourceFile9->GetObject(histName, htemp9);				
+      sourceFile9->GetObject(histName, htemp9);	
+						
       sourceFile10->GetObject(histName, htemp10);				
       sourceFile11->GetObject(histName, htemp11);
       sourceFile12->GetObject(histName, htemp12);			
@@ -1286,28 +1715,42 @@ void recurseOverKeys( TDirectory *target1 ) {
       sourceFile15->GetObject(histName, htemp15);
       sourceFile16->GetObject(histName, htemp16);		
       sourceFile17->GetObject(histName, htemp17);			
-      sourceFile19->GetObject(histName, htemp19);				
-/*     if (GJetsPt){
-      sourceFile18->GetObject(histName, htemp18);	 
-      sourceFile20->GetObject(histName, htemp20);	
-      sourceFile30->GetObject(histName, htemp30);							
+      sourceFile19->GetObject(histName, htemp19);
+							 					
       sourceFile21->GetObject(histName, htemp21);
-      sourceFile17->GetObject(histName, htemp17);     		
+      sourceFile22->GetObject(histName, htemp22);     		
       sourceFile23->GetObject(histName, htemp23);				
       sourceFile24->GetObject(histName, htemp24);
       sourceFile25->GetObject(histName, htemp25);
       sourceFile26->GetObject(histName, htemp26);		
       sourceFile27->GetObject(histName, htemp27);			
       sourceFile28->GetObject(histName, htemp28);		
-      sourceFile29->GetObject(histName, htemp29);			
-			}						*/		
-    }
+      sourceFile29->GetObject(histName, htemp29);
+					
+      sourceFile30->GetObject(histName, htemp30);							
+      sourceFile31->GetObject(histName, htemp31);
+      sourceFile32->GetObject(histName, htemp32);     		
+      sourceFile33->GetObject(histName, htemp33);				
+      sourceFile34->GetObject(histName, htemp34);
+      sourceFile35->GetObject(histName, htemp35);
+      sourceFile36->GetObject(histName, htemp36);		
+      sourceFile37->GetObject(histName, htemp37);			
+      sourceFile38->GetObject(histName, htemp38);		
+      sourceFile39->GetObject(histName, htemp39);	
+						
+      sourceFile40->GetObject(histName, htemp40);							
+      sourceFile41->GetObject(histName, htemp41);
+ 		
+										
+   
+		 }
 
       outputFilename=histName;
-      plotHistograms(htemp1, htemp2, htemp3, htemp4,htemp5, htemp6, htemp7, htemp8, htemp9, htemp10, htemp11, htemp12, htemp13, htemp14, htemp15,
-			htemp16, htemp17, htemp19,outputFolder+path+"/"+outputFilename);
-			// htemp18, htemp20, htemp21, htemp22, htemp23, htemp24, htemp25, htemp26, htemp27, htemp28, htemp29, htemp30,outputFolder+path+"/"+outputFilename); // htemp18, htemp19, htemp20, htemp21, htemp22, htemp23, htemp24, htemp25,
-		//	htemp26, htemp27, htemp28, htemp29, outputFolder+path+"/"+outputFilename);
+      plotHistograms( htemp1, htemp2, htemp3, htemp4, htemp5, htemp6, htemp7, htemp8, htemp9, htemp10,
+			htemp11, htemp12, htemp13, htemp14, htemp15, htemp16, htemp17, htemp19,
+			htemp21, htemp22, htemp23, htemp24, htemp25, htemp26, htemp27, htemp28, htemp29, htemp30,
+			htemp31, htemp32, htemp33, htemp34, htemp35, htemp36, htemp37, htemp38, htemp39, htemp40,
+			htemp41, outputFolder+path+"/"+outputFilename );
 
     } else if ( obj->IsA()->InheritsFrom( "TDirectory" ) ) {
       // it's a subdirectory
@@ -1327,8 +1770,9 @@ int plot() {
 
   // If file labels were not given as argument,
   // use the filename as a label
-TH1::SetDefaultSumw2();		
-fileLabel1.ReplaceAll("_V06.1_sel.root","");
+TH1::SetDefaultSumw2();	
+//fileLabel1.ReplaceAll("_V06.1_sel_blind.root","");	
+fileLabel1.ReplaceAll("PhotonParkedD_V06.1_sel.root","#bf{Data}");
 fileLabel2.ReplaceAll("_V02.1_sel.root","");
 fileLabel3.ReplaceAll("Add.root","");
 fileLabel5.ReplaceAll("Add.root","");
@@ -1361,6 +1805,7 @@ fileLabel19.ReplaceAll(".root","");
   sourceFile7 = TFile::Open( fileName7 );
   sourceFile8 = TFile::Open( fileName8 );	
   sourceFile9 = TFile::Open( fileName9 );
+	
   sourceFile10 = TFile::Open( fileName10 );
   sourceFile11 = TFile::Open( fileName11 );
   sourceFile12 = TFile::Open( fileName12 );		
@@ -1369,11 +1814,8 @@ fileLabel19.ReplaceAll(".root","");
   sourceFile15 = TFile::Open( fileName15 );			
   sourceFile16 = TFile::Open( fileName16 );
   sourceFile17 = TFile::Open( fileName17 );	
-  sourceFile19 = TFile::Open( fileName19 );
-/*if(GJetsPt){
-  sourceFile18 = TFile::Open( fileName18 );	
-  sourceFile30 = TFile::Open( fileName30 );
-  sourceFile20 = TFile::Open( fileName20 );
+  sourceFile19 = TFile::Open( fileName19 );	
+	
   sourceFile21 = TFile::Open( fileName21 );
   sourceFile22 = TFile::Open( fileName22 );		
   sourceFile23 = TFile::Open( fileName23 );
@@ -1382,8 +1824,24 @@ fileLabel19.ReplaceAll(".root","");
   sourceFile26 = TFile::Open( fileName26 );
   sourceFile27 = TFile::Open( fileName27 );
   sourceFile28 = TFile::Open( fileName28 );
-  sourceFile29 = TFile::Open( fileName29 );		 
-	} */
+  sourceFile29 = TFile::Open( fileName29 );	
+	
+  sourceFile30 = TFile::Open( fileName30 );
+  sourceFile31 = TFile::Open( fileName31 );
+  sourceFile32 = TFile::Open( fileName32 );		
+  sourceFile33 = TFile::Open( fileName33 );
+  sourceFile34 = TFile::Open( fileName34 );
+  sourceFile35 = TFile::Open( fileName35 );			
+  sourceFile36 = TFile::Open( fileName36 );
+  sourceFile37 = TFile::Open( fileName37 );
+  sourceFile38 = TFile::Open( fileName38 );
+  sourceFile39 = TFile::Open( fileName39 );
+	
+  sourceFile40 = TFile::Open( fileName40 );		
+  sourceFile41 = TFile::Open( fileName41 );
+
+	
+		 
   outputFolder = "HistogramsTogether"; // Blank to use current directory,
                                           // or, for a specific dir type
                                           // something like "images/"
@@ -1406,6 +1864,7 @@ fileLabel19.ReplaceAll(".root","");
   sourceFile7->Close();
 	sourceFile8->Close();	
   sourceFile9->Close();
+	
   sourceFile10->Close();
   sourceFile11->Close();
 	sourceFile12->Close();	
@@ -1414,12 +1873,8 @@ fileLabel19.ReplaceAll(".root","");
 	sourceFile15->Close();
 	sourceFile16->Close();		
 	sourceFile17->Close();	
-//	sourceFile18->Close();	
   sourceFile19->Close();
-/*if(GJetsPt){
-	sourceFile18->Close();	
-  sourceFile30->Close();
-  sourceFile20->Close();
+	
   sourceFile21->Close();
 	sourceFile22->Close();	
   sourceFile23->Close();
@@ -1428,10 +1883,25 @@ fileLabel19.ReplaceAll(".root","");
 	sourceFile26->Close();		
 	sourceFile27->Close();	
 	sourceFile28->Close();		
-	sourceFile29->Close();	
-	} */
+	sourceFile29->Close();
+		
+  sourceFile30->Close();
+  sourceFile31->Close();
+	sourceFile32->Close();	
+  sourceFile33->Close();
+  sourceFile34->Close();
+	sourceFile35->Close();
+	sourceFile36->Close();		
+	sourceFile37->Close();	
+	sourceFile38->Close();		
+	sourceFile39->Close();
+		
+  sourceFile40->Close();
+  sourceFile41->Close();
+
+
   TString currentDir = gSystem->pwd();
-  cout << "Done. See images in:" << endl << currentDir << "/" << outputFolder << endl;
+//  cout << "Done. See images in:" << endl << currentDir << "/" << outputFolder << endl;
 	
 	return 0;
 }
